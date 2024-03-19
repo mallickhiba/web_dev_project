@@ -22,17 +22,20 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minlength: 3
     },
-    admin: {
-        type: Boolean,
-        default: false,
+    phoneNumber: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        enum: ['customer', 'admin', 'vendor'],
         required: true
     },
     createdAt: {
         type: Date,
         default: Date.now,
         required: true
-    }
-    },
+    }}
 );
 
 const Users = mongoose.model('Users', UserSchema);

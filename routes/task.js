@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Task = require("../models/Task");
+const Task = require("../models/Bookings");
 
 // GET all tasks
 router.get('/', async (req, res) => {
