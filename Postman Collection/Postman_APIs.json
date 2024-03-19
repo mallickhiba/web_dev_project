@@ -1,0 +1,234 @@
+{
+	"info": {
+		"_postman_id": "efc18c44-d91f-4b3c-957c-191ea821caff",
+		"name": "project-management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CREATE PROJECT ",
+			"id": "4291daec-c9da-4650-acd1-54e63e2bfdc8",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImNyZWF0ZWRBdCI6IjIwMjQtMDItMThUMTI6MTc6MzcuMDQ1WiIsImFkbWluIjp0cnVlLCJpYXQiOjE3MDgyNTg2NTcsImV4cCI6MTcwODM0NTA1N30.GfObnWCzKw6UqPufMwnPoRCr5MmRFFgJTOeVQ3fNlMk"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n       \"email\":\"admin@email.com\" ,\r\n       \"pid\":\"XYZ1\",\r\n       \"name\": \"PROJECT 3489875\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/project/create"
+			},
+			"response": []
+		},
+		{
+			"name": "LOGIN",
+			"id": "1ceee282-3410-4b28-8ee5-ad2d2e744a45",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"admin@email.com\",\r\n    \"password\": \"admin1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "REGISTER",
+			"id": "09838de0-6dfa-480f-a6de-6ed456e0f053",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@email.com\",\r\n    \"password\": \"admin1234\",\r\n    \"firstName\": \"Hiba\",\r\n    \"lastName\": \"Mallick\",\r\n    \"admin\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/auth/register"
+			},
+			"response": []
+		},
+		{
+			"name": "GET PROJECT",
+			"id": "ef678bc1-e3c8-4e4e-97a1-cc115e9c71a1",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImNyZWF0ZWRBdCI6IjIwMjQtMDItMThUMTI6MTc6MzcuMDQ1WiIsImFkbWluIjp0cnVlLCJpYXQiOjE3MDgyNTg2NTcsImV4cCI6MTcwODM0NTA1N30.GfObnWCzKw6UqPufMwnPoRCr5MmRFFgJTOeVQ3fNlMk"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pid\": \"XYZ1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/project//getbypidwithuser"
+			},
+			"response": []
+		},
+		{
+			"name": "GET PROJECT WITH USER",
+			"id": "2c3193e4-1865-4a1f-bc61-65c81a7c452a",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImNyZWF0ZWRBdCI6IjIwMjQtMDItMjFUMDk6MjQ6NDcuNTc4WiIsImFkbWluIjp0cnVlLCJpYXQiOjE3MDg1MDc0ODcsImV4cCI6MTcwODU5Mzg4N30.VgpnhNyGPOKb7HJaXMhWM7s5i32_dMUNxOxa5sOgWOo"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pid\": \"XYZ2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/project//getbypidwithuser"
+			},
+			"response": []
+		},
+		{
+			"name": "GET PROJECT",
+			"id": "c86d49e2-2228-4a7f-a5df-ce6a1dba8186",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImNyZWF0ZWRBdCI6IjIwMjQtMDItMThUMTI6MTc6MzcuMDQ1WiIsImFkbWluIjp0cnVlLCJpYXQiOjE3MDgyNTg2NTcsImV4cCI6MTcwODM0NTA1N30.GfObnWCzKw6UqPufMwnPoRCr5MmRFFgJTOeVQ3fNlMk"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pid\": \"XYZ1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/project/"
+			},
+			"response": []
+		},
+		{
+			"name": "GET PROJECT BY PID",
+			"id": "4564e62c-5176-40de-81d6-3541018e04a3",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:5600/project/XYZ1"
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE PROJECT",
+			"id": "31b1ca74-126e-4bab-bbf4-2b0e72fabd85",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImNyZWF0ZWRBdCI6IjIwMjQtMDItMjFUMDk6MjQ6NDcuNTc4WiIsImFkbWluIjp0cnVlLCJpYXQiOjE3MDg1MDc0ODcsImV4cCI6MTcwODU5Mzg4N30.VgpnhNyGPOKb7HJaXMhWM7s5i32_dMUNxOxa5sOgWOo"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"update project name for xyz3\",\r\n  \"description\": \"New proj desc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/project/XYZ3"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE PROJECT BY",
+			"id": "a7333ab5-20df-4bc2-ab9c-11d2023a84d4",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImNyZWF0ZWRBdCI6IjIwMjQtMDItMjFUMDk6MjQ6NDcuNTc4WiIsImFkbWluIjp0cnVlLCJpYXQiOjE3MDg1MDc0ODcsImV4cCI6MTcwODU5Mzg4N30.VgpnhNyGPOKb7HJaXMhWM7s5i32_dMUNxOxa5sOgWOo"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pid\": \"XYZ2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/project/deleteby"
+			},
+			"response": []
+		}
+	]
+}
