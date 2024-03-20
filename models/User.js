@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
-const baseOptions = {
-    discriminatorKey: "type",
-    collection: "user",
-};
-
-const baseUserSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
     {
+        role: {
+            type: String,
+            enum: ['admin', 'customer', 'vendor'],
+            required: true
+        },
         email: {
             type: String,
             required: true,
@@ -36,42 +36,20 @@ const baseUserSchema = new mongoose.Schema(
             type: Date,
             default: Date.now,
             required: true
+        },
+        favourites: {
+            type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
+            default: []
+        },
+        approved: {
+            type: Boolean,
+            default: false
         }
-    },
-    baseOptions
+    
+    }
 );
 
-
-// Define the Customer schema
-const CustomerSchema = new mongoose.Schema({
-    favourites: {
-        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
-        default: []
-    }
-});
-
-// Define the Vendor schema
-const VendorSchema = new mongoose.Schema({
-    approved: {
-        type: Boolean,
-        default: false
-    }
-});
-
-// Define the Admin schema
-const AdminSchema = new mongoose.Schema({
-    admin: {
-        type: Boolean,
-        default: true
-    }
-});
-
 // Create the base model
-const User = mongoose.model('User', baseUserSchema);
-
-// Create discriminators for different roles
-User.discriminator('Customer', CustomerSchema);
-User.discriminator('Vendor', VendorSchema);
-User.discriminator('Admin', AdminSchema);
+const User = mongoose.model('User', UserSchema); // Corrected from 'Users' to 'User'
 
 module.exports = User;

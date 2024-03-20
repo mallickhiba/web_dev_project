@@ -1,10 +1,13 @@
-var createError = require('http-errors');
-var express = require('express');
+const createError = require('http-errors');
+const express = require('express');
 const mongoose = require('mongoose');
+const router = require('./routes/index');
 
-var app = express();
-
+const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+
 app.use(express.urlencoded({ extended: false }));
 
 (async () => {
@@ -14,9 +17,9 @@ app.use(express.urlencoded({ extended: false }));
     } catch (error) {
         console.error('Unable to connect to the database:', error);
     }
-})()
+})();
 
-const router = require('./routes/index');
+// Use the router middleware
 app.use('/', router);
 
 app.use(function (req, res, next) {

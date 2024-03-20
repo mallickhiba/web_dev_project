@@ -6,9 +6,9 @@ const authRouter = require("./auth");
 
 const bookingRouter = require("./bookings");
 const locationRouter = require("./locations");
-//const packageRouter = require("./packages");
 const reviewRouter = require("./reviews")
 const serviceRouter = require("./services")
+const adminRouter = require("./admin")
 
 
 router.use("/auth", authRouter);
@@ -24,11 +24,10 @@ router.use(async (req, res, next) => {
         return res.json({ msg: "TOKEN NOT FOUND / INVALID" })
     }
 })
-
+router.use("/admin", adminRouter);
 router.use("/bookings", bookingRouter);
 router.use("/locations", locationRouter);
-//router.use("/packages", packageRouter);
-router.use("/reviews", reviewRouter);
+//router.use("/reviews", reviewRouter);
 router.use("/services", serviceRouter);
 
 module.exports = router;
