@@ -1,4 +1,4 @@
-const Service = require("../models/Service");
+const Service = require("../models/Services");
 var express = require("express");
 const mongoose = require("mongoose");
 

@@ -1,5 +1,5 @@
 const express = require('express');
-const Booking = require('../models/booking');
+const Booking = require('../models/Bookings'); // Fix the file name to match the actual file name in a case-sensitive manner
 
 const router = express.Router();
 

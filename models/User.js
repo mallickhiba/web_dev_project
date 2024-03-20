@@ -1,65 +1,77 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    match: /\S+@\S+\.\S+/,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 8
-  },
-  firstName: {
-    type: String,
-    required: true,
-    minlength: 3
-  },
-  lastName: {
-    type: String,
-    required: true,
-    minlength: 3
-  },
-  phoneNumber: {
-    type: String,
-    required: true
-  },
-  role: {
-    type: String,
-    enum: ['customer', 'admin', 'vendor'],
-    required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    required: true
-  }
-}, { discriminatorKey: 'role' }); // Discriminator key placed here
+const baseOptions = {
+    discriminatorKey: "type",
+    collection: "user",
+};
+
+const baseUserSchema = new mongoose.Schema(
+    {
+        email: {
+            type: String,
+            required: true,
+            match: /\S+@\S+\.\S+/,
+            unique: true
+        },
+        password: {
+            type: String,
+            required: true,
+            minlength: 8
+        },
+        firstName: {
+            type: String,
+            required: true,
+            minlength: 3
+        },
+        lastName: {
+            type: String,
+            required: true,
+            minlength: 3
+        },
+        phoneNumber: {
+            type: String,
+            required: true
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now,
+            required: true
+        }
+    },
+    baseOptions
+);
+
 
 // Define the Customer schema
 const CustomerSchema = new mongoose.Schema({
-  favourites: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }], // Reference event schema using ObjectId
-    default: []
-  }
+    favourites: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
+        default: []
+    }
 });
 
 // Define the Vendor schema
 const VendorSchema = new mongoose.Schema({
-  approved: {
-    type: Boolean,
-    default: false
-  }
+    approved: {
+        type: Boolean,
+        default: false
+    }
 });
 
-// Create the discriminator models (after UserSchema)
-const Customer = mongoose.model('Customer', UserSchema.discriminator('Customer', CustomerSchema));
-const Vendor = mongoose.model('Vendor', UserSchema.discriminator('Vendor', VendorSchema));
+// Define the Admin schema
+const AdminSchema = new mongoose.Schema({
+    admin: {
+        type: Boolean,
+        default: true
+    }
+});
 
-// Create the base model (before discriminator models)
-const User = mongoose.model('User', UserSchema);
+// Create the base model
+const User = mongoose.model('User', baseUserSchema);
 
-// Export the models
-module.exports = { User, Customer, Vendor };
+// Create discriminators for different roles
+User.discriminator('Customer', CustomerSchema);
+User.discriminator('Vendor', VendorSchema);
+User.discriminator('Admin', AdminSchema);
+
+module.exports = User;

@@ -1,5 +1,5 @@
 const express = require('express');
-const Package = require("../models/Package");
+const Package = require("../models/Packages");
 
 const router = express.Router();
 
