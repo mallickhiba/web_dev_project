@@ -5,6 +5,11 @@ const BookingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
     required: true
     },
+    customer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Customer',
+        required: true
+      },
     date: {
         type: Date,
         default: Date.now,
@@ -14,7 +19,12 @@ const BookingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Service',
         required: true
-    }
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'confirmed', 'cancelled'],
+        default: 'pending'
+      }
 });
 
 const Booking = mongoose.model('Booking', BookingSchema);
