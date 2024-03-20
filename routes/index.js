@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+
 const authRouter = require("./auth");
-const projectRouter = require("./project");
-const taskRouter = require("./task");
-const activityRouter = require("./activity");
+
+const bookingRouter = require("./bookings");
+const locationRouter = require("./locations");
+const packageRouter = require("./packages");
+const reviewRouter = require("./reviews")
+const serviceRouter = require("./services")
+
 
 router.use("/auth", authRouter);
 
@@ -20,8 +25,10 @@ router.use(async (req, res, next) => {
     }
 })
 
-router.use("/project", projectRouter);
-router.use("/task", taskRouter);
-router.use("/activity", activityRouter);
+router.use("/bookings", bookingRouter);
+router.use("/locations", locationRouter);
+router.use("/packages", packageRouter);
+router.use("/reviews", reviewRouter);
+router.use("/services", serviceRouter);
 
 module.exports = router;
