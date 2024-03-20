@@ -81,36 +81,37 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
+//not checked yet
+
 router.post("/reset-password", async (req, res) => {
-    try {
-        const { resetToken, newPassword, pin } = req.body;
-        const decodedToken = jwt.verify(resetToken, "MY_SECRET");
-        const { email } = decodedToken;
-        const user = await Users.findOne({ email });
-        if (!user) {
-            return res.json({ msg: "USER NOT FOUND" });
-        }
-        if (pin !== user.pin) {
-            return res.json({ msg: "INVALID PIN" });
-        }
-        const hashedPassword = await bcrypt.hash(newPassword, 5);
-        user.password = hashedPassword;
-        await user.save();
-        return res.json({ msg: "PASSWORD RESET SUCCESSFUL" });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Server Error" });
+  try {
+    const { resetToken, newPassword, pin } = req.body;
+    const decodedToken = jwt.verify(resetToken, "MY_SECRET");
+    const { email } = decodedToken;
+    const user = await Users.findOne({ email });
+    if (!user) {
+      return res.json({ msg: "USER NOT FOUND" });
     }
+    if (pin !== user.pin) {
+      return res.json({ msg: "INVALID PIN" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 5);
+    user.password = hashedPassword;
+    await user.save();
+    return res.json({ msg: "PASSWORD RESET SUCCESSFUL" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server Error" });
+  }
 });
 
 /****ADDING MIDDLEWARE FOR ROLE-BASED APIS****/
 
 router.use((req, res, next) => {
   //res.send(req.user.email + " IS AN ADMIN? " + req.user.admin)
-  if (!req.user.admin) return res.json({ msg: "NOT ADMIN" });
+  if (req.user.role !== "admin") return res.json({ msg: "NOT ADMIN" });
   else next();
 });
-
 router.get("/users", async (req, res) => {
   try {
     const users = await Users.find();
