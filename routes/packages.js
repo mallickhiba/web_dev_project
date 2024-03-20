@@ -31,9 +31,9 @@ router.get('/:id', async (req, res) => {
 });
 
 router.use((req, res, next) => {
-    if (!req.user.admin) return res.json({ msg: "NOT ADMIN" })
-    else next()
-})
+    if (req.user.role !== "admin") return res.json({ msg: "NOT ADMIN" });
+   else next();
+  });
 
 // POST a new package
 router.post('/create', async (req, res) => {

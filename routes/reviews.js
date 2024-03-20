@@ -19,11 +19,11 @@ router.get('/viewReviews', async (req, res) => {
 
 //Place middleware here to ensure only customer or admin can view customer's review and delete them.  
 router.use((req, res, next) => {
-  if (!req.user || (!req.user.Customer && !req.user.Admin)) {
+  if (!req.user || (req.user.role !== "admin" && req.user.role !== "customer")) {
       return res.status(403).json({ msg: "Forbidden: Access denied - Only Admin and Customer can perfrom these actions!" });
   }
-  next();
-});
+   else next();
+  });
 
 // Get a specific review by id. (useful for admin implementation)
 router.get('/:id', async (req, res) => {
@@ -43,10 +43,8 @@ router.get('/:id', async (req, res) => {
 // Get all reviews of a specific customer.
 router.get('/getbyCustomer', async (req, res) => {
   try {
-      let userId;
 
-      // Check if user is admin then get reviews of specified customer id from req body
-      if (req.user.Admin && req.body.customerId) {
+    if(req.user.role == "admin") {// Check if user is admin then get reviews of specified customer id from req body
             userId = req.body.customerId;
       } else {
           userId = req.user.userId;
@@ -73,7 +71,7 @@ router.post('/delete/:id', async (req, res) => {
       const reviewId = req.params.id;
 
       // Check if user is admin then delete the review directly.
-      if (req.user.Admin) {
+      if (req.user.role == "admin") {
           await Review.findByIdAndDelete(reviewId);
       } else {
           // Customer is logged in so check if the review belongs to the logged-in user
@@ -107,7 +105,7 @@ router.post('/delete/:id', async (req, res) => {
 
 // Place middleware here to ensure only customer can place review
 router.use((req, res, next) => {
-  if (!req.user || !req.user.Customer ) {
+  if (!req.user || req.user.role !== "customer" ) {
       return res.status(403).json({ msg: "Only Customer can post reviews!" });
   }
   next();
