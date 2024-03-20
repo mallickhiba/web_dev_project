@@ -41,6 +41,12 @@ const ServiceSchema = new mongoose.Schema({
   start_price: {
     type: Number,
     required: true
+  },
+  average_rating: {
+    type: Number,
+    default: 0,
+    min: 1,
+    max: 5,
   }
 });
 

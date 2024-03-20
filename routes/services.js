@@ -103,7 +103,7 @@ router.post('/getbyservicename', async (req, res) => {
 
 router.post("/getbyservicewithvendor", async (req, res) => {
   try {
-    const service = await Service.findById(req.body.service_id).populate(
+    const service = await Service.findById(req.params.id).populate(
       "vendor_id",
       "-password"
     );
@@ -160,7 +160,7 @@ router.get('/:serviceId/packages/:packageId', async (req, res) => {
 // To delete/edit/add a package, vendor/admin can edit the service and perform operaions. 
 
 router.use((req, res, next) => {
-  if (!req.user.admin && !req.user.vendor) {
+  if (!req.user.Admin && !req.user.Vendor) {
     return res.json({ msg: "NOT AUTHORIZED" });
   }
   next();
@@ -173,11 +173,11 @@ router.post("/create", async (req, res) => {
   try {
     let vendorId;
     // Check if the user is admin then extract vendor id from body
-    if (req.user.role === 'admin') {
+    if (req.user.Admin) {
         vendorId = req.body.vendor_id;
     } else {
         // If user is vendor then extract the vendor ID from their account
-        vendorId = req.user.vendor_id; 
+        vendorId = req.user.userId; 
     }
     const serviceData = { ...req.body, vendor_id: vendorId };
     await Service.create(serviceData);
@@ -198,12 +198,12 @@ try {
   }
 
   let vendorId;
-  if (req.user.role === 'admin') {
+  if (req.user.Admin) {
       // If the user is an admin, extract the vendor ID from the request body
       vendorId = req.body.vendor_id;
   } else {
       // If the user is vendor, extract the vendor ID from their account
-      vendorId = req.user.vendor_id; 
+      vendorId = req.user.userId; 
   }
   // Check if the vendor ID matches the vendor ID associated with the service
   if (vendorId.toString() !== service.vendor_id.toString()) {
@@ -249,14 +249,14 @@ router.post("/deleteby", async (req, res) => {
     const service = await Service.findById(req.body.id);
     if (!service) return res.json({ msg: "Service not found" });
 
-    if (req.user.admin) {
+    if (req.user.Admin) {
       // Admin can delete any service
       await Service.deleteOne({ _id: req.body.id });
       return res.json({ msg: "Service deleted by admin" });
     }
-    if (req.user.vendor) {
+    else{
       // Vendor can only delete a service they are associated with
-      if (service.vendor_id.toString() !== req.user.vendor.toString()) {
+      if (service.vendor_id.toString() !== req.user.userId.toString()) {
         return res.json({ msg: "Not authorized to delete this service" });
       }
       await Service.deleteOne({ _id: req.body.id });
