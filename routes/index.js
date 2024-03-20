@@ -6,7 +6,7 @@ const authRouter = require("./auth");
 
 const bookingRouter = require("./bookings");
 const locationRouter = require("./locations");
-const packageRouter = require("./packages");
+//const packageRouter = require("./packages");
 const reviewRouter = require("./reviews")
 const serviceRouter = require("./services")
 
@@ -27,8 +27,8 @@ router.use(async (req, res, next) => {
 
 router.use("/bookings", bookingRouter);
 router.use("/locations", locationRouter);
-router.use("/packages", packageRouter);
-//router.use("/reviews", reviewRouter);
+//router.use("/packages", packageRouter);
+router.use("/reviews", reviewRouter);
 router.use("/services", serviceRouter);
 
 module.exports = router;

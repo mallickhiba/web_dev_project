@@ -33,16 +33,6 @@ router.post('/', async (req, res) => {
     }
 });
 
-// DELETE a booking
-router.delete('/:id', getBooking, async (req, res) => {
-    try {
-        await res.booking.remove();
-        res.json({ message: 'Booking deleted' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
 // Middleware function to get a specific booking by ID
 async function getBooking(req, res, next) {
     let booking;
@@ -58,5 +48,16 @@ async function getBooking(req, res, next) {
     res.booking = booking;
     next();
 }
+
+// DELETE a booking
+router.delete('/:id', getBooking, async (req, res) => {
+    try {
+        await res.booking.remove();
+        res.json({ message: 'Booking deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 module.exports = router;
