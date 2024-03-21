@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 var router = express.Router();
 
+// Get all services -- TESTED
 router.get("/", async (req, res) => {
   try {
     console.log("getting all the services");
@@ -16,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 
-// View Available Services by Type. This is for finding sevices by type (includes pagination) --- not tested yet
+// View Available Services by Type. This is for finding sevices by type (includes pagination) --- TESTED
 router.get('/:serviceType', async (req, res) => {
   const { serviceType } = req.params;
   const { page = 1, limit = 10 } = req.query;
@@ -26,7 +27,6 @@ router.get('/:serviceType', async (req, res) => {
     if (!['decor', 'venue', 'catering', 'photography'].includes(serviceType)) {
           return res.status(400).json({ msg: "Invalid service type" });
       }
-
       // Query services by service type with pagination
       const startIndex = (page - 1) * limit;
       const endIndex = page * limit;
@@ -35,28 +35,27 @@ router.get('/:serviceType', async (req, res) => {
       const services = await Service.find({ service_type: serviceType }).limit(limit).skip(startIndex);
 
       // Pagination result
-      const pagination = {};
-      if (endIndex < totalServices) {
-          pagination.next = {
-              page: +page + 1,
-              limit: +limit
-          };
-      }
-      if (startIndex > 0) {
-          pagination.prev = {
-              page: +page - 1,
-              limit: +limit
-          };
-      }
+      
+    const pagination = {
+      offset: startIndex,
+      records_per_page: limit,
+      total_records: totalServices,
+      total_pages: Math.ceil(totalServices / limit),
+      current_page: +page
+    };
 
-      res.json({ services, pagination });
+    if (endIndex < totalServices) {
+      pagination.next_page = +page + 1;
+    }
+
+      res.json({ pagination, services });
   } catch (error) {
       console.error(error);
       res.status(500).json({ msg: "Internal server error" });
   }
 });
 
-
+// not tested 
 router.get("/:id", async (req, res) => {
   try {
     console.log("getting service with id " + req.params.id);
@@ -72,45 +71,64 @@ router.get("/:id", async (req, res) => {
 });
 
 
-// Get Service details by Service Name 
+// Get Service details by Service Name -- Tested
 router.post('/getbyservicename', async (req, res) => {
   try {
-      const { serviceName } = req.body;
+    const { serviceName } = req.body;
 
-      if (!serviceName) {
-          return res.status(400).json({ msg: "Service name is required in the request body" });
-      }
-      // Populate service with packages and vendor name
-      const services = await Service.find({ service_name: serviceName })
+    // Logging: Log the service name being searched for
+    console.log("Searching for service with name:", serviceName);
+
+    if (!serviceName) {
+      return res.status(400).json({ msg: "Service name is required in the request body" });
+    }
+
+    // Populate service with packages and vendor name
+    const services = await Service.find({ service_name: serviceName })
       .populate({
-          path: 'packages',
-          select: 'name price description'
-      })
-      .populate({
-          path: 'vendor_id',
-          select: 'firstName lastName -_id'
+        path: 'vendor_id',
+        select: 'firstName lastName -_id'
       });
-      if (services.length === 0) {
-          return res.json({ msg: "No services found with the provided service name" });
-      }
-      res.json({ msg: "Services found", data: services });
+
+    if (services.length === 0) {
+      // Logging: Log that no services were found
+      console.log("No services found with the provided service name:", serviceName);
+      return res.json({ msg: "No services found with the provided service name" });
+    }
+
+    // Logging: Log the found services
+    console.log("Services found:", services);
+    res.json({ msg: "Services found", data: services });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ msg: "Internal server error" });
+    // Logging: Log any errors that occur
+    console.error("Error fetching services:", error);
+    res.status(500).json({ msg: "Internal server error" });
   }
 });
 
 
+
 router.post("/getbyservicewithvendor", async (req, res) => {
   try {
-    const service = await Service.findById(req.params.id).populate(
+    console.log("Request received to get service with vendor details.");
+    const { id } = req.body;
+    console.log("Service ID:", id);
+    
+    const service = await Service.findById(id).populate(
       "vendor_id",
       "-password"
     );
-    if (!service) return res.json({ msg: "Service not found" });
+    
+    if (!service) {
+      console.log("Service not found.");
+      return res.json({ msg: "Service not found" });
+    }
+
+    console.log("Service found:", service);
     res.json({ msg: "Service found", data: service });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching service with vendor details:", error);
+    res.status(500).json({ msg: "Internal server error" });
   }
 });
 
@@ -160,21 +178,19 @@ router.get('/:serviceId/packages/:packageId', async (req, res) => {
 // To delete/edit/add a package, vendor/admin can edit the service and perform operaions. 
 
 router.use((req, res, next) => {
-  if (!req.user.Admin && !req.user.Vendor) {
-    return res.json({ msg: "NOT AUTHORIZED" });
+  if (!req.user || (req.user.role !== "admin" && req.user.role !== "vendor")) {
+      return res.status(403).json({ msg: "Forbidden: Access denied!" });
   }
-  next();
-});
-
-
+   else next();
+  });
 
 //Add a new service.
 router.post("/create", async (req, res) => {
   try {
     let vendorId;
     // Check if the user is admin then extract vendor id from body
-    if (req.user.Admin) {
-        vendorId = req.body.vendor_id;
+    if (req.user.role == "admin") {
+      vendorId = req.body.vendor_id;
     } else {
         // If user is vendor then extract the vendor ID from their account
         vendorId = req.user.userId; 
@@ -184,6 +200,7 @@ router.post("/create", async (req, res) => {
     res.json({ msg: "Service added" });
   } catch (error) {
     console.error(error);
+    console.error("Error adding service:", error); // Log the error
     res.status(500).json({ msg: "Internal server error" });
   }
 });
@@ -198,7 +215,7 @@ try {
   }
 
   let vendorId;
-  if (req.user.Admin) {
+  if (req.user.role == "admin") {
       // If the user is an admin, extract the vendor ID from the request body
       vendorId = req.body.vendor_id;
   } else {
@@ -249,7 +266,7 @@ router.post("/deleteby", async (req, res) => {
     const service = await Service.findById(req.body.id);
     if (!service) return res.json({ msg: "Service not found" });
 
-    if (req.user.Admin) {
+    if (req.user.role == "admin") {
       // Admin can delete any service
       await Service.deleteOne({ _id: req.body.id });
       return res.json({ msg: "Service deleted by admin" });

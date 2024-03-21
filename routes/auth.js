@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName , role} = req.body;
     if (
       password.length < 8 ||
       !/\d/.test(password) ||
