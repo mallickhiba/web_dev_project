@@ -75,49 +75,46 @@ router.get("/:id", async (req, res) => {
 router.post('/getbyservicename', async (req, res) => {
   try {
     const { serviceName } = req.body;
-
-    // Logging: Log the service name being searched for
     console.log("Searching for service with name:", serviceName);
 
     if (!serviceName) {
       return res.status(400).json({ msg: "Service name is required in the request body" });
     }
+      //Checks for case-sensitive and extra white spaces
+    const regexPattern = serviceName.replace(/\s+/g, '\\s+');
+    const regex = new RegExp(regexPattern, 'i');
 
     // Populate service with packages and vendor name
-    const services = await Service.find({ service_name: serviceName })
+    const services = await Service.find({ service_name: regex })
       .populate({
         path: 'vendor_id',
         select: 'firstName lastName -_id'
       });
 
     if (services.length === 0) {
-      // Logging: Log that no services were found
       console.log("No services found with the provided service name:", serviceName);
       return res.json({ msg: "No services found with the provided service name" });
     }
-
-    // Logging: Log the found services
     console.log("Services found:", services);
     res.json({ msg: "Services found", data: services });
   } catch (error) {
-    // Logging: Log any errors that occur
     console.error("Error fetching services:", error);
     res.status(500).json({ msg: "Internal server error" });
   }
 });
 
 
-
+// Get Service with vendor details using service ID. -- Tested 
 router.post("/getbyservicewithvendor", async (req, res) => {
   try {
     console.log("Request received to get service with vendor details.");
     const { id } = req.body;
     console.log("Service ID:", id);
     
-    const service = await Service.findById(id).populate(
-      "vendor_id",
-      "-password"
-    );
+    const service = await Service.findById(id).populate({
+      path: "vendor_id",
+      select: "firstName lastName email phone -_id"
+    });
     
     if (!service) {
       console.log("Service not found.");
@@ -135,11 +132,11 @@ router.post("/getbyservicewithvendor", async (req, res) => {
 
 //Package APIs
 
-// GET all packages of a service
+// GET all packages of a service -- TESTED
 router.get('/:serviceId/packages', async (req, res) => {
   try {
     console.log("Finding service to get packages for")
-    const service = await Service.findById(req.params.serviceId);
+    const service = await Service.findById(req.params.serviceId).select('packages.package_id packages.name packages.price packages.description');;
     if (!service) {
       return res.status(404).json({ msg: "Service not found" });
     }
@@ -152,7 +149,7 @@ router.get('/:serviceId/packages', async (req, res) => {
 });
 
 
-// GET a specific package by package ID
+// GET a specific package by package ID -- NOT WORKING 
 router.get('/:serviceId/packages/:packageId', async (req, res) => {
   try {
     console.log("Finding service to get packages for")
@@ -184,19 +181,24 @@ router.use((req, res, next) => {
    else next();
   });
 
-//Add a new service.
+//Add a new service. -- TESTED
 router.post("/create", async (req, res) => {
   try {
     let vendorId;
     // Check if the user is admin then extract vendor id from body
     if (req.user.role == "admin") {
       vendorId = req.body.vendor_id;
+    } else if (req.user.role === "vendor") {
+      // If user is vendor then extract the vendor ID from their account
+      vendorId = req.user.id; 
     } else {
-        // If user is vendor then extract the vendor ID from their account
-        vendorId = req.user.userId; 
+      return res.status(403).json({ msg: "Unauthorized access" }); // Return 403 Forbidden for other roles
     }
+    console.log("Vendor ID:", vendorId);
+
     const serviceData = { ...req.body, vendor_id: vendorId };
     await Service.create(serviceData);
+    console.log("Service data:", serviceData);
     res.json({ msg: "Service added" });
   } catch (error) {
     console.error(error);
@@ -206,85 +208,89 @@ router.post("/create", async (req, res) => {
 });
 
 
-// Edit service details including add/edit package as well. 
+// Edit service details including add/edit package as well. -- TESTED BUT NOT WORKING FOR ADDING/EDITING PACKAGE
 router.put("/:id", async (req, res) => {
-try {
-  const service = await Service.findById(req.params.id);
-  if (!service) {
-    return res.status(404).json({ msg: "Service not found" });
-  }
-
-  let vendorId;
-  if (req.user.role == "admin") {
-      // If the user is an admin, extract the vendor ID from the request body
-      vendorId = req.body.vendor_id;
-  } else {
-      // If the user is vendor, extract the vendor ID from their account
-      vendorId = req.user.userId; 
-  }
-  // Check if the vendor ID matches the vendor ID associated with the service
-  if (vendorId.toString() !== service.vendor_id.toString()) {
-      return res.status(403).json({ msg: "You are not authorized to edit this service" });
-  }
-
-  // Update service fields based on request body
-  service.service_name = req.body.service_name || service.service_name;
-  service.service_type = req.body.service_type || service.service_type;
-  service.cancellation_policy = req.body.cancellation_policy || service.cancellation_policy;
-  service.staff = req.body.staff || service.staff;
-  service.description = req.body.description || service.description;
-  service.start_price = req.body.start_price || service.start_price;
-
-  if (req.body.packages) {
-    for (const pkg of req.body.packages) {
-      // Check if the package already exists
-      const existingPackageIndex = service.packages.findIndex(existingPkg => existingPkg.package_id === pkg.package_id);
-      if (existingPackageIndex !== -1) {
-        // If the package exists, update its details
-        service.packages[existingPackageIndex].name = pkg.name || service.packages[existingPackageIndex].name;
-        service.packages[existingPackageIndex].price = pkg.price || service.packages[existingPackageIndex].price;
-        service.packages[existingPackageIndex].description = pkg.description || service.packages[existingPackageIndex].description;
-      } else {
-        // If the package doesn't exist, add it to the service's packages array
-        service.packages.push(pkg);
-      }
-    }
-  }
-  await service.save();
-
-  res.json({ msg: "Service updated", data: service });
-}
-catch (error) {
-  console.error(error);
-  res.status(500).json({ msg: "Internal server error" });
-}
-});
-
-// Delete any service. 
-router.post("/deleteby", async (req, res) => {
   try {
-    const service = await Service.findById(req.body.id);
-    if (!service) return res.json({ msg: "Service not found" });
+    console.log("Updating service details...");
 
-    if (req.user.role == "admin") {
-      // Admin can delete any service
-      await Service.deleteOne({ _id: req.body.id });
-      return res.json({ msg: "Service deleted by admin" });
+    const service = await Service.findById(req.params.id);
+    if (!service) {
+      console.log("Service not found.");
+      return res.status(404).json({ msg: "Service not found" });
     }
-    else{
-      // Vendor can only delete a service they are associated with
-      if (service.vendor_id.toString() !== req.user.userId.toString()) {
-        return res.json({ msg: "Not authorized to delete this service" });
+
+    // Check if the user is a vendor
+    if (req.user && req.user.role === "vendor") {
+      const vendorId = req.user.userId;
+      // Check if the vendor ID matches the vendor ID associated with the service
+      if (vendorId.toString() !== service.vendor_id.toString()) {
+        console.log("Unauthorized access.");
+        return res.status(403).json({ msg: "You are not authorized to edit this service" });
       }
-      await Service.deleteOne({ _id: req.body.id });
-      return res.json({ msg: "Service deleted by vendor" });
     }
 
+    // Update service fields based on request body
+    service.service_name = req.body.service_name || service.service_name;
+    service.service_type = req.body.service_type || service.service_type;
+    service.cancellation_policy = req.body.cancellation_policy || service.cancellation_policy;
+    service.staff = req.body.staff || service.staff;
+    service.description = req.body.description || service.description;
+    service.start_price = req.body.start_price || service.start_price;
+
+    console.log("Service updated:", service);
+
+    if (req.body.packages) {
+      for (const pkg of req.body.packages) {
+        // Check if the package already exists
+        const existingPackageIndex = service.packages.findIndex(existingPkg => existingPkg.package_id === pkg.package_id);
+        if (existingPackageIndex !== -1) {
+          // If the package exists, update its details
+          service.packages[existingPackageIndex].name = pkg.name || service.packages[existingPackageIndex].name;
+          service.packages[existingPackageIndex].price = pkg.price || service.packages[existingPackageIndex].price;
+          service.packages[existingPackageIndex].description = pkg.description || service.packages[existingPackageIndex].description;
+        } else {
+          // If the package doesn't exist, add it to the service's packages array
+          service.packages.push(pkg);
+        }
+      }
+    }
+
+    await service.save();
+
+    console.log("Service saved:", service);
+
+    res.json({ msg: "Service updated", data: service });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
+
+// Delete any service. -- TESTED
+router.post("/deleteby", async (req, res) => {
+  try {
+    const service = await Service.findById(req.body.id);
+    if (!service) {
+      console.log("Service not found.");
+      return res.status(404).json({ msg: "Service not found" });
+    }
+
+    // Check if the user is an admin or the vendor associated with the service
+    if (req.user.role === "admin" || (req.user.role === "vendor" && service.vendor_id.toString() === req.user.userId.toString())) {
+      await Service.deleteOne({ _id: req.body.id });
+      console.log("Service deleted.");
+      return res.json({ msg: "Service deleted" });
+    } else {
+      console.log("Unauthorized access.");
+      return res.status(403).json({ msg: "Not authorized to delete this service" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 
 
 

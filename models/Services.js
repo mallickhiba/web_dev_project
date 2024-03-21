@@ -55,7 +55,7 @@ ServiceSchema.pre('save', async function(next) {
   try {
     const service = this;
     // Check if the 'packages' field is modified or not
-    if (!service.isModified('packages')) {
+    if (service.isModified('packages')) {
       // Calculate the package_id for each package in the array
       service.packages.forEach((pkg, index) => {
         // Set the package_id to the next number
@@ -67,6 +67,8 @@ ServiceSchema.pre('save', async function(next) {
     next(error);
   }
 });
+
+
 
 
 const Service = mongoose.model('Service', ServiceSchema);
