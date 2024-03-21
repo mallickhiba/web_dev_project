@@ -22,6 +22,7 @@ router.use((req, res, next) => {
  else next();
 });
 
+// Get all users - TESTED
 router.get("/users", async (req, res) => {
   try {
     const users = await Users.find();
@@ -59,6 +60,7 @@ router.put("/users/update/:id", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
 router.delete("/users/delete/:id", async (req, res) => {
   try {
     const { id } = req.params;

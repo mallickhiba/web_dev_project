@@ -27,7 +27,7 @@ router.use(async (req, res, next) => {
 router.use("/admin", adminRouter);
 router.use("/bookings", bookingRouter);
 router.use("/locations", locationRouter);
-//router.use("/reviews", reviewRouter);
+router.use("/reviews", reviewRouter);
 router.use("/services", serviceRouter);
 
 module.exports = router;
