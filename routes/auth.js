@@ -48,6 +48,7 @@ router.post("/login", async (req, res) => {
       if (!passwordCheck) return res.json({ msg: "WRONG PASSWORD" });
       const token = jwt.sign(
           {
+              id: user._id,
               email,
               role: user.role // Include user's role in the token
           },
