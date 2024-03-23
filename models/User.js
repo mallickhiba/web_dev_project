@@ -43,12 +43,15 @@ const UserSchema = new mongoose.Schema(
         approved: {
             type: Boolean,
             default: false
+        },
+        resetPasswordToken: {
+            type: String
         }
-    
+
     }
 );
 
 // Create the base model
-const User = mongoose.model('User', UserSchema); // Corrected from 'Users' to 'User'
+const User = mongoose.model('Users', UserSchema); // Corrected from 'Users' to 'User'
 
 module.exports = User;
