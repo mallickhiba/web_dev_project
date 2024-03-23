@@ -43,8 +43,11 @@ const UserSchema = new mongoose.Schema(
         approved: {
             type: Boolean,
             default: false
+        },
+        resetPasswordToken: {
+            type: String
         }
-    
+
     }
 );
 

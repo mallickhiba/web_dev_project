@@ -16,9 +16,7 @@ router.post("/register", async (req, res) => {
       !/\d/.test(password) ||
       !/[a-zA-Z]/.test(password)
     ) {
-      throw new Error(
-        "Password must be at least 8 characters long and include both numbers and alphabets."
-      );
+      throw new Error("Password must be at least 8 characters long and include both numbers and alphabets.");
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
       throw new Error("Invalid email format.");
@@ -35,7 +33,9 @@ router.post("/register", async (req, res) => {
       ...req.body,
       password: await bcrypt.hash(password, 5),
     });
+    console.log("USER CREATED")
     return res.json({ msg: "CREATED" });
+  
   } catch (error) {
     console.error(error);
     return res.status(400).json({ error: error.message });
@@ -53,11 +53,12 @@ router.post("/login", async (req, res) => {
           {
               id: user._id,
               email,
-              role: user.role // Include user's role in the token
+              role: user.role
           },
           "MY_SECRET",
           { expiresIn: "1d" }
       );
+      console.log("LOGGED IN")
       res.json({
           msg: "LOGGED IN",
           token,
@@ -107,7 +108,7 @@ router.post("/updateprofile", async (req, res) => {
     user.lastName = req.body.lastName;
     user.phoneNumber = req.body.phoneNumber;
 
-    await user.save(); // Save the changes to the user object
+    await user.save()
     return res.json({ msg: "PROFILE UPDATED" });
   } catch (error) {
     console.error(error);
@@ -117,10 +118,12 @@ router.post("/updateprofile", async (req, res) => {
 
 router.post("/changepassword", async (req, res) => {
   try {
-    const { token, password, newPassword, confirmPassword } = req.body;
-    const decodedToken = jwt.verify(token, "MY_SECRET");
-    const { email } = decodedToken;
-    const user = await Users.findOne({ email });
+    const { password, newPassword, confirmPassword } = req.body;
+    const token = req.headers.authorization;
+    const decodedToken = jwt.verify(token.split(" ")[1], "MY_SECRET");
+    const userId = decodedToken.id;
+
+    const user = await Users.findById(userId);
     if (!user) {
       return res.json({ msg: "USER NOT FOUND" });
     }
@@ -140,96 +143,66 @@ function generateToken() {
 
 router.post("/forgotpassword", async (req, res) => {
 const { email } = req.body;
+console.log(req.body.email, "forgot password")
+const user = await Users.findOne({ email });
+    if (!user) {
+      return res.json({ msg: "No user registered with this email" });
+    }
 
     // Generate unique token
     const token = generateToken();
+    user.resetPasswordToken = token;
+    console.log("user has resettoken: ", user.resetPasswordToken ) // just for checking
 
-    // Send email with reset link
+
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
         subject: 'Password Reset',
         text: `Your OTP to reset your password is: ${token}`
     };
-
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.error('Error sending email:', error);
             return res.status(500).send('Error sending email');
         } else {
             console.log('Email sent: ' + info.response);
-            return res.send('Email sent');
+            return res.send('Email sent and users token is saved in db', user.resetPasswordToken);
+
         }
     });
 });
 
-/** 
-// Endpoint to reset password
-app.post('/reset-password', (req, res) => {
-  const { token, newPassword } = req.body;
-
-  // Validate token (check if it's valid and not expired)
-  // Update user's password in the database
-
-  // Example response
-  return res.send('Password reset successful');
-});*/
-
-//not checked yet
-/** 
-router.post("/reset-password", async (req, res) => {
-  try {
-    const { resetToken, newPassword, pin } = req.body;
-    const decodedToken = jwt.verify(resetToken, "MY_SECRET");
-    const { email } = decodedToken;
-    const user = await Users.findOne({ email });
-    if (!user) {
-      return res.json({ msg: "USER NOT FOUND" });
-    }
-    if (pin !== user.pin) {
-      return res.json({ msg: "INVALID PIN" });
-    }
-    const hashedPassword = await bcrypt.hash(newPassword, 5);
-    user.password = hashedPassword;
-    await user.save();
-    return res.json({ msg: "PASSWORD RESET SUCCESSFUL" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server Error" });
-  }
-}); */
-
-
 router.post("/resetpassword", async (req, res) => {
   try {
-      const { email, token, newPassword } = req.body;
+      const { email, resetToken, newPassword } = req.body;
 
-      // Find the user by the email and reset token
-      const user = await Users.findOne({ email, resetPasswordToken: token });
-
-      // If user not found or token is expired, return error
+      const user = await Users.findOne({ email});
       if (!user || user.resetPasswordExpires < Date.now()) {
           return res.status(400).json({ error: "Invalid or expired token" });
       }
-
-      // Hash the new password
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-      // Update the user's password and clear reset token fields
+      if(user.resetPasswordToken == resetToken){
+        console.log("CORRECT TOKEN");
+        if (
+          newPassword.length < 8 ||
+          !/\d/.test(password) ||
+          !/[a-zA-Z]/.test(password)
+        ) {
+          throw new Error("Password must be at least 8 characters long and include both numbers and alphabets.");
+        }
+      
+      const hashedPassword = await bcrypt.hash(newPassword, 5);
       user.password = hashedPassword;
       user.resetPasswordToken = undefined;
       user.resetPasswordExpires = undefined;
-
-      // Save the user object
       await user.save();
+      console.log("CORRECT TOKEN");
 
-      // Return success message
-      return res.json({ msg: "Password reset successful" });
+      return res.json({ msg: "Password reset successful" });}
   } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Server Error" });
   }
 });
-
 
 module.exports = router;
