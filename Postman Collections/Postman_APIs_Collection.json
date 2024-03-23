@@ -262,7 +262,7 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
 							}
 						},
 						"method": "PUT",
@@ -277,6 +277,34 @@
 							}
 						},
 						"url": "http://localhost:5600/admin/users/update/65ff35c28dd78956dcfa0b0e"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE USER BY ID",
+					"id": "f21e6741-1dd7-4f50-ad81-d22fa5e1b5be",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"jhgdfdfsd\",\r\n    \"lastName\": \"hfsuifh\",\r\n    \"email\": \"mallickhiba@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/admin/users/delete/65ff35c28dd78956dcfa0b0e"
 					},
 					"response": []
 				}
