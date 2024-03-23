@@ -7,7 +7,7 @@ function authenticate(req, res, next) {
         req.user = user;
         next();
     } catch (e) {
-        return res.json({ msg: "TOKEN NOT FOUND / INVALID" });
+        return res.json({ msg: "TOKEN NOT FOUND / INVALID. PLEASE LOG IN " });
     }
 }
 module.exports = authenticate;

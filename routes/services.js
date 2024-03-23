@@ -9,7 +9,7 @@ var router = express.Router();
 
 
 
-//*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN
+//*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN********************************************
 // Get all services -- TESTED
 router.get("/", async (req, res) => {
   try {
