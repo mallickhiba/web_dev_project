@@ -201,6 +201,19 @@
 				}
 			],
 			"id": "99c9cae9-8f4f-4302-86ac-d61fe280d982"
+		},
+		{
+			"name": "GET ALL SERVICES",
+			"id": "b6819328-83e4-48c0-81d7-10a67e922d83",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:5600/services/"
+			},
+			"response": []
 		}
 	]
 }
