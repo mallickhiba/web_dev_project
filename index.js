@@ -1,13 +1,16 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const mongoose = require('mongoose');
 const router = require('./routes/index');
-
+ 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 
+
+ 
 app.use(express.urlencoded({ extended: false }));
 
 (async () => {
