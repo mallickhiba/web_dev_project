@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "31f9604e-d277-43d5-a443-ca5dbab2ae09",
+		"name": "web-dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AUTH APIs",
+			"item": [
+				{
+					"name": "USER REGISTER",
+					"id": "5a12d1d8-e72d-49ee-a2f5-624de6fbc347",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"role\": \"admin\",\r\n  \"email\": \"mallickhiba@gmail.com\",\r\n  \"password\": \"adminpassword9\",\r\n  \"firstName\": \"Hiba\",\r\n  \"lastName\": \"Mallick\",\r\n  \"phoneNumber\": \"1234567890\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/auth/register"
+					},
+					"response": []
+				},
+				{
+					"name": "LOG IN",
+					"id": "63c8c7ac-da7e-4118-a7f5-4b6d4e8af9d2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\": \"admin1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "LOG OUT",
+					"id": "c0c89b68-aeb7-4024-b075-2e885062e463",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjI4MzEzLCJleHAiOjE3MTEzMTQ3MTN9.l_w2PTmt3giH-ZxcCj2VwF2YIUnnJtSB_qP1Xdi8JDw"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:5600/auth/logout"
+					},
+					"response": []
+				},
+				{
+					"name": "GET PROFILE",
+					"id": "120a748e-4a5d-41a8-a359-6a46037b6fd9",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmYzNWMyOGRkNzg5NTZkY2ZhMGIwZSIsImVtYWlsIjoibWFsbGlja2hpYmFAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjI3MTg1LCJleHAiOjE3MTEzMTM1ODV9.lq1JOX--kInHr85WG_9CpBR1x0V_uYDNjt9U_45KtqI"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:5600/auth/profile"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE PROFILE",
+					"id": "741ddbbd-63e7-4532-b221-74ec7700c785",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmYzNWMyOGRkNzg5NTZkY2ZhMGIwZSIsImVtYWlsIjoibWFsbGlja2hpYmFAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjI3MTg1LCJleHAiOjE3MTEzMTM1ODV9.lq1JOX--kInHr85WG_9CpBR1x0V_uYDNjt9U_45KtqI"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"mallickhiba@gmail.com\",\r\n  \"firstName\": \"HEHEHEH\",\r\n  \"lastName\": \"Mallick\",\r\n  \"phoneNumber\": \"1234567890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/auth/updateprofile"
+					},
+					"response": []
+				},
+				{
+					"name": "RESET PASSWORD",
+					"id": "7dc05f29-5d36-4f5d-aa13-694ef42bea28",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"email\": \"mallickhiba@gmail.com\",\r\n   \"token\":\"26a73fc9400096df4f7f46165e35369f626a0b20\",\r\n   \"newPassword\": \"qwerty1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/auth/resetpassword"
+					},
+					"response": []
+				},
+				{
+					"name": "CHANGE PASSWORD",
+					"id": "9f4af8d2-7e5d-47bd-ba7e-53edec635668",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"qwerty1234\",\r\n   \"newPassword\": \"adminpassword10\",\r\n   \"confirmPassword\": \"adminpassword10\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/auth/changepassword"
+					},
+					"response": []
+				},
+				{
+					"name": "FORGOT PASSWORD",
+					"id": "0988c390-6cd1-48a1-9431-c7ef134e6532",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmUyZDI5ZGEyYTJkYjNmNjI3Mzk1NiIsImVtYWlsIjoibWFsbGlja2hpYmFAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMTU2NTM2LCJleHAiOjE3MTEyNDI5MzZ9.WJYH3D2rPhIJt8lZ98AhSKc5vuer9vyB1iEmnSGYGOw"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"email\": \"mallickhiba@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/auth/forgotpassword"
+					},
+					"response": []
+				}
+			],
+			"id": "99c9cae9-8f4f-4302-86ac-d61fe280d982"
+		}
+	]
+}
