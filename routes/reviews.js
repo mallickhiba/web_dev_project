@@ -3,6 +3,10 @@ const router = express.Router();
 const Review = require("../models/Reviews");
 const Service = require('../models/Services'); 
 
+const authenticate = require('../middlewares/authenticate.js');
+const adminMiddleware = require('../middlewares/adminMiddleware');
+const customerMiddleware = require('../middlewares/customerMiddleware');
+const vendorMiddleware = require('../middlewares/vendorMiddleware');
 
 
 // View all reviews -- TESTED
@@ -16,15 +20,35 @@ router.get('/viewReviews', async (req, res) => {
   }
 });
 
+// Place middleware here to ensure only customer can place review
+router.use(customerMiddleware);
 
+// Post a new review -- TESTED
+router.post('/add', async (req, res) => {
+  try {
+      console.log("creating new review")
+      const userId = req.user.id;
+      const { service, rating, review } = req.body;
+      const newReview = new Review({ user: userId, service, rating, review });
+      const savedReview = await newReview.save();
+
+      // Recalculate avg rating for the service and update it in the service doc
+      const serviceReviews = await Review.find({ service });
+      const totalRatings = serviceReviews.reduce((sum, review) => sum + review.rating, 0);
+      const averageRating = totalRatings / serviceReviews.length;
+      await Service.findByIdAndUpdate(service, { average_rating: averageRating });
+
+      console.log("Review added and updated");
+      res.status(201).json({ msg: "Review created", review: savedReview });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: "Internal server error" });
+  }
+});
 
 //Place middleware here to ensure only customer or admin can view customer's review and delete them.  
-router.use((req, res, next) => {
-  if (!req.user || (req.user.role !== "admin" && req.user.role !== "customer")) {
-      return res.status(403).json({ msg: "Forbidden: Access denied - Only Admin and Customer can perfrom these actions!" });
-  }
-   else next();
-  });
+router.use(adminMiddleware);
+router.use(customerMiddleware);
 
 // Get a specific review by id. (useful for admin implementation) -- TESTED
 router.get('/review/:id', async (req, res) => {
@@ -121,40 +145,5 @@ router.post('/delete/:id', async (req, res) => {
       res.status(500).json({ msg: "Internal server error" });
     }
   });
-  
-
-// Place middleware here to ensure only customer can place review
-router.use((req, res, next) => {
-  if (!req.user || req.user.role !== "customer" ) {
-      return res.status(403).json({ msg: "Only Customer can post reviews!" });
-  }
-  next();
-});
-
-
-// Post a new review -- TESTED
-router.post('/add', async (req, res) => {
-  try {
-      console.log("creating new review")
-      const userId = req.user.id;
-      const { service, rating, review } = req.body;
-      const newReview = new Review({ user: userId, service, rating, review });
-      const savedReview = await newReview.save();
-
-      // Recalculate avg rating for the service and update it in the service doc
-      const serviceReviews = await Review.find({ service });
-      const totalRatings = serviceReviews.reduce((sum, review) => sum + review.rating, 0);
-      const averageRating = totalRatings / serviceReviews.length;
-      await Service.findByIdAndUpdate(service, { average_rating: averageRating });
-
-      console.log("Review added and updated");
-      res.status(201).json({ msg: "Review created", review: savedReview });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ msg: "Internal server error" });
-  }
-});
-
-
 
 module.exports = router;

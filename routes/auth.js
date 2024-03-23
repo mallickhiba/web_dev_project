@@ -74,6 +74,16 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", async (req, res) => {
+  try {
+    req.headers.authorization = null;
+    return res.json({ msg: "Logout successful" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Server Error" });
+  }
+});
+
 router.get("/profile", async (req, res) => {
   try {
     const token = req.headers.authorization;
@@ -93,7 +103,7 @@ router.get("/profile", async (req, res) => {
   }
 });
 
-router.post("/updateprofile", async (req, res) => {
+router.post("/updateaccount", async (req, res) => {
   try {
     const token = req.headers.authorization;
     const decodedToken = jwt.verify(token.split(" ")[1], "MY_SECRET");

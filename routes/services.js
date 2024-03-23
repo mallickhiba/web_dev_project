@@ -1,9 +1,15 @@
 const Service = require("../models/Services");
 var express = require("express");
 const mongoose = require("mongoose");
-
+const authenticate = require('../middlewares/authenticate.js');
+const adminMiddleware = require('../middlewares/adminMiddleware');
+const customerMiddleware = require('../middlewares/customerMiddleware');
+const vendorMiddleware = require('../middlewares/vendorMiddleware');
 var router = express.Router();
 
+
+
+//*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN********************************************
 // Get all services -- TESTED
 router.get("/", async (req, res) => {
   try {
@@ -15,7 +21,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
 
 // View Available Services by Type. This is for finding sevices by type (includes pagination) --- TESTED
 router.get('/:serviceType', async (req, res) => {
@@ -170,16 +175,26 @@ router.get('/:serviceId/packages/:packageId', async (req, res) => {
   }
 });
 
-// middleware to ensure only admin can create/edit/delete services. 
-//Middleware should ensure admin can perform CUD operations on all services and vendor can only do so on services with his vendorID
-// To delete/edit/add a package, vendor/admin can edit the service and perform operaions. 
-
-router.use((req, res, next) => {
-  if (!req.user || (req.user.role !== "admin" && req.user.role !== "vendor")) {
-      return res.status(403).json({ msg: "Forbidden: Access denied!" });
+// Get reviews for a specific service ***NOT TESTED
+router.get('/service/:id/reviews', async (req, res) => {
+  try {
+    const serviceId = req.params.id;
+    const reviews = await Review.find({ service: serviceId }).populate('user', 'firstName lastName');
+    res.json({ reviews });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
   }
-   else next();
-  });
+});
+
+//******FOLLOWING APIS CAN ONLY BE ACCESED WITH LOGGED IN ADMIN AND VENDOR USERS */
+router.use(authenticate);
+
+// middleware to ensure only admin can create/edit/delete services. 
+//Middleware should ensure admin can perform CRUD operations on all services and vendor can only do so on services with his vendorID
+// To delete/edit/add a package, vendor/admin can edit the service and perform operaions. 
+router.use(adminMiddleware);
+router.use(vendorMiddleware);
 
 //Add a new service. -- TESTED
 router.post("/create", async (req, res) => {
@@ -206,7 +221,6 @@ router.post("/create", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
 
 // Edit service details including add/edit package as well. -- TESTED BUT NOT WORKING FOR ADDING/EDITING PACKAGE
 router.put("/:id", async (req, res) => {
@@ -254,7 +268,6 @@ router.put("/:id", async (req, res) => {
         }
       }
     }
-
     await service.save();
 
     console.log("Service saved:", service);
@@ -265,7 +278,6 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
 
 // Delete any service. -- TESTED
 router.post("/deleteby", async (req, res) => {
@@ -290,8 +302,4 @@ router.post("/deleteby", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
-
-
-
 module.exports = router;

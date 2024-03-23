@@ -47,7 +47,13 @@ const ServiceSchema = new mongoose.Schema({
     default: 0,
     min: 0,
     max: 5,
-  }
+  },
+  location_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Location',
+    required: true
+  },
+
 });
 
 
