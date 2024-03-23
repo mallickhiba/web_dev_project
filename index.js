@@ -8,11 +8,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
-
- 
-app.use(express.urlencoded({ extended: false }));
-
 (async () => {
     try {
         await mongoose.connect("mongodb+srv://mallickhiba:6k01T6hQZH3zN463@cluster0.hlhg6oe.mongodb.net/wed-dev")
@@ -22,7 +17,6 @@ app.use(express.urlencoded({ extended: false }));
     }
 })();
 
-// Use the router middleware
 app.use('/', router);
 
 app.use(function (req, res, next) {
