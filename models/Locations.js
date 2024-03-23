@@ -5,11 +5,18 @@ const Schema = mongoose.Schema;
 const locationSchema = new Schema({
     areaName: {
         type: String,
-        required: true
+        enum: ['Gulshan-e-Iqbal', 'DHA', "North Nazimabad", "Other"]
     },
     locationName: {
         type: String,
-        required: true
+        enum: ['Karachi', 'Lahore', 'Islamabad'],
+        default: 'Karachi'
+    },
+    latitude: {
+        type: Number,
+    },
+    longitude: {
+        type: Number,
     }
 });
 
