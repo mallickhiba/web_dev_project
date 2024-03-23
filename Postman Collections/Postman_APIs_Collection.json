@@ -307,6 +307,25 @@
 						"url": "http://localhost:5600/admin/users/delete/65ff35c28dd78956dcfa0b0e"
 					},
 					"response": []
+				},
+				{
+					"name": "GET USERS BY ID",
+					"id": "49030266-7339-4a96-b4da-3c8edb719024",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:5600/admin/users/"
+					},
+					"response": []
 				}
 			],
 			"id": "61c46408-797c-4b7a-9a61-2dcb5113134c"
