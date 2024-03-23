@@ -223,6 +223,34 @@
 						"url": "http://localhost:5600/admin/users"
 					},
 					"response": []
+				},
+				{
+					"name": "GET USER BY EMAIL",
+					"id": "73ae1b25-db97-4721-a87b-9124dc50d2fc",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"mallickhiba@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/admin/getuserbyemail"
+					},
+					"response": []
 				}
 			],
 			"id": "61c46408-797c-4b7a-9a61-2dcb5113134c"
