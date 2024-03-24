@@ -5,8 +5,8 @@ const authenticate = require('../middlewares/authenticate.js');
 const adminMiddleware = require('../middlewares/adminMiddleware');
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const vendorMiddleware = require('../middlewares/vendorMiddleware');
+const Service = require('../models/Service'); // Add the missing import statement for the Service model
 var router = express.Router();
-
 
 
 //*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN********************************************
@@ -175,6 +175,37 @@ router.get('/:serviceId/packages/:packageId', async (req, res) => {
   }
 });
 
+// DELETE a specific package by package ID --NOT TESTED
+router.delete('/:serviceId/packages/:packageId', async (req, res) => {
+  try {
+    console.log("Finding service to delete package from");
+    const service = await Service.findById(req.params.serviceId);
+    if (!service) {
+      return res.status(404).json({ msg: "Service not found" });
+    }
+    const packageId = parseInt(req.params.packageId); // Convert packageId to an integer
+    const packageIndex = service.packages.findIndex(pkg => pkg.package_id === packageId);
+    if (packageIndex === -1) {
+      return res.status(404).json({ msg: "Package not found" });
+    }
+    service.packages.splice(packageIndex, 1);
+    await service.save();
+    console.log("Package deleted");
+    res.json({ msg: "Package deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+
+
+
+
+
+
+
+
 // Get reviews for a specific service ***NOT TESTED
 router.get('/service/:id/reviews', async (req, res) => {
   try {
@@ -302,4 +333,5 @@ router.post("/deleteby", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
 module.exports = router;

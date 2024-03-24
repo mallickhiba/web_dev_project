@@ -73,10 +73,6 @@ ServiceSchema.pre('save', async function(next) {
     next(error);
   }
 });
-
-
-
-
 const Service = mongoose.model('Service', ServiceSchema);
 
 module.exports = Service;
