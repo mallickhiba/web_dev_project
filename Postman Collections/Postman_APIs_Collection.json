@@ -383,6 +383,62 @@
 						"url": "http://localhost:5600/admin/vendors/pending"
 					},
 					"response": []
+				},
+				{
+					"name": "APPROVE VENDORS",
+					"id": "f3a1092c-b428-4e78-86ea-211d1eb39d52",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"email\":\"v3@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/admin/vendors/approve"
+					},
+					"response": []
+				},
+				{
+					"name": "DEACTIVATE VENDOR",
+					"id": "5421cece-6aa4-42dd-b7ef-e9a0d53f2112",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"email\":\"v2@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5600/admin/vendors/deactivate"
+					},
+					"response": []
 				}
 			],
 			"id": "61c46408-797c-4b7a-9a61-2dcb5113134c"
