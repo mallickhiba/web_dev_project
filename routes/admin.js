@@ -47,7 +47,7 @@ router.get("/customers", async (req, res) => {
 //Get all vendors
 router.get("/vendors", async (req, res) => {
   try {
-    const users = await Users.find({ role: "customer" });
+    const users = await Users.find({ role: "vendor" });
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -69,8 +69,8 @@ router.get("/vendors/pending", async (req, res) => {
 //Approve vendor
 router.post("/vendors/approve", async (req, res) => {
   try {
-    const { userId } = req.body;
-    const user = await Users.findById(userId);
+    const user = await Users.findOne({ email: req.body.email });
+    console.log("attempting to approve vendor with email and role: ", user.email, user.role)
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
@@ -89,8 +89,7 @@ router.post("/vendors/approve", async (req, res) => {
 //Deactivate vendor
 router.post("/vendors/deactivate", async (req, res) => {
   try {
-    const { userId } = req.body;
-    const user = await Users.findById(userId);
+    const user = await Users.findOne({ email: req.body.email });
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
