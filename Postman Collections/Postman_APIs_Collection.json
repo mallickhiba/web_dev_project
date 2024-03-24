@@ -326,6 +326,63 @@
 						"url": "http://localhost:5600/admin/users/"
 					},
 					"response": []
+				},
+				{
+					"name": "GET ALL CUSTOMERS",
+					"id": "23d4beef-958d-4402-97f7-ad806c939e2e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:5600/admin/customers"
+					},
+					"response": []
+				},
+				{
+					"name": "GET ALL VENDORS",
+					"id": "60a37ded-9b3a-4a6d-ae24-1715987cb33b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:5600/admin/vendors"
+					},
+					"response": []
+				},
+				{
+					"name": "GET VENDORS PENDING APPROVAL",
+					"id": "8c64bff8-1e9e-433b-957e-dfb344a92bc8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:5600/admin/vendors/pending"
+					},
+					"response": []
 				}
 			],
 			"id": "61c46408-797c-4b7a-9a61-2dcb5113134c"
