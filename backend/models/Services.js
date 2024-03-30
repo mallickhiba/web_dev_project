@@ -8,7 +8,6 @@ const PackageSchema = new mongoose.Schema({
 });
 
 const ServiceSchema = new mongoose.Schema({
-
   vendor_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

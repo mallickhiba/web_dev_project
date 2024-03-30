@@ -200,7 +200,6 @@ router.post("/resetpassword", async (req, res) => {
         ) {
           throw new Error("Password must be at least 8 characters long and include both numbers and alphabets.");
         }
-      
       const hashedPassword = await bcrypt.hash(newPassword, 5);
       user.password = hashedPassword;
       user.resetPasswordToken = undefined;
