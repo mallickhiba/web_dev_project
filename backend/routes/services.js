@@ -5,7 +5,6 @@ const authenticate = require('../middlewares/authenticate.js');
 const adminMiddleware = require('../middlewares/adminMiddleware');
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const vendorMiddleware = require('../middlewares/vendorMiddleware');
-const Service = require('../models/Service'); // Add the missing import statement for the Service model
 var router = express.Router();
 
 
