@@ -4,12 +4,12 @@ import axios from "axios";
 
 function App() {
   const [data, setData] = useState({
+    role:"",
     email: "",
     password: "",
-    age: 0,
     firstName: "",
     lastName: "",
-    admin: false,
+    phoneNumber: ""
   });
   const [user, setUser] = useState({ loggedIn: false, token: "" });
 
@@ -20,7 +20,7 @@ function App() {
     try {
       e.preventDefault();
       const res = await axios({
-        url: "htt://localhost:5600/auth/signUp",
+        url: "http://localhost:5600/auth/register",
         method: "post",
         data: data,
       });
@@ -84,6 +84,14 @@ function App() {
               style={{ display: "flex", flexDirection: "column" }}
             >
               <h1>Signup</h1>
+            
+              <input
+                type="text"
+                name="role"
+                value={data.admin}
+                onChange={handleForm}
+                style={{ margin: 5 }} 
+                />
               <input
                 type="text"
                 name="firstName"
@@ -109,20 +117,6 @@ function App() {
                 type="password"
                 name="password"
                 value={data.password}
-                onChange={handleForm}
-                style={{ margin: 5 }}
-              />
-              <input
-                type="number"
-                name="age"
-                value={data.age}
-                onChange={handleForm}
-                style={{ margin: 5 }}
-              />
-              <input
-                type="checkbox"
-                name="admin"
-                value={data.admin}
                 onChange={handleForm}
                 style={{ margin: 5 }}
               />
