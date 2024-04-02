@@ -493,7 +493,16 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:5600/services/decor"
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serviceName\": \"Elegant Events Decor\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/services/getbyservicename"
 			},
 			"response": []
 		}
