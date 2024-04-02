@@ -505,6 +505,41 @@
 				"url": "http://localhost:5600/services/getbyservicename"
 			},
 			"response": []
+		},
+		{
+			"name": "GET BY SERVICE NAME",
+			"id": "a1d767fa-d083-4096-a1dd-0656724e61ff",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serviceName\": \"Elegant Even\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/services/getbyservicename"
+			},
+			"response": []
+		},
+		{
+			"name": "GET SERVICE BY ID",
+			"id": "6d981c9f-ec7c-4e48-98bf-dc0fecc24202",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:5600/services/getbyid/660c91d3234d66b8a7fdcb2d"
+			},
+			"response": []
 		}
 	]
 }
