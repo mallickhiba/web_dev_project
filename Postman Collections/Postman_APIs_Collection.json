@@ -473,7 +473,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \r\n            \"vendor_id\": \"65fc85ee5b416e9bf8f7d22a\",\r\n            \"packages\": [\r\n                {\r\n                    \"name\": \"Basic Decor Package\",\r\n                    \"price\": 500,\r\n                    \"description\": \"Simple decor setup\",\r\n                    \"_id\": \"65fc8c5e6e5f307685630200\"\r\n                },\r\n                {\r\n                    \"name\": \"Premium Decor Package\",\r\n                    \"price\": 1000,\r\n                    \"description\": \"Luxury decor setup\",\r\n                    \"_id\": \"65fc8c5e6e5f307685630201\"\r\n                }\r\n            ],\r\n            \"service_name\": \"Elegant Events Decor\",\r\n            \"service_type\": \"decor\",\r\n            \"cancellation_policy\": \"Moderate\",\r\n            \"staff\": \"Male\",\r\n            \"description\": \"We provide elegant decor setups for all events.\",\r\n            \"start_price\": 500,\r\n            \"average_rating\": 4.5,\r\n            \"latitude\":34,\r\n            \"longitude\":67\r\n}",
+					"raw": "{\r\n            \"vendor_id\": \"65fc85ee5b416e9bf8f7d22a\",\r\n            \"packages\": [\r\n                {\r\n                    \"name\": \"Premium Photography Package\",\r\n                    \"price\": 2500,\r\n                    \"description\": \"Comprehensive photography coverage with premium features\",\r\n                    \"_id\": \"65fca16a2393e3784808f231\",\r\n                    \"package_id\": 1\r\n                },\r\n                {\r\n                    \"name\": \"Standard Photography Package\",\r\n                    \"price\": 1500,\r\n                    \"description\": \"Standard photography coverage for your events\",\r\n                    \"_id\": \"65fca16a2393e3784808f232\",\r\n                    \"package_id\": 2\r\n                },\r\n                {\r\n                    \"name\": \"Basic Package \",\r\n                    \"price\": 1000,\r\n                    \"description\": \"This is basic packages\",\r\n                    \"_id\": \"65fca2172393e3784808f258\",\r\n                    \"package_id\": 3\r\n                }\r\n            ],\r\n            \"service_name\": \"Dreamscape Photography\",\r\n            \"service_type\": \"photography\",\r\n            \"cancellation_policy\": \"Moderate\",\r\n            \"staff\": \"Female\",\r\n            \"description\": \"Capture your dream moments with our professional photography services.\",\r\n            \"start_price\": 1500,\r\n            \"average_rating\": 5,\r\n            \"latitude\": 28.9,\r\n            \"longitude\": 69.9\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -481,6 +481,19 @@
 					}
 				},
 				"url": "http://localhost:5600/services/create"
+			},
+			"response": []
+		},
+		{
+			"name": "GET BY SERVICE TYPE",
+			"id": "b4e7151c-a8eb-4f6d-8c85-a47adc86b4d5",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:5600/services/decor"
 			},
 			"response": []
 		}
