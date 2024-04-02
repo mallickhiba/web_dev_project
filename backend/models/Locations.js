@@ -11,12 +11,6 @@ const locationSchema = new Schema({
         type: String,
         enum: ['Karachi', 'Lahore', 'Islamabad'],
         default: 'Karachi'
-    },
-    latitude: {
-        type: Number,
-    },
-    longitude: {
-        type: Number,
     }
 });
 

@@ -52,9 +52,13 @@ const ServiceSchema = new mongoose.Schema({
     ref: 'Location',
     required: true
   },
-
+  latitude: {
+    type: Number
+  },
+  longitude: {
+    type: Number
+  }
 });
-
 
 ServiceSchema.pre('save', async function(next) {
   try {

@@ -242,6 +242,13 @@ router.post("/create", async (req, res) => {
     console.log("Vendor ID:", vendorId);
 
     const serviceData = { ...req.body, vendor_id: vendorId };
+
+    // Check if latitude and longitude fall within a specific range
+    const { latitude, longitude } = req.body;
+    if (latitude < 24.3539 || latitude > 35.91869 || longitude < 61.74681 || longitude > 75.16683) {
+      return res.status(400).json({ msg: "Latitude and longitude should be in Pakistan" });
+    }
+
     await Service.create(serviceData);
     console.log("Service data:", serviceData);
     res.json({ msg: "Service added" });
