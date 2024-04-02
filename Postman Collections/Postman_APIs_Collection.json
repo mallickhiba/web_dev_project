@@ -517,14 +517,14 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"serviceName\": \"Elegant Even\"\r\n}",
+					"raw": "{\r\n    \"serviceName\": \"Elegant EvenTS Decor\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://localhost:5600/services/getbyservicename"
+				"url": "http://localhost:5600/services/getbyname/"
 			},
 			"response": []
 		},
