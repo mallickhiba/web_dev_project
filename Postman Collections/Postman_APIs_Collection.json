@@ -540,6 +540,28 @@
 				"url": "http://localhost:5600/services/getbyid/660c91d3234d66b8a7fdcb2d"
 			},
 			"response": []
+		},
+		{
+			"name": "GET BY SERVICE NAME WITH VENDOR",
+			"id": "86026f96-6fe1-451a-8186-68b80f47c7b8",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"660c91d3234d66b8a7fdcb2d\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/services/getbyservicewithvendor"
+			},
+			"response": []
 		}
 	]
 }
