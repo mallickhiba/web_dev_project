@@ -59,8 +59,8 @@ router.get('/:serviceType', async (req, res) => {
   }
 });
 
-// not tested 
-router.get("/:id", async (req, res) => {
+// TESTED - WORKING
+router.get("/getbyid/:id", async (req, res) => {
   try {
     console.log("getting service with id " + req.params.id);
     const service = await Service.findById(req.params.id);
@@ -75,8 +75,8 @@ router.get("/:id", async (req, res) => {
 });
 
 
-// Get Service details by Service Name -- Tested
-router.post('/getbyservicename', async (req, res) => {
+// Get Service details by Service Name -- Tested GIVES VENDOR ID NULL
+router.post('/getbyname', async (req, res) => {
   try {
     const { serviceName } = req.body;
     console.log("Searching for service with name:", serviceName);
@@ -89,11 +89,10 @@ router.post('/getbyservicename', async (req, res) => {
     const regex = new RegExp(regexPattern, 'i');
 
     // Populate service with packages and vendor name
-    const services = await Service.find({ service_name: regex })
-      .populate({
-        path: 'vendor_id',
-        select: 'firstName lastName -_id'
-      });
+    const services = await Service.find({ service_name: regex })  .populate({
+      path: 'vendor_id',
+      select: 'firstName lastName -_id'
+    });
 
     if (services.length === 0) {
       console.log("No services found with the provided service name:", serviceName);
@@ -108,7 +107,7 @@ router.post('/getbyservicename', async (req, res) => {
 });
 
 
-// Get Service with vendor details using service ID. -- Tested 
+// Get Service with vendor details using service ID. -- Tested GIVES VENDOR ID NULL 
 router.post("/getbyservicewithvendor", async (req, res) => {
   try {
     console.log("Request received to get service with vendor details.");
@@ -133,6 +132,36 @@ router.post("/getbyservicewithvendor", async (req, res) => {
   }
 });
 
+//API TO FIND ORDEREED LIST OF SERVICES BY SERVICE TYPE - WORKING!!
+router.post("/findclosest", async (req, res) => {
+  try {
+    const { serviceType, latitude, longitude } = req.body;
+    console.log("Finding services of type", serviceType, "sorted by closest latitude and longitude");
+
+    // Query services by service type
+    const services = await Service.find({ service_type: serviceType });
+
+    // Calculate the distance between the given latitude and longitude and each service's latitude and longitude
+    const distances = services.map(service => {
+      const serviceLatitude = service.latitude;
+      const serviceLongitude = service.longitude;
+      const distance = Math.sqrt(Math.pow(serviceLatitude - latitude, 2) + Math.pow(serviceLongitude - longitude, 2));
+      return { service, distance };
+    });
+
+    // Sort the services by distance in ascending order
+    distances.sort((a, b) => a.distance - b.distance);
+
+    // Extract services from sorted distances
+    const sortedServices = distances.map(distance => distance.service);
+
+    console.log("Services sorted by closest distance:", sortedServices);
+    res.json({ msg: "Services sorted by closest distance", data: sortedServices });
+  } catch (error) {
+    console.error("Error finding closest services:", error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
 
 //Package APIs
 
@@ -224,7 +253,7 @@ router.use(authenticate);
 //Middleware should ensure admin can perform CRUD operations on all services and vendor can only do so on services with his vendorID
 // To delete/edit/add a package, vendor/admin can edit the service and perform operaions. 
 router.use(adminMiddleware);
-router.use(vendorMiddleware);
+//router.use(vendorMiddleware);
 
 //Add a new service. -- TESTED
 router.post("/create", async (req, res) => {
@@ -251,7 +280,7 @@ router.post("/create", async (req, res) => {
 
     await Service.create(serviceData);
     console.log("Service data:", serviceData);
-    res.json({ msg: "Service added" });
+    res.json({  msg: "Service added" });
   } catch (error) {
     console.error(error);
     console.error("Error adding service:", error); // Log the error

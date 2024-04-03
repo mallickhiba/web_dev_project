@@ -10,7 +10,7 @@ const PackageSchema = new mongoose.Schema({
 const ServiceSchema = new mongoose.Schema({
   vendor_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Users',
     required: true
   },
   packages: [PackageSchema],
@@ -49,8 +49,7 @@ const ServiceSchema = new mongoose.Schema({
   },
   location_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Location',
-    required: true
+    ref: 'Location'
   },
   latitude: {
     type: Number
