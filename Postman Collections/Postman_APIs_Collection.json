@@ -562,6 +562,28 @@
 				"url": "http://localhost:5600/services/getbyservicewithvendor"
 			},
 			"response": []
+		},
+		{
+			"name": "FIND CLOSEST SERVICE BY SERVICE TYPE",
+			"id": "f91ec66d-e1cf-445e-a798-920e1d60271f",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serviceType\": \"decor\",\r\n    \"latitude\": 30.3,\r\n    \"longitude\":  70\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/services/findclosest"
+			},
+			"response": []
 		}
 	]
 }
