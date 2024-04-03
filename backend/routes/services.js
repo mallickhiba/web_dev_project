@@ -163,6 +163,47 @@ router.post("/findclosest", async (req, res) => {
   }
 });
 
+//api to get service tpye in a specific city
+router.get('/:serviceType/:city', async (req, res) => {
+  try {
+    const { serviceType, city } = req.params;
+    
+    if (!['Karachi', 'Lahore', 'Islamabad'].includes(city)) {
+      return res.status(400).json({ msg: 'Invalid city' });
+    }
+
+    const services = await Service.find({ service_type: serviceType, city: city });
+    if (services.length === 0) {
+      return res.status(404).json({ msg: `No services found for ${serviceType} in ${city}` });
+    }
+    res.json({ msg: `Services found for ${serviceType} in ${city}`, data: services });
+  } catch (error) {
+    console.error('Error finding services:', error);
+    res.status(500).json({ msg: 'Internal server error' });
+  }
+});
+
+
+
+//api to et service type by city AND AREA (AREA GOES IN REQ BODY ) - NOT TESTED
+router.post('/:serviceType/:city', async (req, res) => {
+  try {
+    const { serviceType, city } = req.params;
+    const { area } = req.body;
+    
+    if (!['Karachi', 'Lahore', 'Islamabad'].includes(city)) {
+      return res.status(400).json({ msg: 'Invalid city' });
+    }    const services = await Service.find({ service_type: serviceType, city: city, area: area });
+    if (services.length === 0) {
+      return res.status(404).json({ msg: `No services found for ${serviceType} in ${area}, ${city}` });
+    }    res.json({ msg: `Services found for ${serviceType} in ${area}, ${city}`, data: services });
+  } catch (error) {
+    console.error('Error finding services:', error);
+    res.status(500).json({ msg: 'Internal server error' });
+  }
+});
+
+
 //Package APIs
 
 // GET all packages of a service -- TESTED
