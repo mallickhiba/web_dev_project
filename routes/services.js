@@ -1,14 +1,17 @@
-const Service = require("../models/Services");
+
 var express = require("express");
 const mongoose = require("mongoose");
 const authenticate = require('../middlewares/authenticate.js');
+const authorization = require('../middlewares/authorization.js');
 const adminMiddleware = require('../middlewares/adminMiddleware');
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const vendorMiddleware = require('../middlewares/vendorMiddleware');
-const Service = require('../models/Service'); // Add the missing import statement for the Service model
+const Service = require('../models/Services'); // Add the missing import statement for the Service model
+const VenueService = require('../models/Services').model('VenueService');
+const PhotographyService = require('../models/Services').model('PhotographyService');
+const CateringService = require('../models/Services').model('CateringService');
+const DecorService = require('../models/Services').model('DecorService');
 var router = express.Router();
-
-
 //*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN********************************************
 // Get all services -- TESTED
 router.get("/", async (req, res) => {
@@ -21,7 +24,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
 // View Available Services by Type. This is for finding sevices by type (includes pagination) --- TESTED
 router.get('/:serviceType', async (req, res) => {
   const { serviceType } = req.params;
@@ -36,8 +38,8 @@ router.get('/:serviceType', async (req, res) => {
       const startIndex = (page - 1) * limit;
       const endIndex = page * limit;
 
-      const totalServices = await Service.countDocuments({ service_type: serviceType });
-      const services = await Service.find({ service_type: serviceType }).limit(limit).skip(startIndex);
+      const totalServices = await Service.countDocuments({ service_category: serviceType });
+      const services = await Service.find({ service_category: serviceType }).limit(limit).skip(startIndex);
 
       // Pagination result
       
@@ -60,7 +62,8 @@ router.get('/:serviceType', async (req, res) => {
   }
 });
 
-// not tested 
+
+// Getting Service based on ID-TESTED
 router.get("/:id", async (req, res) => {
   try {
     console.log("getting service with id " + req.params.id);
@@ -76,7 +79,47 @@ router.get("/:id", async (req, res) => {
 });
 
 
-// Get Service details by Service Name -- Tested
+
+
+// View Services by Service Category and Location ID with Pagination--Tested
+router.get('/:serviceType/:locationId', async (req, res) => {
+  const { serviceType, locationId } = req.params;
+  const { page = 1, limit = 10 } = req.query;
+
+  try {
+    if (!['decor', 'venue', 'catering', 'photography'].includes(serviceType)) {
+      return res.status(400).json({ msg: "Invalid service type" });
+    }
+
+    // Query services by service type and location ID with pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalServices = await Service.countDocuments({ service_category: serviceType, location_id: locationId });
+    const services = await Service.find({ service_category: serviceType, location_id: locationId })
+      .limit(limit)
+      .skip(startIndex);
+
+    // Pagination result
+    const pagination = {
+      offset: startIndex,
+      records_per_page: limit,
+      total_records: totalServices,
+      total_pages: Math.ceil(totalServices / limit),
+      current_page: +page
+    };
+
+    if (endIndex < totalServices) {
+      pagination.next_page = +page + 1;
+    }
+
+    res.json({ pagination, services });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 router.post('/getbyservicename', async (req, res) => {
   try {
     const { serviceName } = req.body;
@@ -85,14 +128,16 @@ router.post('/getbyservicename', async (req, res) => {
     if (!serviceName) {
       return res.status(400).json({ msg: "Service name is required in the request body" });
     }
-      //Checks for case-sensitive and extra white spaces
+
+    // Create a regex pattern for case-insensitive and extra white spaces in the service name
     const regexPattern = serviceName.replace(/\s+/g, '\\s+');
     const regex = new RegExp(regexPattern, 'i');
 
-    // Populate service with packages and vendor name
+    // Populate service with packages and vendor name from the 'users' collection
     const services = await Service.find({ service_name: regex })
       .populate({
         path: 'vendor_id',
+        model: 'users', // Use the correct collection name here
         select: 'firstName lastName -_id'
       });
 
@@ -100,6 +145,7 @@ router.post('/getbyservicename', async (req, res) => {
       console.log("No services found with the provided service name:", serviceName);
       return res.json({ msg: "No services found with the provided service name" });
     }
+
     console.log("Services found:", services);
     res.json({ msg: "Services found", data: services });
   } catch (error) {
@@ -199,13 +245,6 @@ router.delete('/:serviceId/packages/:packageId', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
 // Get reviews for a specific service ***NOT TESTED
 router.get('/service/:id/reviews', async (req, res) => {
   try {
@@ -218,6 +257,135 @@ router.get('/service/:id/reviews', async (req, res) => {
   }
 });
 
+
+//*************APIS  only work for vendors and admin but there is an issue with fetching id (will be an issue in the frontend)***************////
+router.use(authenticate); 
+router.use(authorization); 
+
+// POST endpoint to add a new venue
+router.post('/venue',authenticate,authorization,async (req, res) => {
+  try {
+    // Extract venue details from the request body
+    const {vendor_id,staff, cancellation_policy, service_name,service_category, description, start_price, location_id,packages,capacity, outdoor } = req.body;
+
+    // Create a new venue service instance
+    const newVenue = new VenueService({
+      vendor_id,
+      staff,
+      cancellation_policy,
+      service_name,
+      service_category,
+      description,
+      start_price,
+      location_id,
+      packages, // Assuming packages are included in the request body
+      capacity,
+      outdoor
+    });
+
+    // Save the new venue service to the database
+    await newVenue.save();
+
+    res.status(201).json({ msg: 'Venue added successfully!', venue: newVenue });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+
+
+// POST endpoint to add a new photography service
+router.post('/photography', authenticate, authorization, async (req, res) => {
+  try {
+    // Extract photography service details from the request body
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, packages, drone } = req.body;
+
+    // Create a new photography service instance
+    const newPhotographyService = new PhotographyService({
+      vendor_id,
+      staff,
+      cancellation_policy,
+      service_name,
+      service_category,
+      description,
+      start_price,
+      location_id,
+      packages, // Assuming packages are included in the request body
+      drone
+    });
+
+    // Save the new photography service to the database
+    await newPhotographyService.save();
+
+    res.status(201).json({ msg: 'Photography service added successfully!', service: newPhotographyService });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+// POST endpoint to add a new catering service
+router.post('/catering', authenticate, authorization,async (req, res) => {
+  try {
+    // Extract catering service details from the request body
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, packages, cuisine } = req.body;
+
+    // Create a new catering service instance
+    const newCateringService = new CateringService({
+      vendor_id,
+      staff,
+      cancellation_policy,
+      service_name,
+      service_category,
+      description,
+      start_price,
+      location_id,
+      packages, // Assuming packages are included in the request body
+      cuisine
+    });
+
+    // Save the new catering service to the database
+    await newCateringService.save();
+
+    res.status(201).json({ msg: 'Catering service added successfully!', service: newCateringService });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+ 
+
+// POST endpoint to add a new decor service
+// POST endpoint to add a new decor service
+router.post('/decor', authenticate,authorization, async (req, res) => {
+  try {
+    // Extract decor service details from the request body
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, packages, decortype } = req.body;
+
+    // Create a new decor service instance
+    const newDecorService = new DecorService({
+      vendor_id,
+      staff,
+      cancellation_policy,
+      service_name,
+      service_category,
+      description,
+      start_price,
+      location_id,
+      packages, // Assuming packages are included in the request body
+      decortype
+    });
+
+    // Save the new decor service to the database
+    await newDecorService.save();
+
+    res.status(201).json({ msg: 'Decor service added successfully!', service: newDecorService });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+
+
 //******FOLLOWING APIS CAN ONLY BE ACCESED WITH LOGGED IN ADMIN AND VENDOR USERS */
 router.use(authenticate);
 
@@ -227,8 +395,8 @@ router.use(authenticate);
 router.use(adminMiddleware);
 router.use(vendorMiddleware);
 
-//Add a new service. -- TESTED
-router.post("/create", async (req, res) => {
+//Add a new service. -- TESTED 
+router.post("/create", vendorMiddleware,async (req, res) => {
   try {
     let vendorId;
     // Check if the user is admin then extract vendor id from body
@@ -252,6 +420,7 @@ router.post("/create", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
 
 // Edit service details including add/edit package as well. -- TESTED BUT NOT WORKING FOR ADDING/EDITING PACKAGE
 router.put("/:id", async (req, res) => {
@@ -333,5 +502,7 @@ router.post("/deleteby", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
+
 
 module.exports = router;
