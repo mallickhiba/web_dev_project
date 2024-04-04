@@ -584,6 +584,34 @@
 				"url": "http://localhost:5600/services/findclosest"
 			},
 			"response": []
+		},
+		{
+			"name": "GET CUSTOMER'S FAVOURITES",
+			"id": "90be3b57-5c1c-40a6-b8f1-f50fcf0713d2",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MGRhY2JkNzFmYWY5MjY2NGVkNThiYyIsImVtYWlsIjoiY3VzdG9tZXJAZ21haWwuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzEyMTkwMjA4LCJleHAiOjE3MTIyNzY2MDh9.A0N40NnJnX9rAo3pW6DUbh35o65OlYrIrlyKSeBaF-0"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/customer/getfavs"
+			},
+			"response": []
 		}
 	]
 }
