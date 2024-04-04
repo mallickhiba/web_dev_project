@@ -79,8 +79,6 @@ router.get("/:id", async (req, res) => {
 });
 
 
-
-
 // View Services by Service Category and Location ID with Pagination--Tested
 router.get('/:serviceType/:locationId', async (req, res) => {
   const { serviceType, locationId } = req.params;
@@ -180,6 +178,78 @@ router.post("/getbyservicewithvendor", async (req, res) => {
   }
 });
 
+//API TO FIND ORDEREED LIST OF SERVICES BY SERVICE TYPE - WORKING!!
+router.post("/findclosest", async (req, res) => {
+  try {
+    const { serviceType, latitude, longitude } = req.body;
+    console.log("Finding services of type", serviceType, "sorted by closest latitude and longitude");
+
+    // Query services by service type
+    const services = await Service.find({ service_category: serviceType });
+
+    // Calculate the distance between the given latitude and longitude and each service's latitude and longitude
+    const distances = services.map(service => {
+      const serviceLatitude = service.latitude;
+      const serviceLongitude = service.longitude;
+      const distance = Math.sqrt(Math.pow(serviceLatitude - latitude, 2) + Math.pow(serviceLongitude - longitude, 2));
+      return { service, distance };
+    });
+
+    // Sort the services by distance in ascending order
+    distances.sort((a, b) => a.distance - b.distance);
+
+    // Extract services from sorted distances
+    const sortedServices = distances.map(distance => distance.service);
+
+    console.log("Services sorted by closest distance:", sortedServices);
+    res.json({ msg: "Services sorted by closest distance", data: sortedServices });
+  } catch (error) {
+    console.error("Error finding closest services:", error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+//api to get service tpye in a specific city
+router.get('/:serviceType/:city', async (req, res) => {
+  try {
+    const { serviceType, city } = req.params;
+    
+    if (!['Karachi', 'Lahore', 'Islamabad'].includes(city)) {
+      return res.status(400).json({ msg: 'Invalid city' });
+    }
+
+    const services = await Service.find({ service_category: serviceType, city: city });
+    if (services.length === 0) {
+      return res.status(404).json({ msg: `No services found for ${serviceType} in ${city}` });
+    }
+    res.json({ msg: `Services found for ${serviceType} in ${city}`, data: services });
+  } catch (error) {
+    console.error('Error finding services:', error);
+    res.status(500).json({ msg: 'Internal server error' });
+  }
+});
+
+
+
+//api to et service type by city AND AREA (AREA GOES IN REQ BODY ) - NOT TESTED
+router.post('/:serviceType/:city', async (req, res) => {
+  try {
+    const { serviceType, city } = req.params;
+    const { area } = req.body;
+    
+    if (!['Karachi', 'Lahore', 'Islamabad'].includes(city)) {
+      return res.status(400).json({ msg: 'Invalid city' });
+    }    const services = await Service.find({ service_category: serviceType, city: city, area: area });
+    if (services.length === 0) {
+      return res.status(404).json({ msg: `No services found for ${serviceType} in ${area}, ${city}` });
+    }    res.json({ msg: `Services found for ${serviceType} in ${area}, ${city}`, data: services });
+  } catch (error) {
+    console.error('Error finding services:', error);
+    res.status(500).json({ msg: 'Internal server error' });
+  }
+});
+
+
 
 //Package APIs
 
@@ -266,7 +336,9 @@ router.use(authorization);
 router.post('/venue',authenticate,authorization,async (req, res) => {
   try {
     // Extract venue details from the request body
-    const {vendor_id,staff, cancellation_policy, service_name,service_category, description, start_price, location_id,packages,capacity, outdoor } = req.body;
+    const {vendor_id,staff, cancellation_policy, service_name,service_category, 
+      description, start_price, location_id,packages,latitude,
+      longitude, city,area,capacity, outdoor } = req.body;
 
     // Create a new venue service instance
     const newVenue = new VenueService({
@@ -278,7 +350,11 @@ router.post('/venue',authenticate,authorization,async (req, res) => {
       description,
       start_price,
       location_id,
-      packages, // Assuming packages are included in the request body
+      packages, // Assuming packages are included in the request body,
+      latitude,
+      longitude,
+      city,
+      area,
       capacity,
       outdoor
     });
@@ -298,7 +374,8 @@ router.post('/venue',authenticate,authorization,async (req, res) => {
 router.post('/photography', authenticate, authorization, async (req, res) => {
   try {
     // Extract photography service details from the request body
-    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, packages, drone } = req.body;
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, 
+      start_price, location_id, packages,latitude,    longitude,  city,area, drone } = req.body;
 
     // Create a new photography service instance
     const newPhotographyService = new PhotographyService({
@@ -311,6 +388,10 @@ router.post('/photography', authenticate, authorization, async (req, res) => {
       start_price,
       location_id,
       packages, // Assuming packages are included in the request body
+      latitude,
+      longitude,
+      city,
+      area,
       drone
     });
 
@@ -327,7 +408,8 @@ router.post('/photography', authenticate, authorization, async (req, res) => {
 router.post('/catering', authenticate, authorization,async (req, res) => {
   try {
     // Extract catering service details from the request body
-    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, packages, cuisine } = req.body;
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, 
+      packages,latitude,longitude, city,  area, cuisine } = req.body;
 
     // Create a new catering service instance
     const newCateringService = new CateringService({
@@ -340,6 +422,10 @@ router.post('/catering', authenticate, authorization,async (req, res) => {
       start_price,
       location_id,
       packages, // Assuming packages are included in the request body
+      latitude,
+      longitude,
+      city,
+      area,
       cuisine
     });
 
@@ -359,7 +445,8 @@ router.post('/catering', authenticate, authorization,async (req, res) => {
 router.post('/decor', authenticate,authorization, async (req, res) => {
   try {
     // Extract decor service details from the request body
-    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, packages, decortype } = req.body;
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description,
+       start_price, location_id, packages,latitude,    longitude,   city, area, decortype } = req.body;
 
     // Create a new decor service instance
     const newDecorService = new DecorService({
@@ -372,6 +459,10 @@ router.post('/decor', authenticate,authorization, async (req, res) => {
       start_price,
       location_id,
       packages, // Assuming packages are included in the request body
+      latitude,
+      longitude,
+      city,
+      area,
       decortype
     });
 

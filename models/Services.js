@@ -53,11 +53,21 @@ const ServiceSchema = new mongoose.Schema(
       min: 0,
       max: 5,
     },
-    location_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Location',
-      required: false
+    latitude: {
+      type: Number
     },
+    longitude: {
+      type: Number
+    },
+    city: {
+      type: String,
+      enum: ['Karachi', 'Lahore', 'Islamabad'],
+      default: 'Karachi'
+    },
+    area:{
+      type: String,
+      enum: ['Saddar','Gulshan-e-Iqbal', 'DHA', "North Nazimabad", "Other"]
+  },
 
   }, 
   baseOptions
