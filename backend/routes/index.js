@@ -3,34 +3,28 @@ const router = express.Router();
 const jwt = require("jsonwebtoken")
 
 const authenticate = require('../middlewares/authenticate.js');
-/*
-const adminMiddleware = require('../middlewares/adminMiddleware');
-const customerMiddleware = require('../middlewares/customerMiddleware');
-const vendorMiddleware = require('../middlewares/vendorMiddleware');*/
+
+console.log("in index router file");
 
 const authRouter = require("./auth");
+const serviceRouter = require("./services");
+
 const bookingRouter = require("./bookings");
-const locationRouter = require("./locations");
-const reviewRouter = require("./reviews")
-const serviceRouter = require("./services")
-const adminRouter = require("./admin")
+const reviewRouter = require("./reviews");
+const adminRouter = require("./admin");
+const customerRouter = require("./customer");
 
 router.use("/auth", authRouter);
 router.use("/services", serviceRouter);
 
-
 //put this middleware after logging in to apply it to neeche wali routes
 router.use(authenticate);
 
-/*router.use(adminMiddleware);
-router.use(customerMiddleware);
-router.use(vendorMiddleware);*/
-
+//add role specific middleware
 
 router.use("/admin", adminRouter);
 router.use("/bookings", bookingRouter);
-router.use("/locations", locationRouter);
+router.use("/customer", customerRouter);
 router.use("/reviews", reviewRouter);
-
 
 module.exports = router;

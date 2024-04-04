@@ -22,7 +22,8 @@ app.use(cors());
 app.use('/', router);
 
 app.use(function (req, res, next) {
-    console.log(req.body)
+    console.log(req.body);
+    console.log("at middleware");
     next(createError(404)); // middleware 
 });
 
