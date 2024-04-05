@@ -1,13 +1,13 @@
-const Service = require("../models/Services");
+
 var express = require("express");
 const mongoose = require("mongoose");
 const authenticate = require('../middlewares/authenticate.js');
+const authorization = require('../middlewares/authorization.js');
 const adminMiddleware = require('../middlewares/adminMiddleware');
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const vendorMiddleware = require('../middlewares/vendorMiddleware');
+const Service = require('../models/Service'); // Add the missing import statement for the Service model
 var router = express.Router();
-
-
 //*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN********************************************
 // Get all services -- TESTED
 router.get("/", async (req, res) => {
@@ -20,7 +20,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
 // View Available Services by Type. This is for finding sevices by type (includes pagination) --- TESTED
 router.get('/:serviceType', async (req, res) => {
   const { serviceType } = req.params;
@@ -35,8 +34,8 @@ router.get('/:serviceType', async (req, res) => {
       const startIndex = (page - 1) * limit;
       const endIndex = page * limit;
 
-      const totalServices = await Service.countDocuments({ service_type: serviceType });
-      const services = await Service.find({ service_type: serviceType }).limit(limit).skip(startIndex);
+      const totalServices = await Service.countDocuments({ service_category: serviceType });
+      const services = await Service.find({ service_category: serviceType }).limit(limit).skip(startIndex);
 
       // Pagination result
       
@@ -59,8 +58,8 @@ router.get('/:serviceType', async (req, res) => {
   }
 });
 
-// TESTED - WORKING
-router.get("/getbyid/:id", async (req, res) => {
+// not tested 
+router.get("/:id", async (req, res) => {
   try {
     console.log("getting service with id " + req.params.id);
     const service = await Service.findById(req.params.id);
@@ -75,8 +74,8 @@ router.get("/getbyid/:id", async (req, res) => {
 });
 
 
-// Get Service details by Service Name -- Tested GIVES VENDOR ID NULL
-router.post('/getbyname', async (req, res) => {
+// Get Service details by Service Name -- Tested
+router.post('/getbyservicename', async (req, res) => {
   try {
     const { serviceName } = req.body;
     console.log("Searching for service with name:", serviceName);
@@ -84,20 +83,23 @@ router.post('/getbyname', async (req, res) => {
     if (!serviceName) {
       return res.status(400).json({ msg: "Service name is required in the request body" });
     }
-      //Checks for case-sensitive and extra white spaces
+
+    // Create a regex pattern for case-insensitive and extra white spaces in the service name
     const regexPattern = serviceName.replace(/\s+/g, '\\s+');
     const regex = new RegExp(regexPattern, 'i');
 
     // Populate service with packages and vendor name
-    const services = await Service.find({ service_name: regex })  .populate({
-      path: 'vendor_id',
-      select: 'firstName lastName -_id'
-    });
+    const services = await Service.find({ service_name: regex })
+      .populate({
+        path: 'vendor_id',
+        select: 'firstName lastName -_id'
+      });
 
     if (services.length === 0) {
       console.log("No services found with the provided service name:", serviceName);
       return res.json({ msg: "No services found with the provided service name" });
     }
+
     console.log("Services found:", services);
     res.json({ msg: "Services found", data: services });
   } catch (error) {
@@ -129,77 +131,6 @@ router.post("/getbyservicewithvendor", async (req, res) => {
   } catch (error) {
     console.error("Error fetching service with vendor details:", error);
     res.status(500).json({ msg: "Internal server error" });
-  }
-});
-
-//API TO FIND ORDEREED LIST OF SERVICES BY SERVICE TYPE - WORKING!!
-router.post("/findclosest", async (req, res) => {
-  try {
-    const { serviceType, latitude, longitude } = req.body;
-    console.log("Finding services of type", serviceType, "sorted by closest latitude and longitude");
-
-    // Query services by service type
-    const services = await Service.find({ service_type: serviceType });
-
-    // Calculate the distance between the given latitude and longitude and each service's latitude and longitude
-    const distances = services.map(service => {
-      const serviceLatitude = service.latitude;
-      const serviceLongitude = service.longitude;
-      const distance = Math.sqrt(Math.pow(serviceLatitude - latitude, 2) + Math.pow(serviceLongitude - longitude, 2));
-      return { service, distance };
-    });
-
-    // Sort the services by distance in ascending order
-    distances.sort((a, b) => a.distance - b.distance);
-
-    // Extract services from sorted distances
-    const sortedServices = distances.map(distance => distance.service);
-
-    console.log("Services sorted by closest distance:", sortedServices);
-    res.json({ msg: "Services sorted by closest distance", data: sortedServices });
-  } catch (error) {
-    console.error("Error finding closest services:", error);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
-
-//api to get service tpye in a specific city
-router.get('/:serviceType/:city', async (req, res) => {
-  try {
-    const { serviceType, city } = req.params;
-    
-    if (!['Karachi', 'Lahore', 'Islamabad'].includes(city)) {
-      return res.status(400).json({ msg: 'Invalid city' });
-    }
-
-    const services = await Service.find({ service_type: serviceType, city: city });
-    if (services.length === 0) {
-      return res.status(404).json({ msg: `No services found for ${serviceType} in ${city}` });
-    }
-    res.json({ msg: `Services found for ${serviceType} in ${city}`, data: services });
-  } catch (error) {
-    console.error('Error finding services:', error);
-    res.status(500).json({ msg: 'Internal server error' });
-  }
-});
-
-
-
-//api to et service type by city AND AREA (AREA GOES IN REQ BODY ) - NOT TESTED
-router.post('/:serviceType/:city', async (req, res) => {
-  try {
-    const { serviceType, city } = req.params;
-    const { area } = req.body;
-    
-    if (!['Karachi', 'Lahore', 'Islamabad'].includes(city)) {
-      return res.status(400).json({ msg: 'Invalid city' });
-    }    const services = await Service.find({ service_type: serviceType, city: city, area: area });
-    if (services.length === 0) {
-      return res.status(404).json({ msg: `No services found for ${serviceType} in ${area}, ${city}` });
-    }    res.json({ msg: `Services found for ${serviceType} in ${area}, ${city}`, data: services });
-  } catch (error) {
-    console.error('Error finding services:', error);
-    res.status(500).json({ msg: 'Internal server error' });
   }
 });
 
@@ -268,13 +199,6 @@ router.delete('/:serviceId/packages/:packageId', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
 // Get reviews for a specific service ***NOT TESTED
 router.get('/service/:id/reviews', async (req, res) => {
   try {
@@ -287,6 +211,156 @@ router.get('/service/:id/reviews', async (req, res) => {
   }
 });
 
+
+//*************APIS  only work for vendors and admin but there is an issue with fetching id (will be an issue in the frontend)***************////
+router.use(authenticate); 
+router.use(authorization); 
+
+// POST endpoint to add a new venue
+router.post('/venue',authenticate,authorization,async (req, res) => {
+  try {
+    // Extract venue details from the request body
+    const {vendor_id,staff, cancellation_policy, service_name,service_category, 
+      description, start_price, location_id,packages,latitude,
+      longitude, city,area,capacity, outdoor } = req.body;
+
+    // Create a new venue service instance
+    const newVenue = new VenueService({
+      vendor_id,
+      staff,
+      cancellation_policy,
+      service_name,
+      service_category,
+      description,
+      start_price,
+      location_id,
+      packages, // Assuming packages are included in the request body,
+      latitude,
+      longitude,
+      city,
+      area,
+      capacity,
+      outdoor
+    });
+
+    // Save the new venue service to the database
+    await newVenue.save();
+
+    res.status(201).json({ msg: 'Venue added successfully!', venue: newVenue });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+
+
+// POST endpoint to add a new photography service
+router.post('/photography', authenticate, authorization, async (req, res) => {
+  try {
+    // Extract photography service details from the request body
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, 
+      start_price, location_id, packages,latitude,    longitude,  city,area, drone } = req.body;
+
+    // Create a new photography service instance
+    const newPhotographyService = new PhotographyService({
+      vendor_id,
+      staff,
+      cancellation_policy,
+      service_name,
+      service_category,
+      description,
+      start_price,
+      location_id,
+      packages, // Assuming packages are included in the request body
+      latitude,
+      longitude,
+      city,
+      area,
+      drone
+    });
+
+    // Save the new photography service to the database
+    await newPhotographyService.save();
+
+    res.status(201).json({ msg: 'Photography service added successfully!', service: newPhotographyService });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+// POST endpoint to add a new catering service
+router.post('/catering', authenticate, authorization,async (req, res) => {
+  try {
+    // Extract catering service details from the request body
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, 
+      packages,latitude,longitude, city,  area, cuisine } = req.body;
+
+    // Create a new catering service instance
+    const newCateringService = new CateringService({
+      vendor_id,
+      staff,
+      cancellation_policy,
+      service_name,
+      service_category,
+      description,
+      start_price,
+      location_id,
+      packages, // Assuming packages are included in the request body
+      latitude,
+      longitude,
+      city,
+      area,
+      cuisine
+    });
+
+    // Save the new catering service to the database
+    await newCateringService.save();
+
+    res.status(201).json({ msg: 'Catering service added successfully!', service: newCateringService });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+ 
+
+// POST endpoint to add a new decor service
+// POST endpoint to add a new decor service
+router.post('/decor', authenticate,authorization, async (req, res) => {
+  try {
+    // Extract decor service details from the request body
+    const { vendor_id, staff, cancellation_policy, service_name, service_category, description,
+       start_price, location_id, packages,latitude,    longitude,   city, area, decortype } = req.body;
+
+    // Create a new decor service instance
+    const newDecorService = new DecorService({
+      vendor_id,
+      staff,
+      cancellation_policy,
+      service_name,
+      service_category,
+      description,
+      start_price,
+      location_id,
+      packages, // Assuming packages are included in the request body
+      latitude,
+      longitude,
+      city,
+      area,
+      decortype
+    });
+
+    // Save the new decor service to the database
+    await newDecorService.save();
+
+    res.status(201).json({ msg: 'Decor service added successfully!', service: newDecorService });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+
+
 //******FOLLOWING APIS CAN ONLY BE ACCESED WITH LOGGED IN ADMIN AND VENDOR USERS */
 router.use(authenticate);
 
@@ -296,8 +370,8 @@ router.use(authenticate);
 router.use(adminMiddleware);
 //router.use(vendorMiddleware);
 
-//Add a new service. -- TESTED
-router.post("/create", async (req, res) => {
+//Add a new service. -- TESTED 
+router.post("/create", vendorMiddleware,async (req, res) => {
   try {
     let vendorId;
     // Check if the user is admin then extract vendor id from body
@@ -328,6 +402,7 @@ router.post("/create", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
 
 // Edit service details including add/edit package as well. -- TESTED BUT NOT WORKING FOR ADDING/EDITING PACKAGE
 router.put("/:id", async (req, res) => {
@@ -409,5 +484,7 @@ router.post("/deleteby", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
+
 
 module.exports = router;
