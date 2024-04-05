@@ -13,13 +13,6 @@ const baseOptions = {
 };
 const ServiceSchema = new mongoose.Schema(
   {
-   
-    vendor_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    },
-    packages: [PackageSchema],
     service_name: {
       type: String,
       required: true
@@ -27,6 +20,11 @@ const ServiceSchema = new mongoose.Schema(
     service_category: {
       type: String,
       enum: ['decor', 'venue', 'catering', 'photography'],
+      required: true
+    },
+    vendor_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true
     },
     cancellation_policy: {
@@ -51,7 +49,7 @@ const ServiceSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: 0,
-      max: 5,
+      max: 5
     },
     latitude: {
       type: Number
@@ -68,6 +66,7 @@ const ServiceSchema = new mongoose.Schema(
       type: String,
       enum: ['Saddar','Gulshan-e-Iqbal', 'DHA', "North Nazimabad", "Other"]
   },
+  packages: [PackageSchema]
 
   }, 
   baseOptions

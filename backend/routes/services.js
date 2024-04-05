@@ -6,7 +6,7 @@ const authorization = require('../middlewares/authorization.js');
 const adminMiddleware = require('../middlewares/adminMiddleware');
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const vendorMiddleware = require('../middlewares/vendorMiddleware');
-const Service = require('../models/Service'); // Add the missing import statement for the Service model
+const Service = require('../models/Services'); // Add the missing import statement for the Service model
 var router = express.Router();
 //*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN********************************************
 // Get all services -- TESTED
@@ -402,7 +402,6 @@ router.post("/create", vendorMiddleware,async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
 
 // Edit service details including add/edit package as well. -- TESTED BUT NOT WORKING FOR ADDING/EDITING PACKAGE
 router.put("/:id", async (req, res) => {
