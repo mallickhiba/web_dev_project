@@ -20,9 +20,18 @@ router.get('/:id', getBooking, (req, res) => {
 
 // POST a new booking
 router.post('/', async (req, res) => {
+    const { date, service } = req.body; // Extract date and service from req.body
+    const customer = req.body.customer; // Extract customer ID from req.body
+
+    // Check if customer ID is provided
+    if (!customer) {
+        return res.status(400).json({ message: "Customer ID is required." });
+    }
+
     const booking = new Booking({
-        date: req.body.date,
-        service: req.body.service
+        date: date,
+        service: service,
+        customer: customer // Include customer ID in the booking
     });
 
     try {
