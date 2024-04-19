@@ -1,6 +1,9 @@
 import "./App.css";
 import { useState } from "react";
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import axios from "axios";
+import SignUp from "./SignUp";
+import Login from "./Login";
 
 function App() {
   const [data, setData] = useState({
@@ -11,41 +14,8 @@ function App() {
     lastName: "",
     phoneNumber: ""
   });
+
   const [user, setUser] = useState({ loggedIn: false, token: "" });
-
-  const handleForm = (e) =>
-    setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-
-  const signupSubmit = async (e) => {
-    try {
-      e.preventDefault();
-      const res = await axios({
-        url: "http://localhost:5600/auth/register",
-        method: "post",
-        data: data,
-      });
-      window.alert(res.data.msg);
-    } catch (e) {
-      window.alert("ERROR");
-      console.error(e);
-    }
-  };
-
-  const loginSubmit = async (e) => {
-    try {
-      e.preventDefault();
-      const res = await axios({
-        url: "http://localhost:5600/auth/login",
-        method: "post",
-        data: data,
-      });
-      window.alert(res.data.msg);
-      if (res.data.token) setUser({ loggedIn: true, token: res.data.token });
-    } catch (e) {
-      window.alert("ERROR");
-      console.error(e);
-    }
-  };
 
   const createCard = async (e) => {
     try {
@@ -63,92 +33,30 @@ function App() {
   };
 
   return (
-    <div
-      className="mera-dabba"
-    >
-      {user.loggedIn ? (
-        <div style={{ margin: 50 }}>
-          <form
-            onSubmit={createCard}
-            style={{ display: "flex", flexDirection: "column" }}
-          >
-            <h1>Create Card</h1>
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-      ) : (
-        <>
-          <div style={{ margin: 50 }}>
-            <form
-              onSubmit={signupSubmit}
-              style={{ display: "flex", flexDirection: "column" }}
-            >
-              <h1>Signup</h1>
-            
-              <input
-                type="text"
-                name="role"
-                value={data.admin}
-                onChange={handleForm}
-                style={{ margin: 5 }} 
-                />
-              <input
-                type="text"
-                name="firstName"
-                value={data.firstName}
-                onChange={handleForm}
-                style={{ margin: 5 }}
-              />
-              <input
-                type="text"
-                name="lastName"
-                value={data.lastName}
-                onChange={handleForm}
-                style={{ margin: 5 }}
-              />
-              <input
-                type="text"
-                name="email"
-                data={data.email}
-                onChange={handleForm}
-                style={{ margin: 5 }}
-              />
-              <input
-                type="password"
-                name="password"
-                value={data.password}
-                onChange={handleForm}
-                style={{ margin: 5 }}
-              />
-              <button type="submit">Submit</button>
-            </form>
-          </div>
-          <div>
-            <form
-              onSubmit={loginSubmit}
-              style={{ display: "flex", flexDirection: "column" }}
-            >
-              <h1>Login</h1>
-              <input
-                type="text"
-                name="email"
-                data={data.email}
-                onChange={handleForm}
-                style={{ margin: 5 }}
-              />
-              <input
-                type="password"
-                name="password"
-                value={data.password}
-                onChange={handleForm}
-                style={{ margin: 5 }}
-              />
-              <button type="submit">Submit</button>
-            </form>
-          </div>
-        </>
-      )}
-    </div>
+    <Router>
+      <div className="mera-dabba">
+        <nav>
+          <ul>
+          <li>
+              <Link to="/signup">Signup</Link>
+            </li>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+            {user.loggedIn && (
+              <li>
+                <button onClick={createCard}>Create Card</button>
+              </li>
+            )}
+          </ul>
+        </nav>
+
+        <Routes>
+          <Route path="/signup" element={<SignUp/>} />
+          <Route path="/login" element={<Login setUser={setUser} />} />        
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
