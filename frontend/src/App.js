@@ -24,7 +24,7 @@ function App() {
         url: "http://localhost:5600/bank/createCard",
         method: "post",
         data: { email: data.email },
-        headers: { Authorization: `Bearer ${user.token}` },
+       x,
       });
       window.alert(res.data.msg);
     } catch (e) {
