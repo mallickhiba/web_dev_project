@@ -10,13 +10,11 @@ const vendorMiddleware = require('../middlewares/vendorMiddleware');*/
 
 const authRouter = require("./auth");
 const bookingRouter = require("./bookings");
-const reviewRouter = require("./reviews");
-const serviceRouter = require("./services");
-const adminRouter = require("./admin");
+const locationRouter = require("./locations");
+const reviewRouter = require("./reviews")
+const serviceRouter = require("./services")
+const adminRouter = require("./admin")
 const customerRouter = require("./customer");
-
-
-
 
 router.use("/auth", authRouter);
 router.use("/services", serviceRouter);
@@ -32,8 +30,9 @@ router.use(vendorMiddleware);*/
 
 router.use("/admin", adminRouter);
 router.use("/bookings", bookingRouter);
-router.use('/customer', customerRouter);
+router.use("/locations", locationRouter);
 router.use("/reviews", reviewRouter);
+router.use('/customer', customerRouter);
 
 
 module.exports = router;
