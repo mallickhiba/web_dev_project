@@ -6,48 +6,6 @@ export const navList = [
       text: "Home",
     },
     {
-      id: 2,
-      path: "/about",
-      text: "About",
-    },
-    {
-      id: 3,
-      path: "/services",
-      text: "Services",
-    },
-    {
-      id: 4,
-      path: "/rooms",
-      text: "Rooms",
-    },
-    {
-      id: 5,
-      path: "/page",
-      text: "Page",
-      subItems: [
-        {
-          id: 51,
-          path: "/booking",
-          text: "Booking",
-        },
-        {
-          id: 52,
-          path: "/team",
-          text: "Our Team",
-        },
-        {
-          id: 53,
-          path: "/testimonial",
-          text: "Testimonial",
-        },
-      ],
-    },
-    {
-      id: 6,
-      path: "/contact",
-      text: "Contact",
-    },
-    {
       id: 7,
       path: "/venues",
       text: "Venues",
@@ -71,18 +29,16 @@ export const navList = [
  
   export const carouselData = [
     {
-      img: "../assets/carousel-1.jpg",
-      title: "Discover A Brand Luxurious Hotel",
-      subtitle: "luxury living",
-      btn1: "Our Room",
-      btn2: "Book Room",
+      img: "../assets/home-2.jpg",
+      title: "Helping you plan your big day",
+      subtitle: "Unforgettable Moments of Love and Celebration",
+      
     },
     {
-      img: "../assets/carousel-2.jpg",
-      title: "Discover A Brand Luxurious Hotel",
-      subtitle: "luxury living",
-      btn1: "Our Room",
-      btn2: "Book Room",
+      img: "../assets/home-4.jpg",
+      title: "Helping you plan your big day",
+      subtitle: "Unforgettable Moments of Love and Celebration",
+      
     },
   ];
   export const about = [

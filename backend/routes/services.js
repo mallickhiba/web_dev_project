@@ -7,6 +7,7 @@ const adminMiddleware = require('../middlewares/adminMiddleware');
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const vendorMiddleware = require('../middlewares/vendorMiddleware');
 const Service = require('../models/Services'); // Add the missing import statement for the Service model
+const Users = require('../models/User'); // Add the missing import statement for the Service model
 const VenueService = require('../models/Services').model('VenueService');
 const PhotographyService = require('../models/Services').model('PhotographyService');
 const CateringService = require('../models/Services').model('CateringService');
@@ -118,6 +119,7 @@ router.get('/:serviceType/:locationId', async (req, res) => {
   }
 });
 
+//TESTED
 router.post('/getbyservicename', async (req, res) => {
   try {
     const { serviceName } = req.body;
@@ -135,7 +137,7 @@ router.post('/getbyservicename', async (req, res) => {
     const services = await Service.find({ service_name: regex })
       .populate({
         path: 'vendor_id',
-        model: 'users', // Use the correct collection name here
+        model: 'Users', // Use the correct collection name here
         select: 'firstName lastName -_id'
       });
 

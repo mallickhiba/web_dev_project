@@ -38,27 +38,16 @@ export default function Carousel() {
             <Slider ref={sliderRef} {...settings}>
               {carouselData.map((val, index) => (
                 <div className="carousel-item" key={index}>
-                  <img className="w-100" src={val.img} />
-                  <div className="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                    <div className="p-3" style={{ maxWidth: "700px" }}>
+                  <img className="w-100" src={val.img} style={{ maxHeight: "500px" }} />
+                  <div className="carousel-caption d-flex flex-column align-items-center justify-content-center" style={{ maxWidth: "700px", margin: "0 auto" }}> {/* Center the caption horizontally */}
+                    <div className="p-3">
                       <h6 className="section-title text-white text-uppercase mb-3 animated slideInDown">
                         {val.subtitle}
                       </h6>
                       <h1 className="display-3 text-white mb-4 animated slideInDown">
                         {val.title}
                       </h1>
-                      <a
-                        href=""
-                        className="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft"
-                      >
-                        {val.btn1}
-                      </a>
-                      <a
-                        href=""
-                        className="btn btn-light py-md-3 px-md-5 animated slideInRight"
-                      >
-                        {val.btn2}
-                      </a>
+                      
                     </div>
                   </div>
                 </div>

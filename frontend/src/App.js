@@ -13,15 +13,13 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import "./App.css";
 import Header from "./common/Header";
 import Home  from "./home/Homes.js";
-import Booking from "./pages/BookingPage.js";
-import Team from "./pages/TeamPage.js";
 import Services from "./pages/ServicesPage.js";
-import Room from "./pages/RoomPage.js";
 import Venues from "./pages/VenuePage.js";
 import Catering from "./pages/CateringPage.js";
 import Photography from "./pages/PhotographyPage.js";
 import Decor from "./pages/DecorPage.js";
 import Footer from "./common/Footer";
+import Test from "./pages/test.js";
 
 function App() {
   const [data, setData] = useState({
@@ -55,15 +53,13 @@ function App() {
       <div>
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />      x
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/team" element={<Team />} />
+          <Route path="/" element={<Home />} />         
           <Route path="/services" element={<Services />} />
-          <Route path="/rooms" element={<Room />} />
           <Route path="/venues" element={<Venues />} />
           <Route path="/catering" element={<Catering />} />
           <Route path="/photography" element={<Photography />} />
           <Route path="/decor" element={<Decor />} />
+          <Route path="/pages/test.js" element={<Test />} />
         </Routes>
         <Footer />
       </div>
