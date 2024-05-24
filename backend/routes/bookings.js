@@ -4,9 +4,12 @@ const User = require('../models/User');
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const authenticate = require('../middlewares/authenticate');
 const adminMiddleware = require('../middlewares/adminMiddleware');
+const vendorMiddleware = require('../middlewares/vendorMiddleware');
 
 
 const router = express.Router();
+
+// NEED TO MAKE API TO CHECK FOR AVILABILITY AS WELL
 
 /****get booking apis are working but shows vendorID as null so need to be fixed***/
 
@@ -140,8 +143,58 @@ router.post('/createBooking', authenticate, customerMiddleware, async (req, res)
     }
 });
 
+// NOT TESTED 
+router.post('/approveBooking/:bookingId',authenticate, vendorMiddleware, async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
 
+        const vendorId = req.user.id;
 
+        const booking = await Booking.findById(bookingId).populate('service.service_id');
+        
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
 
+        if (booking.service.service_id.vendor_id.toString() !== vendorId) {
+            return res.status(403).json({ message: "Unauthorized: You are not the owner of this booking" });
+        }
+
+        booking.status = "confirmed";
+        await booking.save();
+
+        res.status(200).json({ message: "Booking approved successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+// NOT TESTED YET
+router.post('/cancelBooking/:bookingId', authenticate, async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+        const userId = req.user.id;
+
+        const booking = await Booking.findById(bookingId).populate('service.service_id');
+
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        // Check if the authenticated user is the owner of the booking (customer) or the owner of the service associated with the booking (vendor)
+        if (booking.customer.toString() !== userId && booking.service.service_id.vendor_id.toString() !== userId) {
+            return res.status(403).json({ message: "Unauthorized: You are not authorized to cancel this booking" });
+        }
+
+        booking.status = "cancelled";
+        await booking.save();
+
+        res.status(200).json({ message: "Booking cancelled successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
 
 module.exports = router;
