@@ -33,20 +33,7 @@ function App() {
 
   const [user, setUser] = useState({ loggedIn: false, token: "" });
 
-  const createCard = async (e) => {
-    try {
-      e.preventDefault();
-      const res = await axios({
-        url: "http://localhost:5600/bank/createCard",
-        method: "post",
-        data: { email: data.email },
-      
-      });
-      window.alert(res.data.msg);
-    } catch (e) {
-      window.alert("ERROR");
-    }
-  };
+  
 
   return (
     <Router>

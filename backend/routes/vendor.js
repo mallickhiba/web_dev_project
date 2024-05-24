@@ -5,7 +5,6 @@ var router = express.Router();
 const jwt = require("jsonwebtoken");
 const vendorMiddleware = require('../middlewares/vendorMiddleware');
 
-router.use(vendorMiddleware)
 
 // Get all details of a specific vendor
 router.get("/vendors/:id", async (req, res) => {
@@ -31,6 +30,7 @@ router.get("/vendors/:id", async (req, res) => {
     }
 });
 
+router.use(vendorMiddleware)
 
 // Get all services of a specific vendor
 router.get("/vendors/:id/services", async (req, res) => {
