@@ -27,10 +27,11 @@ router.get('/venues1', async (req, res) => {
       cancellation_policy, // Accept comma-separated list of cancellation policies
       city, // Accept comma-separated list of cities
       area, // Accept comma-separated list of areas
+      staff,
       outdoor // Accept comma-separated list of outdoor options
     } = req.query;
 
-    // Handle sorting
+     // Handle sorting
     req.query.sort ? (sort = req.query.sort.split(',')) : (sort = [sort]);
     let sortBy = {};
     if (sort[1]) {
@@ -38,6 +39,7 @@ router.get('/venues1', async (req, res) => {
     } else {
       sortBy[sort[0]] = 'asc';
     }
+
 
     // Build filter criteria
     let filter = {};
@@ -57,6 +59,10 @@ router.get('/venues1', async (req, res) => {
     if (outdoor) {
       const outdoors = outdoor.split(',');
       filter.outdoor = { $in: outdoors };
+    }
+    if (staff) {
+      const staffOptions = staff.split(',');
+      filter.staff = { $in: staffOptions };
     }
     if (start_price) {
       const [minPrice, maxPrice] = start_price.split('-').map(Number);
@@ -93,6 +99,7 @@ router.get('/venues1', async (req, res) => {
     res.status(500).json({ error: true, message: 'Internal Server Error' });
   }
 });
+
 
 router.get('/catering1', async (req, res) => {
   try {
@@ -440,6 +447,7 @@ router.get('/:serviceType/:locationId', async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
 
 //TESTED
 router.post('/getbyservicename', async (req, res) => {
