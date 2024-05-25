@@ -133,24 +133,36 @@ router.post("/updateaccount", async (req, res) => {
 
 router.post("/changepassword", async (req, res) => {
   try {
-    const { password, newPassword, confirmPassword } = req.body;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
     const token = req.headers.authorization;
     const decodedToken = jwt.verify(token.split(" ")[1], "MY_SECRET");
     const userId = decodedToken.id;
 
     const user = await Users.findById(userId);
     if (!user) {
-      return res.json({ msg: "USER NOT FOUND" });
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Verify current password
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ msg: "Invalid current password" });
+    }
+
+    // Check if new password and confirm password match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ msg: "New password and confirm password do not match" });
     }
     const hashedPassword = await bcrypt.hash(newPassword, 5);
     user.password = hashedPassword;
     await user.save();
-    return res.json({ msg: "PASSWORD CHANGED SUCCESSFULLY" });
+    return res.json({ msg: "Password changed successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server Error" });
   }
 });
+
 
 function generateToken() {
     return crypto.randomBytes(20).toString('hex');
