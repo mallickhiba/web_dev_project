@@ -707,7 +707,7 @@ router.post('/photography', authenticate, authorization, async (req, res) => {
   try {
     // Extract photography service details from the request body
     const { vendor_id, staff, cancellation_policy, service_name, service_category, description, 
-      start_price, location_id, packages,latitude,    longitude,  city,area, drone } = req.body;
+      start_price, location_id, packages,latitude, longitude, city,area, drone } = req.body;
 
     // Create a new photography service instance
     const newPhotographyService = new PhotographyService({
