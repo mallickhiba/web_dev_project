@@ -1,7 +1,23 @@
-.mera-dabba {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
+
+.navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link.active {
+  color : #fea116;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  margin-right: 30px;
+  padding: 25px 0;
+  color: #FFFFFF;
+  font-size: 15px;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.carousel-caption {
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+.bg-image {
+  background-image: url('../public/assets/about-1.jpg');
 }
