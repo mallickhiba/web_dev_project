@@ -1,6 +1,6 @@
 const express = require('express');
 const Booking = require('../models/Bookings')
-const User = require('../models/User'); 
+const Users = require('../models/User'); 
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const authenticate = require('../middlewares/authenticate');
 const adminMiddleware = require('../middlewares/adminMiddleware');
