@@ -28,7 +28,7 @@ router.post("/register", async (req, res) => {
       throw new Error("Last name must be at least 3 characters long.");
     }
     let user = await Users.findOne({ email });
-    if (user) return res.json({ msg: "USER EXISTS" });
+    if (user) return res.status(400).json({ error: "USER EXISTS" });
     await Users.create({
       ...req.body,
       password: await bcrypt.hash(password, 5),
@@ -38,41 +38,46 @@ router.post("/register", async (req, res) => {
   
   } catch (error) {
     console.error(error);
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message }); // Return validation error messages
   }
 });
+
+
 router.post("/login", async (req, res) => {
   try {
-      const { email, password } = req.body;
-      const user = await Users.findOne({ email });
-      if (!user) return res.json({ msg: "USER NOT FOUND" });
-      // Check password
-      const passwordCheck = await bcrypt.compare(password, user.password);
-      if (!passwordCheck) return res.json({ msg: "WRONG PASSWORD" });
-      const token = jwt.sign(
-          {
-              id: user._id,
-              email,
-              role: user.role
-          },
-          "MY_SECRET",
-          { expiresIn: "1d" }
-      );
-      console.log("LOGGED IN")
-      res.json({
-          msg: "LOGGED IN",
-          token,
-          user: {
-              id: user._id,
-              email: user.email,
-              role: user.role
-          }
-      });
+    const { email, password } = req.body;
+    const user = await Users.findOne({ email });
+    if (!user) {
+      throw new Error("USER NOT FOUND");
+    }
+    const passwordCheck = await bcrypt.compare(password, user.password);
+    if (!passwordCheck) {
+      throw new Error("WRONG PASSWORD");
+    }
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email,
+        role: user.role
+      },
+      "MY_SECRET",
+      { expiresIn: "1d" }
+    );
+    console.log("LOGGED IN")
+    res.json({
+      msg: "LOGGED IN",
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Server Error" });
-  }
-});
+    console.error(error);
+    res.status(500).json({ error: error.message }); 
+}});
+
 
 router.post("/logout", async (req, res) => {
   try {
