@@ -20,50 +20,27 @@ import Photography from "./pages/PhotographyPage.js";
 import Decor from "./pages/DecorPage.js";
 import Footer from "./common/Footer";
 import Test from "./pages/test.js";
+import { Provider } from 'react-redux';
+import store from './redux/store'; // Import the Redux store
+import Venues1 from './pages/Venues.js'; // Import your Venues component
+import Caterings1 from './pages/Catering.js'; 
+
 
 function App() {
-  const [data, setData] = useState({
-    role:"",
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    phoneNumber: ""
-  });
-
-  const [user, setUser] = useState({ loggedIn: false, token: "" });
-
-  const createCard = async (e) => {
-    try {
-      e.preventDefault();
-      const res = await axios({
-        url: "http://localhost:5600/bank/createCard",
-        method: "post",
-        data: { email: data.email },
-      
-      });
-      window.alert(res.data.msg);
-    } catch (e) {
-      window.alert("ERROR");
-    }
-  };
-
   return (
-    <Router>
-      <div>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />         
-          <Route path="/services" element={<Services />} />
-          <Route path="/venues" element={<Venues />} />
-          <Route path="/catering" element={<Catering />} />
-          <Route path="/photography" element={<Photography />} />
-          <Route path="/decor" element={<Decor />} />
-          <Route path="/pages/test.js" element={<Test />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Home />} /> {/* Home page route */}
+            <Route path="/venues1" element={<Venues1 />} /> {/* Venues page route */}
+            <Route path="/catering1" element={<Caterings1 />} /> {/* Venues page route */}
+            
+            {/* Add other routes as needed */}
+          </Routes>
+        </div>
+      </Router>
+    </Provider>
   );
 }
 
