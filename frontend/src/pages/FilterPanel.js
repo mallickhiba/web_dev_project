@@ -9,35 +9,31 @@ const FilterPanel = ({ serviceType, handleFilterChange, handleApplyFilters, hand
         area: ['Saddar', 'Gulshan-e-Iqbal', 'DHA', 'North Nazimabad', 'Other'],
         cancellation_policy: ['Flexible', 'Moderate', 'Strict'],
         staff: ['Male', 'Female'],
+        type: ['banquet', 'outdoor', ],
         capacity: true, // Add capacity only for venues
         price: true, // Add price for all service types
       }
     },
+    
     decor: {
-      fields: ['city', 'area', 'price', 'cancellation_policy', 'staff', 'decortype'],
-      labels: {
-        city: 'City',
-        area: 'Area',
-        price: 'Price',
-        cancellation_policy: 'Cancellation Policy',
-        staff: 'Staff',
-        decortype: 'Decor Type'
-      },
-      options: {
-        decortype: ['wedding', 'birthday party', 'anniversary', 'formal events']
+      fields: {
+        city: ['Karachi', 'Islamabad', 'Lahore'],
+        area: ['Saddar', 'Gulshan-e-Iqbal', 'DHA', 'North Nazimabad', 'Other'],
+        cancellation_policy: ['Flexible', 'Moderate', 'Strict'],
+        staff: ['Male', 'Female'],
+        type:['wedding', 'birthday party', 'anniversary', 'formal events'],
+        price: true, // Add price for all service types
       }
     },
     photography: {
-      fields: ['city', 'area', 'price', 'cancellation_policy', 'staff', 'drone'],
-      labels: {
-        city: 'City',
-        area: 'Area',
-        price: 'Price',
-        cancellation_policy: 'Cancellation Policy',
-        staff: 'Staff',
-        drone: 'Drone'
-      },    
-      options: {}
+      fields: {
+        city: ['Karachi', 'Islamabad', 'Lahore'],
+        area: ['Saddar', 'Gulshan-e-Iqbal', 'DHA', 'North Nazimabad', 'Other'],
+        cancellation_policy: ['Flexible', 'Moderate', 'Strict'],
+        staff: ['Male', 'Female'],
+        drone:['true', 'false'],
+        price: true, // Add price for all service types
+      }
     },
     catering: {
         fields: {
@@ -45,7 +41,7 @@ const FilterPanel = ({ serviceType, handleFilterChange, handleApplyFilters, hand
           area: ['Saddar', 'Gulshan-e-Iqbal', 'DHA', 'North Nazimabad', 'Other'],
           cancellation_policy: ['Flexible', 'Moderate', 'Strict'],
           staff: ['Male', 'Female'],
-          capacity: true, // Add capacity only for venues
+          cuisine:['Pakistani', 'French','Mexican'],
           price: true, // Add price for all service types
         }
       },

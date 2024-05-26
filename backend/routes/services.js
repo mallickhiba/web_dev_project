@@ -354,6 +354,7 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
 // View Available Services by Type. This is for finding sevices by type (includes pagination) --- TESTED
 router.get('/:serviceType', async (req, res) => {
   const { serviceType } = req.params;
@@ -475,7 +476,6 @@ router.post('/getbyservicename', async (req, res) => {
       console.log("No services found with the provided service name:", serviceName);
       return res.json({ msg: "No services found with the provided service name" });
     }
-
     console.log("Services found:", services);
     res.json({ msg: "Services found", data: services });
   } catch (error) {
@@ -645,6 +645,10 @@ router.delete('/:serviceId/packages/:packageId', async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
+
+
+
 
 
 // Get reviews for a specific service ***NOT TESTED
@@ -818,8 +822,8 @@ router.use(authenticate);
 router.use(adminMiddleware);
 router.use(vendorMiddleware);
 
-//Add a new service. -- TESTED 
-router.post("/create", vendorMiddleware,async (req, res) => {
+//Add a new service. -- TESTED
+router.post("/create", async (req, res) => {
   try {
     let vendorId;
     // Check if the user is admin then extract vendor id from body
@@ -843,7 +847,6 @@ router.post("/create", vendorMiddleware,async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
 
 // Edit service details including add/edit package as well. -- TESTED BUT NOT WORKING FOR ADDING/EDITING PACKAGE
 router.put("/:id", async (req, res) => {
@@ -925,7 +928,5 @@ router.post("/deleteby", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
-
 
 module.exports = router;

@@ -3,6 +3,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { carouselData } from "../data/Data";
+import Header from "../common/Header"; // Import the Header component
 
 export default function Carousel() {
   const sliderRef = useRef(null);
@@ -26,8 +27,12 @@ export default function Carousel() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+
   return (
     <>
+      {/* Include the Header component */}
+      <Header />
+
       <div className="container-fluid p-0 mb-5">
         <div
           id="header-carousel"
@@ -47,7 +52,6 @@ export default function Carousel() {
                       <h1 className="display-3 text-white mb-4 animated slideInDown">
                         {val.title}
                       </h1>
-                      
                     </div>
                   </div>
                 </div>
