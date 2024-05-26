@@ -101,7 +101,6 @@ router.get('/venues1', async (req, res) => {
 });
 
 
-
 router.get('/catering1', async (req, res) => {
   try {
     const page = parseInt(req.query.page) - 1 || 0;
@@ -184,7 +183,7 @@ router.get('/catering1', async (req, res) => {
 });
 
  // Adjust the path to your model
-router.get('/photography1', async (req, res) => {
+router.get('/photography', async (req, res) => {
   try {
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 5;
@@ -235,7 +234,7 @@ router.get('/photography1', async (req, res) => {
     filter.service_name = { $regex: search, $options: 'i' };
 
     // Fetch photography services
-    const photographys = await PhotographyService.find(filter)
+    const photographies = await PhotographyService.find(filter)
       .sort(sortBy)
       .skip(page * limit)
       .limit(limit);
@@ -249,7 +248,7 @@ router.get('/photography1', async (req, res) => {
       total,
       page: page + 1,
       limit,
-      photographys
+      photographies
     };
 
     res.status(200).json(response);
@@ -342,40 +341,6 @@ router.get('/decor1', async (req, res) => {
 
 
 
-//TESTED
-router.post('/getbyservicename', async (req, res) => {
-  try {
-    const { serviceName } = req.body;
-    console.log("Searching for service with name:", serviceName);
-
-    if (!serviceName) {
-      return res.status(400).json({ msg: "Service name is required in the request body" });
-    }
-
-    // Create a regex pattern for case-insensitive and extra white spaces in the service name
-    const regexPattern = serviceName.replace(/\s+/g, '\\s+');
-    const regex = new RegExp(regexPattern, 'i');
-
-    // Populate service with packages and vendor name from the 'users' collection
-    const services = await Service.find({ service_name: regex })
-      .populate({
-        path: 'vendor_id',
-        model: 'Users', // Use the correct collection name here
-        select: 'firstName lastName -_id'
-      });
-
-    if (services.length === 0) {
-      console.log("No services found with the provided service name:", serviceName);
-      return res.json({ msg: "No services found with the provided service name" });
-    }
-
-    console.log("Services found:", services);
-    res.json({ msg: "Services found", data: services });
-  } catch (error) {
-    console.error("Error fetching services:", error);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
 
 
 // Get all services -- TESTED
@@ -389,6 +354,7 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
 // View Available Services by Type. This is for finding sevices by type (includes pagination) --- TESTED
 router.get('/:serviceType', async (req, res) => {
   const { serviceType } = req.params;
@@ -484,9 +450,39 @@ router.get('/:serviceType/:locationId', async (req, res) => {
 });
 
 
+//TESTED
+router.post('/getbyservicename', async (req, res) => {
+  try {
+    const { serviceName } = req.body;
+    console.log("Searching for service with name:", serviceName);
 
+    if (!serviceName) {
+      return res.status(400).json({ msg: "Service name is required in the request body" });
+    }
 
+    // Create a regex pattern for case-insensitive and extra white spaces in the service name
+    const regexPattern = serviceName.replace(/\s+/g, '\\s+');
+    const regex = new RegExp(regexPattern, 'i');
 
+    // Populate service with packages and vendor name from the 'users' collection
+    const services = await Service.find({ service_name: regex })
+      .populate({
+        path: 'vendor_id',
+        model: 'Users', // Use the correct collection name here
+        select: 'firstName lastName -_id'
+      });
+
+    if (services.length === 0) {
+      console.log("No services found with the provided service name:", serviceName);
+      return res.json({ msg: "No services found with the provided service name" });
+    }
+    console.log("Services found:", services);
+    res.json({ msg: "Services found", data: services });
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
 
 
 // Get Service with vendor details using service ID. -- Tested 
@@ -651,6 +647,10 @@ router.delete('/:serviceId/packages/:packageId', async (req, res) => {
 });
 
 
+
+
+
+
 // Get reviews for a specific service ***NOT TESTED
 router.get('/service/:id/reviews', async (req, res) => {
   try {
@@ -711,7 +711,7 @@ router.post('/photography', authenticate, authorization, async (req, res) => {
   try {
     // Extract photography service details from the request body
     const { vendor_id, staff, cancellation_policy, service_name, service_category, description, 
-      start_price, location_id, packages,latitude,    longitude,  city,area, drone } = req.body;
+      start_price, location_id, packages,latitude, longitude, city,area, drone } = req.body;
 
     // Create a new photography service instance
     const newPhotographyService = new PhotographyService({
@@ -822,8 +822,8 @@ router.use(authenticate);
 router.use(adminMiddleware);
 router.use(vendorMiddleware);
 
-//Add a new service. -- TESTED 
-router.post("/create", vendorMiddleware,async (req, res) => {
+//Add a new service. -- TESTED
+router.post("/create", async (req, res) => {
   try {
     let vendorId;
     // Check if the user is admin then extract vendor id from body
@@ -847,7 +847,6 @@ router.post("/create", vendorMiddleware,async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
 
 // Edit service details including add/edit package as well. -- TESTED BUT NOT WORKING FOR ADDING/EDITING PACKAGE
 router.put("/:id", async (req, res) => {
@@ -929,7 +928,5 @@ router.post("/deleteby", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
-
-
 
 module.exports = router;
