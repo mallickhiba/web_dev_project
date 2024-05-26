@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchVenues, addToFavorites, bookVenue } from '../redux/serviceActions.js';
+import { fetchDecors, addToFavorites, bookVenue } from '../redux/serviceActions.js';
 import CommonHeading from '../common/CommonHeading';
 import Heading from '../common/Heading';
 import Header from "../common/Header";
@@ -9,10 +9,9 @@ import ServiceCard from './ServiceCard.js'; // Import the ServiceCard component
 import FilterPanel from './FilterPanel'; // Import the FilterPanel component
 import { Grid } from '@mui/material';
 
-const Venues = () => {
+const Decors = () => {
   const dispatch = useDispatch();
-  const { venues, loading, error, favorites } = useSelector((state) => state.venues);
-
+  const { decors, loading, error, favorites } = useSelector((state) => state.decors);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [search, setSearch] = useState('');
@@ -24,7 +23,7 @@ const Venues = () => {
   const [appliedFilters, setAppliedFilters] = useState({});
 
   useEffect(() => {
-    dispatch(fetchVenues({ page, limit, search, sort, filters: appliedFilters }));
+    dispatch(fetchDecors({ page, limit, search, sort, filters: appliedFilters }));
   }, [dispatch, page, limit, search, sort, appliedFilters]);
 
   const handleAddToFavorites = (serviceId) => {
@@ -89,23 +88,25 @@ const Venues = () => {
     setSort(e.target.value);
   };
 
-  
+  console.log(decors); // Add this line to log the caterings array
+
 
   return (
     <div>
-      <Header />
-      <Heading heading="Venues" title="Home" subtitle="Venues" />
+        <Header />
+      <Heading heading="Decor" title="Home" subtitle="Catering" />
       <div className="container-xxl py-5">
         <div className="container">
-          <CommonHeading heading="Our Venues" title="Venues" subtitle="Explore Our" />
+          <CommonHeading heading="Our Catering" title="Catering" subtitle="Explore Our" />
           <Grid container spacing={4}>
             <Grid item xs={3}>
               {/* Render the FilterPanel with serviceType="venue" */}
               <FilterPanel
-                serviceType="venue"
+                serviceType="decor"
                 handleFilterChange={handleFilterChange}
                 handleApplyFilters={handleApplyFilters}
                 handleSortChange={handleSortChange}
+                sort={sort}
               />
             </Grid>
             <Grid item xs={9}>
@@ -113,14 +114,16 @@ const Venues = () => {
     
                 {loading && <p>Loading...</p>}
                 {error && <p>{error}</p>}
-                {venues.map((service) => (
-                  <ServiceCard
-                    key={service._id}
-                    service={service}
-                    onAddToFavorites={handleAddToFavorites}
-                    onBookVenue={handleBookVenue}
-                  />
-                ))}
+                {Array.isArray(decors) && decors.map((service) => (
+  <ServiceCard
+    key={service._id}
+    service={service}
+    onAddToFavorites={handleAddToFavorites}
+    onBookVenue={handleBookVenue}
+  />
+))}
+    
+
               </div>
             </Grid>
           </Grid>
@@ -131,4 +134,4 @@ const Venues = () => {
   );
 };
 
-export default Venues;
+export default Decors;
