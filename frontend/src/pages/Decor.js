@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchDecors, addToFavorites, bookVenue } from '../redux/venueActions';
+import { fetchDecors, addToFavorites, bookVenue } from '../redux/serviceActions.js';
 import CommonHeading from '../common/CommonHeading';
 import Heading from '../common/Heading';
+import Header from "../common/Header";
+import Footer from "../common/Footer";
 import ServiceCard from './ServiceCard.js'; // Import the ServiceCard component
 import FilterPanel from './FilterPanel'; // Import the FilterPanel component
 import { Grid } from '@mui/material';
@@ -91,6 +93,7 @@ const Decors = () => {
 
   return (
     <div>
+        <Header />
       <Heading heading="Decor" title="Home" subtitle="Catering" />
       <div className="container-xxl py-5">
         <div className="container">
@@ -126,6 +129,7 @@ const Decors = () => {
           </Grid>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

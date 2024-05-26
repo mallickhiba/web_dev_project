@@ -17,6 +17,9 @@ import {
 import {
   setDecors,
 } from './DecorSlice';
+import {
+  setServices,
+} from './ServiceSlice';
 
 
 // Fetch venues with filtering and sorting
@@ -83,6 +86,24 @@ export const fetchDecors = createAsyncThunk(
         params: { page, limit, search, sort, ...filters }
       }); 
       dispatch(setDecors(response.data.decors));
+      console.log(response.data);
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setError(error.message));
+      dispatch(setLoading(false));
+    }
+  }
+);
+// Fetch venues with filtering and sorting
+export const fetchServices = createAsyncThunk(
+  'venues/fetchServices',
+  async ({ page, limit, search, sort, filters }, { dispatch }) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axios.get('http://localhost:5600/services/getbyservicename', {
+        params: { page, limit, search, sort, ...filters }
+      }); 
+      dispatch(setServices(response.data.services));
       console.log(response.data);
       dispatch(setLoading(false));
     } catch (error) {

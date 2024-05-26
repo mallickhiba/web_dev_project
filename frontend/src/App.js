@@ -14,18 +14,15 @@ import "./App.css";
 import Header from "./common/Header";
 import Home  from "./home/Homes.js";
 import Services from "./pages/ServicesPage.js";
-import Venues from "./pages/VenuePage.js";
-import Catering from "./pages/CateringPage.js";
-import Photography from "./pages/PhotographyPage.js";
-import Decor from "./pages/DecorPage.js";
 import Footer from "./common/Footer";
 import Test from "./pages/test.js";
 import { Provider } from 'react-redux';
 import store from './redux/store'; // Import the Redux store
-import Venues1 from './pages/Venues.js'; // Import your Venues component
-import Caterings1 from './pages/Catering.js'; 
-import Photography1 from './pages/Photography.js'; 
-import Decor1 from './pages/Decor.js'; 
+import Venues from './pages/Venues.js'; // Import your Venues component
+import Caterings from './pages/Catering.js'; 
+import Photography from './pages/Photography.js'; 
+import Decor from './pages/Decor.js'; 
+import Services1 from "./pages/Services.js";
 
 
 
@@ -36,15 +33,13 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Home />} /> {/* Home page route */}
-            <Route path="/venues1" element={<Venues1 />} /> {/* Venues page route */}
-            <Route path="/catering1" element={<Caterings1 />} /> {/* Venues page route */}
-            <Route path="/photography1" element={<Photography1 />} /> {/* Venues page route */}
-            <Route path="/decor1" element={<Decor1 />} /> {/* Venues page route */}
+            <Route path="/venues" element={<Venues />} /> {/* Venues page route */}
+            <Route path="/catering" element={<Caterings />} /> {/* Venues page route */}
+            <Route path="/photography" element={<Photography />} /> {/* Venues page route */}
+            <Route path="/decor" element={<Decor />} /> {/* Venues page route */}
             <Route path="/services" element={<Services />} />
-          <Route path="/venues" element={<Venues />} />
-          <Route path="/catering" element={<Catering />} />
-          <Route path="/photography" element={<Photography />} />
-          <Route path="/decor" element={<Decor />} />
+            <Route path="/services1" element={<Services1 />} />
+          
           <Route path="/pages/test.js" element={<Test />} />
 
             

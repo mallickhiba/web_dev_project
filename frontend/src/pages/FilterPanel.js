@@ -14,6 +14,7 @@ const FilterPanel = ({ serviceType, handleFilterChange, handleApplyFilters, hand
         price: true, // Add price for all service types
       }
     },
+    
     decor: {
       fields: {
         city: ['Karachi', 'Islamabad', 'Lahore'],

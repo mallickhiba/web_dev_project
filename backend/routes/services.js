@@ -101,6 +101,7 @@ router.get('/venues1', async (req, res) => {
 });
 
 
+
 router.get('/catering1', async (req, res) => {
   try {
     const page = parseInt(req.query.page) - 1 || 0;
@@ -341,6 +342,40 @@ router.get('/decor1', async (req, res) => {
 
 
 
+//TESTED
+router.post('/getbyservicename', async (req, res) => {
+  try {
+    const { serviceName } = req.body;
+    console.log("Searching for service with name:", serviceName);
+
+    if (!serviceName) {
+      return res.status(400).json({ msg: "Service name is required in the request body" });
+    }
+
+    // Create a regex pattern for case-insensitive and extra white spaces in the service name
+    const regexPattern = serviceName.replace(/\s+/g, '\\s+');
+    const regex = new RegExp(regexPattern, 'i');
+
+    // Populate service with packages and vendor name from the 'users' collection
+    const services = await Service.find({ service_name: regex })
+      .populate({
+        path: 'vendor_id',
+        model: 'Users', // Use the correct collection name here
+        select: 'firstName lastName -_id'
+      });
+
+    if (services.length === 0) {
+      console.log("No services found with the provided service name:", serviceName);
+      return res.json({ msg: "No services found with the provided service name" });
+    }
+
+    console.log("Services found:", services);
+    res.json({ msg: "Services found", data: services });
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
 
 
 // Get all services -- TESTED
@@ -449,40 +484,9 @@ router.get('/:serviceType/:locationId', async (req, res) => {
 });
 
 
-//TESTED
-router.post('/getbyservicename', async (req, res) => {
-  try {
-    const { serviceName } = req.body;
-    console.log("Searching for service with name:", serviceName);
 
-    if (!serviceName) {
-      return res.status(400).json({ msg: "Service name is required in the request body" });
-    }
 
-    // Create a regex pattern for case-insensitive and extra white spaces in the service name
-    const regexPattern = serviceName.replace(/\s+/g, '\\s+');
-    const regex = new RegExp(regexPattern, 'i');
 
-    // Populate service with packages and vendor name from the 'users' collection
-    const services = await Service.find({ service_name: regex })
-      .populate({
-        path: 'vendor_id',
-        model: 'Users', // Use the correct collection name here
-        select: 'firstName lastName -_id'
-      });
-
-    if (services.length === 0) {
-      console.log("No services found with the provided service name:", serviceName);
-      return res.json({ msg: "No services found with the provided service name" });
-    }
-
-    console.log("Services found:", services);
-    res.json({ msg: "Services found", data: services });
-  } catch (error) {
-    console.error("Error fetching services:", error);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
 
 
 // Get Service with vendor details using service ID. -- Tested 
