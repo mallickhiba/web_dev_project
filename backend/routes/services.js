@@ -183,7 +183,7 @@ router.get('/catering1', async (req, res) => {
 });
 
  // Adjust the path to your model
-router.get('/photography', async (req, res) => {
+router.get('/photography1', async (req, res) => {
   try {
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 5;
@@ -234,7 +234,7 @@ router.get('/photography', async (req, res) => {
     filter.service_name = { $regex: search, $options: 'i' };
 
     // Fetch photography services
-    const photographies = await PhotographyService.find(filter)
+    const photographys = await PhotographyService.find(filter)
       .sort(sortBy)
       .skip(page * limit)
       .limit(limit);
@@ -248,7 +248,7 @@ router.get('/photography', async (req, res) => {
       total,
       page: page + 1,
       limit,
-      photographies
+      photographys
     };
 
     res.status(200).json(response);

@@ -24,6 +24,9 @@ import { Provider } from 'react-redux';
 import store from './redux/store'; // Import the Redux store
 import Venues1 from './pages/Venues.js'; // Import your Venues component
 import Caterings1 from './pages/Catering.js'; 
+import Photography1 from './pages/Photography.js'; 
+import Decor1 from './pages/Decor.js'; 
+
 
 
 function App() {
@@ -35,6 +38,15 @@ function App() {
             <Route path="/" element={<Home />} /> {/* Home page route */}
             <Route path="/venues1" element={<Venues1 />} /> {/* Venues page route */}
             <Route path="/catering1" element={<Caterings1 />} /> {/* Venues page route */}
+            <Route path="/photography1" element={<Photography1 />} /> {/* Venues page route */}
+            <Route path="/decor1" element={<Decor1 />} /> {/* Venues page route */}
+            <Route path="/services" element={<Services />} />
+          <Route path="/venues" element={<Venues />} />
+          <Route path="/catering" element={<Catering />} />
+          <Route path="/photography" element={<Photography />} />
+          <Route path="/decor" element={<Decor />} />
+          <Route path="/pages/test.js" element={<Test />} />
+
             
             {/* Add other routes as needed */}
           </Routes>

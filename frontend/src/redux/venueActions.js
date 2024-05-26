@@ -11,6 +11,12 @@ import {
 import {
   setCaterings,
 } from './CateringSlice';
+import {
+  setPhotographys,
+} from './PhotographySlice';
+import {
+  setDecors,
+} from './DecorSlice';
 
 
 // Fetch venues with filtering and sorting
@@ -48,7 +54,43 @@ export const fetchCaterings = createAsyncThunk(
     }
   }
 );
+// Fetch venues with filtering and sorting
+export const fetchPhotographys = createAsyncThunk(
+  'venues/fetchPhotographys',
+  async ({ page, limit, search, sort, filters }, { dispatch }) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axios.get('http://localhost:5600/services/photography1', {
+        params: { page, limit, search, sort, ...filters }
+      }); 
+      dispatch(setPhotographys(response.data.photographys));
+      console.log(response.data);
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setError(error.message));
+      dispatch(setLoading(false));
+    }
+  }
+);
 
+// Fetch venues with filtering and sorting
+export const fetchDecors = createAsyncThunk(
+  'venues/fetchDecors',
+  async ({ page, limit, search, sort, filters }, { dispatch }) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axios.get('http://localhost:5600/services/decor1', {
+        params: { page, limit, search, sort, ...filters }
+      }); 
+      dispatch(setDecors(response.data.decors));
+      console.log(response.data);
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setError(error.message));
+      dispatch(setLoading(false));
+    }
+  }
+);
 
 // Add a venue to favorites
 export const addToFavorites = createAsyncThunk(
