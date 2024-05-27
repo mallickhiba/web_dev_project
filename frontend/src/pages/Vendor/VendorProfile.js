@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setUserDetails, logout } from '../redux/userSlice';
-import { Box, Typography, TextField, Button, Divider,Grid } from '@mui/material';
+import { Box, Typography, TextField, Button,Grid, Container } from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { NotificationManager } from 'react-notifications';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { setUserDetails} from '../../redux/userSlice';
+import DashboardSidebar from '../../common/DashboardSidebar';
 
-const VendorHome = () => {
+const VendorProfile = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const token = useSelector((state) => state.user.token);
   const vendorData = useSelector((state) => state.user.userDetails);
@@ -65,36 +64,29 @@ const VendorHome = () => {
     }
   };
   
-  const handleLogout = async () => {
-    try {
-      await axios.post('http://localhost:5600/auth/logout', null, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      dispatch(logout());
-      navigate('/login')
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
+
 
   if (!vendorData) {
     return <div>Loading...</div>;
   }
 
   return (
-    <Box mx={4} my={4}>
-    <Grid container justifyContent="flex-end">
-      <Button onClick={handleLogout} variant="contained" color="secondary">
-        Logout
-      </Button>
-    </Grid>
+    <Container>
+    <Grid container>
+      {/* Render the DashboardSidebar component */}
+      <Grid item xs={12} md={3}>
+        <DashboardSidebar active={3} />
+      </Grid>
+      
+      {/* Main content */}
+      <Grid item xs={12} md={9}>
+        <Box mx={4} my={4}>
 
-
-    <Box mx="auto" mt={12} bgcolor="background.paper" maxWidth="7xl" px={4} sm={6} lg={8}>
-<Box border="1px solid #ccc" borderRadius={4} p={3} mb={3} mt={2}>
-  <Typography variant="h4" gutterBottom>
-    Vendor Profile
-  </Typography>
+          <Box mx="auto" mt={12} bgcolor="background.paper" maxWidth="7xl" px={4} sm={6} lg={8}>
+            <Box border="1px solid #ccc" borderRadius={4} p={3} mb={3} mt={2}>
+              <Typography variant="h4" gutterBottom>
+                Vendor Profile
+              </Typography>
         {!editMode ? (
           <div>
             <Typography>Email: {vendorData.email}</Typography>
@@ -266,7 +258,10 @@ const VendorHome = () => {
       </Box>
 
     </Box>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 
-export default VendorHome;
+export default VendorProfile;
