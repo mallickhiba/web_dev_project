@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 const initialState = {
   services: [],
@@ -6,8 +7,17 @@ const initialState = {
   loading: false,
   error: null,
   favorites: [],
-  bookingStatus: null
+  bookingStatus: null,
+  selectedService: null
 };
+export const fetchAllServiceByIdAsync = createAsyncThunk(
+  'service/fetchServiceById',
+  async (id) => {
+    const response = await axios.get(`http://localhost:5600/services/byid/${id}`);
+    return response.data.data;
+  }
+);
+
 
 const serviceSlice = createSlice({
   name: 'services',
@@ -16,7 +26,9 @@ const serviceSlice = createSlice({
     setServices(state, action) {
       state.services = action.payload;
       console.log(action.payload);
-
+    },
+    setServiceDetail(state, action) {
+      state.serviceDetail = action.payload; // Define setServiceDetail action
     },
     setFilteredServices(state, action) {
       state.filteredServices = action.payload;
@@ -38,19 +50,30 @@ const serviceSlice = createSlice({
     },
     setBookingStatus(state, action) {
       state.bookingStatus = action.payload;
+    },
+    fetchAllServiceByIdAsync(state, action) {
+      state.selectedService = action.payload;
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchAllServiceByIdAsync.fulfilled, (state, action) => {
+      state.selectedService = action.payload;
+    });
   }
 });
 
 export const {
   setServices,
+  setServiceDetail, // Export the action
   setFilteredServices,
   addService,
   setLoading,
   setError,
   addFavorite,
   removeFavorite,
-  setBookingStatus
+  setBookingStatus,
+  selectedService
+
 } = serviceSlice.actions;
 
 export default serviceSlice.reducer;

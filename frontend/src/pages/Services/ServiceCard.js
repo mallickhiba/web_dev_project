@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ServiceCard = ({ service, onAddToFavorites, onBookVenue }) => {
   return (
-    <div className="col-lg-12 wow fadeInUp" data-wow-delay="0.1s">
+    <Link to={`/service/${service._id}`} className="col-lg-12 wow fadeInUp" data-wow-delay="0.1s">
       <div className="room-item shadow rounded overflow-hidden">
         <div className="position-relative">
         </div>
@@ -30,7 +31,7 @@ const ServiceCard = ({ service, onAddToFavorites, onBookVenue }) => {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

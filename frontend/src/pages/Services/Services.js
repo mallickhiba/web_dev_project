@@ -1,14 +1,18 @@
 import React from "react";
-import Header from "../common/Header";
-import CommonHeading from "../common/CommonHeading";
-import Footer from "../common/Footer";
+import Header from "../../common/Header";
+import CommonHeading from "../../common/CommonHeading";
+import Footer from "../../common/Footer";
 import ServiceCard from "./ServiceCard"; // assuming you have a ServiceCard component
 
 const Services1 = ({ services, loading, error }) => {
   return (
     <div>
       <Header />
-      <CommonHeading heading="Our Services" title="Services" subtitle="Explore Our" />
+      <CommonHeading
+        heading="Our Services"
+        title="Services"
+        subtitle="Explore Our"
+      />
       <div className="container-xxl py-5">
         <div className="container">
           <div className="row g-4">

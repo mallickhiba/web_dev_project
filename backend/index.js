@@ -9,6 +9,7 @@ const router = require('./routes/index');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 (async () => {
     try {
@@ -22,7 +23,8 @@ app.use(cors());
 app.use('/', router);
 
 app.use(function (req, res, next) {
-    console.log(req.body)
+    console.log(req.body);
+    console.log("at middleware");
     next(createError(404)); // middleware 
 });
 
