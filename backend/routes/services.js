@@ -663,8 +663,15 @@ router.get('/service/:id/reviews', async (req, res) => {
 });
 
 
-//Middleware should ensure admin can perform CRUD operations on all services and vendor can only do so on services with his vendorID
-// To delete/edit/add a package, vendor/admin can edit the service and perform operaions. 
+/*
+
+-------------------  ADDED NEW APIS HERE   ----------------------------
+
+*/
+
+// Admin can only add or delete a service. 
+//Vendor can add/edit/delete his service.
+// Vendor can also add/edit/delete a package of his service
 
 
 router.post('/addService', authenticate, authorization, async (req, res) => {
@@ -782,7 +789,7 @@ router.post('/addService', authenticate, authorization, async (req, res) => {
 
 
 // Edit service API - TESTED
-router.put('/editService/:serviceId', authenticate, authorization, async (req, res) => {
+router.put('/editService/:serviceId', authenticate, vendorMiddleware, async (req, res) => {
   try {
     const serviceId = req.params.serviceId;
     console.log("Editing service with ID:", serviceId);
@@ -795,7 +802,7 @@ router.put('/editService/:serviceId', authenticate, authorization, async (req, r
     }
 
     // Check if the vendor is authorized to edit this service
-    if (existingService.vendor_id.toString() !== req.user.id && req.user.role !== "admin") {
+    if (existingService.vendor_id.toString() !== req.user.id) {
       console.log("Unauthorized to edit this service");
       return res.status(403).json({ msg: "Unauthorized to edit this service" });
     }
@@ -935,7 +942,7 @@ router.post('/addPackage/:serviceId', authenticate, vendorMiddleware, async (req
 });
 
 
-router.post('/deletePackage/:serviceId/:packageId', authenticate, authorization, async (req, res) => {
+router.post('/deletePackage/:serviceId/:packageId', authenticate, vendorMiddleware, async (req, res) => {
   try {
     const { serviceId, packageId } = req.params;
 
@@ -946,7 +953,7 @@ router.post('/deletePackage/:serviceId/:packageId', authenticate, authorization,
     }
 
     // Check if the vendor is authorized to delete this package
-    if (existingService.vendor_id.toString() !== req.user.id && req.user.role !== "admin") {
+    if (existingService.vendor_id.toString() !== req.user.id) {
       return res.status(403).json({ msg: "Unauthorized to delete this package" });
     }
 
