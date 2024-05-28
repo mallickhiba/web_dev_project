@@ -1,6 +1,7 @@
 
 var express = require("express");
 const mongoose = require("mongoose");
+const axios = require('axios');
 const authenticate = require('../middlewares/authenticate.js');
 const authorization = require('../middlewares/authorization.js');
 const adminMiddleware = require('../middlewares/adminMiddleware');
@@ -12,6 +13,7 @@ const VenueService = require('../models/Services').model('VenueService');
 const PhotographyService = require('../models/Services').model('PhotographyService');
 const CateringService = require('../models/Services').model('CateringService');
 const DecorService = require('../models/Services').model('DecorService');
+const BaseService = require('../models/Services'); // Adjust the path as per your project structure
 var router = express.Router();
 //*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN********************************************
 router.get('/venues1', async (req, res) => {
@@ -340,7 +342,85 @@ router.get('/decor1', async (req, res) => {
 });
 
 
+// API to get all services for a specific vendor with pagination, filtering, and sorting -- TESTED
+router.get('/servicesbyVendor', authenticate, vendorMiddleware, async (req, res) => {
+  try {
+      const vendorId = req.user.id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const serviceType = req.query.serviceType || '';
+      const sortBy = req.query.sortBy || 'createdAt';
+      const sortOrder = req.query.sortOrder || 'desc';
+      
+      let queryCriteria = { vendor_id: vendorId };
 
+      // Add service category filter if provided
+      if (serviceType) {
+          queryCriteria.service_category = serviceType;
+      }
+
+      const skip = (page - 1) * limit;
+      let services;
+      let totalServices;
+
+      // Use discriminators or BaseService based on service type
+      switch (serviceType) {
+          case 'catering':
+              services = await CateringService.find(queryCriteria)
+                  .limit(limit)
+                  .skip(skip)
+                  .sort({ [sortBy]: sortOrder });
+              totalServices = await CateringService.countDocuments(queryCriteria);
+              break;
+          case 'decor':
+              services = await DecorService.find(queryCriteria)
+                  .limit(limit)
+                  .skip(skip)
+                  .sort({ [sortBy]: sortOrder });
+              totalServices = await DecorService.countDocuments(queryCriteria);
+              break;
+          case 'photography':
+              services = await PhotographyService.find(queryCriteria)
+                  .limit(limit)
+                  .skip(skip)
+                  .sort({ [sortBy]: sortOrder });
+              totalServices = await PhotographyService.countDocuments(queryCriteria);
+              break;
+          case 'venue':
+              services = await VenueService.find(queryCriteria)
+                  .limit(limit)
+                  .skip(skip)
+                  .sort({ [sortBy]: sortOrder });
+              totalServices = await VenueService.countDocuments(queryCriteria);
+              break;
+          default:
+              // If no service type specified, retrieve all services
+              services = await BaseService.find(queryCriteria)
+                  .limit(limit)
+                  .skip(skip)
+                  .sort({ [sortBy]: sortOrder });
+              totalServices = await BaseService.countDocuments(queryCriteria);
+              break;
+      }
+
+      const pagination = {
+          offset: skip,
+          records_per_page: limit,
+          total_records: totalServices,
+          total_pages: Math.ceil(totalServices / limit),
+          current_page: page
+      };
+
+      if (skip + limit < totalServices) {
+          pagination.next_page = page + 1;
+      }
+
+      res.json({ pagination, services });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: "Internal Server Error" });
+  }
+});
 
 
 // Get all services -- TESTED
@@ -354,6 +434,8 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 });
+
+
 
 // View Available Services by Type. This is for finding sevices by type (includes pagination) --- TESTED
 router.get('/:serviceType', async (req, res) => {
@@ -409,45 +491,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-// View Services by Service Category and Location ID with Pagination--Tested
-router.get('/:serviceType/:locationId', async (req, res) => {
-  const { serviceType, locationId } = req.params;
-  const { page = 1, limit = 10 } = req.query;
-
-  try {
-    if (!['decor', 'venue', 'catering', 'photography'].includes(serviceType)) {
-      return res.status(400).json({ msg: "Invalid service type" });
-    }
-
-    // Query services by service type and location ID with pagination
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-
-    const totalServices = await Service.countDocuments({ service_category: serviceType, location_id: locationId });
-    const services = await Service.find({ service_category: serviceType, location_id: locationId })
-      .limit(limit)
-      .skip(startIndex);
-
-    // Pagination result
-    const pagination = {
-      offset: startIndex,
-      records_per_page: limit,
-      total_records: totalServices,
-      total_pages: Math.ceil(totalServices / limit),
-      current_page: +page
-    };
-
-    if (endIndex < totalServices) {
-      pagination.next_page = +page + 1;
-    }
-
-    res.json({ pagination, services });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
 
 
 //TESTED
@@ -562,29 +605,6 @@ router.get('/:serviceType/:city', async (req, res) => {
 });
 
 
-
-//api to et service type by city AND AREA (AREA GOES IN REQ BODY ) - NOT TESTED
-router.post('/:serviceType/:city', async (req, res) => {
-  try {
-    const { serviceType, city } = req.params;
-    const { area } = req.body;
-    
-    if (!['Karachi', 'Lahore', 'Islamabad'].includes(city)) {
-      return res.status(400).json({ msg: 'Invalid city' });
-    }    const services = await Service.find({ service_category: serviceType, city: city, area: area });
-    if (services.length === 0) {
-      return res.status(404).json({ msg: `No services found for ${serviceType} in ${area}, ${city}` });
-    }    res.json({ msg: `Services found for ${serviceType} in ${area}, ${city}`, data: services });
-  } catch (error) {
-    console.error('Error finding services:', error);
-    res.status(500).json({ msg: 'Internal server error' });
-  }
-});
-
-
-
-//Package APIs
-
 // GET all packages of a service -- TESTED
 router.get('/:serviceId/packages', async (req, res) => {
   try {
@@ -623,28 +643,7 @@ router.get('/:serviceId/packages/:packageId', async (req, res) => {
   }
 });
 
-// DELETE a specific package by package ID --NOT TESTED
-router.delete('/:serviceId/packages/:packageId', async (req, res) => {
-  try {
-    console.log("Finding service to delete package from");
-    const service = await Service.findById(req.params.serviceId);
-    if (!service) {
-      return res.status(404).json({ msg: "Service not found" });
-    }
-    const packageId = parseInt(req.params.packageId); // Convert packageId to an integer
-    const packageIndex = service.packages.findIndex(pkg => pkg.package_id === packageId);
-    if (packageIndex === -1) {
-      return res.status(404).json({ msg: "Package not found" });
-    }
-    service.packages.splice(packageIndex, 1);
-    await service.save();
-    console.log("Package deleted");
-    res.json({ msg: "Package deleted" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
+
 
 
 
@@ -664,269 +663,338 @@ router.get('/service/:id/reviews', async (req, res) => {
 });
 
 
-//*************APIS  only work for vendors and admin but there is an issue with fetching id (will be an issue in the frontend)***************////
-router.use(authenticate); 
-router.use(authorization); 
-
-// POST endpoint to add a new venue
-router.post('/venue',authenticate,authorization,async (req, res) => {
-  try {
-    // Extract venue details from the request body
-    const {vendor_id,staff, cancellation_policy, service_name,service_category, 
-      description, start_price, location_id,packages,latitude,
-      longitude, city,area,capacity, outdoor } = req.body;
-
-    // Create a new venue service instance
-    const newVenue = new VenueService({
-      vendor_id,
-      staff,
-      cancellation_policy,
-      service_name,
-      service_category,
-      description,
-      start_price,
-      location_id,
-      packages, // Assuming packages are included in the request body,
-      latitude,
-      longitude,
-      city,
-      area,
-      capacity,
-      outdoor
-    });
-
-    // Save the new venue service to the database
-    await newVenue.save();
-
-    res.status(201).json({ msg: 'Venue added successfully!', venue: newVenue });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: 'Internal Server Error' });
-  }
-});
-
-
-// POST endpoint to add a new photography service
-router.post('/photography', authenticate, authorization, async (req, res) => {
-  try {
-    // Extract photography service details from the request body
-    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, 
-      start_price, location_id, packages,latitude, longitude, city,area, drone } = req.body;
-
-    // Create a new photography service instance
-    const newPhotographyService = new PhotographyService({
-      vendor_id,
-      staff,
-      cancellation_policy,
-      service_name,
-      service_category,
-      description,
-      start_price,
-      location_id,
-      packages, // Assuming packages are included in the request body
-      latitude,
-      longitude,
-      city,
-      area,
-      drone
-    });
-
-    // Save the new photography service to the database
-    await newPhotographyService.save();
-
-    res.status(201).json({ msg: 'Photography service added successfully!', service: newPhotographyService });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: 'Internal Server Error' });
-  }
-});
-// POST endpoint to add a new catering service
-router.post('/catering', authenticate, authorization,async (req, res) => {
-  try {
-    // Extract catering service details from the request body
-    const { vendor_id, staff, cancellation_policy, service_name, service_category, description, start_price, location_id, 
-      packages,latitude,longitude, city,  area, cuisine } = req.body;
-
-    // Create a new catering service instance
-    const newCateringService = new CateringService({
-      vendor_id,
-      staff,
-      cancellation_policy,
-      service_name,
-      service_category,
-      description,
-      start_price,
-      location_id,
-      packages, // Assuming packages are included in the request body
-      latitude,
-      longitude,
-      city,
-      area,
-      cuisine
-    });
-
-    // Save the new catering service to the database
-    await newCateringService.save();
-
-    res.status(201).json({ msg: 'Catering service added successfully!', service: newCateringService });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: 'Internal Server Error' });
-  }
-});
- 
-
-// POST endpoint to add a new decor service
-// POST endpoint to add a new decor service
-router.post('/decor', authenticate,authorization, async (req, res) => {
-  try {
-    // Extract decor service details from the request body
-    const { vendor_id, staff, cancellation_policy, service_name, service_category, description,
-       start_price, location_id, packages,latitude,    longitude,   city, area, decortype } = req.body;
-
-    // Create a new decor service instance
-    const newDecorService = new DecorService({
-      vendor_id,
-      staff,
-      cancellation_policy,
-      service_name,
-      service_category,
-      description,
-      start_price,
-      location_id,
-      packages, // Assuming packages are included in the request body
-      latitude,
-      longitude,
-      city,
-      area,
-      decortype
-    });
-
-    // Save the new decor service to the database
-    await newDecorService.save();
-
-    res.status(201).json({ msg: 'Decor service added successfully!', service: newDecorService });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: 'Internal Server Error' });
-  }
-});
-
-
-//******FOLLOWING APIS CAN ONLY BE ACCESED WITH LOGGED IN ADMIN AND VENDOR USERS */
-router.use(authenticate);
-
-// middleware to ensure only admin can create/edit/delete services. 
 //Middleware should ensure admin can perform CRUD operations on all services and vendor can only do so on services with his vendorID
 // To delete/edit/add a package, vendor/admin can edit the service and perform operaions. 
-router.use(adminMiddleware);
-router.use(vendorMiddleware);
 
-//Add a new service. -- TESTED
-router.post("/create", async (req, res) => {
+
+router.post('/addService', authenticate, authorization, async (req, res) => {
   try {
     let vendorId;
-    // Check if the user is admin then extract vendor id from body
-    if (req.user.role == "admin") {
+    if (req.user.role === "admin") {
       vendorId = req.body.vendor_id;
     } else if (req.user.role === "vendor") {
-      // If user is vendor then extract the vendor ID from their account
-      vendorId = req.user.id; 
+      vendorId = req.user.id;
     } else {
-      return res.status(403).json({ msg: "Unauthorized access" }); // Return 403 Forbidden for other roles
+      return res.status(403).json({ msg: "Unauthorized access" });
     }
     console.log("Vendor ID:", vendorId);
 
-    const serviceData = { ...req.body, vendor_id: vendorId };
-    await Service.create(serviceData);
-    console.log("Service data:", serviceData);
-    res.json({ msg: "Service added" });
+
+    // Extract common service details from the request body
+    const { staff, cancellation_policy, service_name, service_category, description, start_price, packages, latitude, longitude, city, area } = req.body;
+ // Check if the service name already exists within the specified service category
+ const existingService = await BaseService.findOne({ service_name: service_name, service_category: service_category });
+
+ if (existingService) {
+   return res.status(400).json({ msg: "Service name already exists within the specified category" });
+ }
+
+    let newService;
+
+    // Determine the service category and create the appropriate service instance
+    switch (service_category) {
+      case 'catering':
+        const { cuisine } = req.body;
+        newService = new CateringService({
+          vendor_id: vendorId,
+          staff,
+          cancellation_policy,
+          service_name,
+          service_category,
+          description,
+          start_price,
+          packages,
+          latitude,
+          longitude,
+          city,
+          area,
+          cuisine
+        });
+        break;
+      case 'decor':
+        const { decortype } = req.body;
+        newService = new DecorService({
+          vendor_id: vendorId,
+          staff,
+          cancellation_policy,
+          service_name,
+          service_category,
+          description,
+          start_price,
+          packages,
+          latitude,
+          longitude,
+          city,
+          area,
+          decortype
+        });
+        break;
+      case 'photography':
+        const { drone } = req.body;
+        newService = new PhotographyService({
+          vendor_id: vendorId,
+          staff,
+          cancellation_policy,
+          service_name,
+          service_category,
+          description,
+          start_price,
+          packages,
+          latitude,
+          longitude,
+          city,
+          area,
+          drone
+        });
+        break;
+      case 'venue':
+        const { capacity, outdoor } = req.body;
+        newService = new VenueService({
+          vendor_id: vendorId,
+          staff,
+          cancellation_policy,
+          service_name,
+          service_category,
+          description,
+          start_price,
+          packages,
+          latitude,
+          longitude,
+          city,
+          area,
+          capacity,
+          outdoor
+        });
+        break;
+      default:
+        return res.status(400).json({ msg: "Invalid service category" });
+    }
+
+    // Save the new service to the database
+    await newService.save();
+
+    res.status(201).json({ msg: 'Service added successfully!', service: newService });
   } catch (error) {
     console.error(error);
-    console.error("Error adding service:", error); // Log the error
-    res.status(500).json({ msg: "Internal server error" });
+    res.status(500).json({ msg: 'Internal Server Error' });
   }
 });
 
-// Edit service details including add/edit package as well. -- TESTED BUT NOT WORKING FOR ADDING/EDITING PACKAGE
-router.put("/:id", async (req, res) => {
-  try {
-    console.log("Updating service details...");
 
-    const service = await Service.findById(req.params.id);
-    if (!service) {
-      console.log("Service not found.");
+// Edit service API - TESTED
+router.put('/editService/:serviceId', authenticate, authorization, async (req, res) => {
+  try {
+    const serviceId = req.params.serviceId;
+    console.log("Editing service with ID:", serviceId);
+
+    // Check if the service exists
+    const existingService = await BaseService.findById(serviceId);
+    if (!existingService) {
+      console.log("Service not found");
       return res.status(404).json({ msg: "Service not found" });
     }
 
-    // Check if the user is a vendor
-    if (req.user && req.user.role === "vendor") {
-      const vendorId = req.user.userId;
-      // Check if the vendor ID matches the vendor ID associated with the service
-      if (vendorId.toString() !== service.vendor_id.toString()) {
-        console.log("Unauthorized access.");
-        return res.status(403).json({ msg: "You are not authorized to edit this service" });
-      }
+    // Check if the vendor is authorized to edit this service
+    if (existingService.vendor_id.toString() !== req.user.id && req.user.role !== "admin") {
+      console.log("Unauthorized to edit this service");
+      return res.status(403).json({ msg: "Unauthorized to edit this service" });
     }
 
-    // Update service fields based on request body
-    service.service_name = req.body.service_name || service.service_name;
-    service.service_type = req.body.service_type || service.service_type;
-    service.cancellation_policy = req.body.cancellation_policy || service.cancellation_policy;
-    service.staff = req.body.staff || service.staff;
-    service.description = req.body.description || service.description;
-    service.start_price = req.body.start_price || service.start_price;
+    console.log("Service found. Updating...");
 
-    console.log("Service updated:", service);
+    // Update common service details if provided
+    existingService.staff = req.body.staff || existingService.staff;
+    existingService.cancellation_policy = req.body.cancellation_policy || existingService.cancellation_policy;
+    existingService.service_name = req.body.service_name || existingService.service_name;
+    existingService.description = req.body.description || existingService.description;
+    existingService.start_price = req.body.start_price || existingService.start_price;
+    existingService.latitude = req.body.latitude || existingService.latitude;
+    existingService.longitude = req.body.longitude || existingService.longitude;
+    existingService.city = req.body.city || existingService.city;
+    existingService.area = req.body.area || existingService.area;
 
-    if (req.body.packages) {
-      for (const pkg of req.body.packages) {
-        // Check if the package already exists
-        const existingPackageIndex = service.packages.findIndex(existingPkg => existingPkg.package_id === pkg.package_id);
-        if (existingPackageIndex !== -1) {
-          // If the package exists, update its details
-          service.packages[existingPackageIndex].name = pkg.name || service.packages[existingPackageIndex].name;
-          service.packages[existingPackageIndex].price = pkg.price || service.packages[existingPackageIndex].price;
-          service.packages[existingPackageIndex].description = pkg.description || service.packages[existingPackageIndex].description;
-        } else {
-          // If the package doesn't exist, add it to the service's packages array
-          service.packages.push(pkg);
+    // Update packages if provided
+    if (req.body.packages && req.body.packages.length > 0) {
+      req.body.packages.forEach(pkg => {
+        const packageIndex = existingService.packages.findIndex(p => p._id.toString() === pkg._id.toString());
+        if (packageIndex !== -1) {
+          existingService.packages[packageIndex].name = pkg.name || existingService.packages[packageIndex].name;
+          existingService.packages[packageIndex].price = pkg.price || existingService.packages[packageIndex].price;
+          existingService.packages[packageIndex].description = pkg.description || existingService.packages[packageIndex].description;
         }
-      }
+      });
+
+      console.log("Packages updated");
     }
-    await service.save();
 
-    console.log("Service saved:", service);
+    console.log("Service details updated");
 
-    res.json({ msg: "Service updated", data: service });
+    // Save the updated service to the database
+    await existingService.save();
+
+    console.log("Service saved to the database");
+
+    // Update service specific details based on service category
+    switch (existingService.service_category) {
+      case 'catering':
+        existingService.cuisine = req.body.cuisine || existingService.cuisine;
+        console.log("Catering service details updated");
+        break;
+      case 'decor':
+        existingService.decortype = req.body.decortype || existingService.decortype;
+        console.log("Decor service details updated");
+        break;
+      case 'photography':
+        existingService.drone = req.body.drone || existingService.drone;
+        console.log("Photography service details updated");
+        break;
+      case 'venue':
+        existingService.capacity = req.body.capacity || existingService.capacity;
+        existingService.outdoor = req.body.outdoor || existingService.outdoor;
+        console.log("Venue service details updated");
+        break;
+      default:
+        console.log("Invalid service category");
+        return res.status(400).json({ msg: "Invalid service category" });
+    }
+
+    res.status(200).json({ msg: 'Service updated successfully!', service: existingService });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internal server error" });
+    console.error("Error updating service:", error);
+    res.status(500).json({ msg: 'Internal Server Error' });
   }
 });
+
+
+// API to update a specific package of a service -- TESTED 
+router.put('/editPackage/:serviceId/:packageId', authenticate, vendorMiddleware, async (req, res) => {
+  try {
+    const { serviceId, packageId } = req.params;
+
+    // Check if the service exists
+    const existingService = await BaseService.findById(serviceId);
+    if (!existingService) {
+      return res.status(404).json({ msg: "Service not found" });
+    }
+
+    // Check if the vendor is authorized to edit this service
+    if (existingService.vendor_id.toString() !== req.user.id) {
+      return res.status(403).json({ msg: "Unauthorized to edit this service" });
+    }
+
+    // Find the package to update
+    const packageToUpdate = existingService.packages.find(pkg => pkg._id.toString() === packageId);
+    if (!packageToUpdate) {
+      return res.status(404).json({ msg: "Package not found" });
+    }
+
+    // Update only the fields provided in the request body
+    Object.assign(packageToUpdate, req.body);
+
+    // Save the updated service to the database
+    await existingService.save();
+
+    res.status(200).json({ msg: 'Package updated successfully!', package: packageToUpdate });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+
+
+router.post('/addPackage/:serviceId', authenticate, vendorMiddleware, async (req, res) => {
+  try {
+    const serviceId = req.params.serviceId;
+
+    // Check if the service exists
+    const existingService = await BaseService.findById(serviceId);
+    if (!existingService) {
+      return res.status(404).json({ msg: "Service not found" });
+    }
+
+    // Check if the vendor is authorized to add a package to this service
+    if (existingService.vendor_id.toString() !== req.user.id) {
+      return res.status(403).json({ msg: "Unauthorized to add a package to this service" });
+    }
+
+    // Create a new package object
+    const newPackage = {
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description
+    };
+
+    existingService.packages.push(newPackage);
+    await existingService.save();
+
+    res.status(201).json({ msg: 'Package added successfully!', package: newPackage });
+  } catch (error) {
+    console.error("Error adding package:", error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+
+
+router.post('/deletePackage/:serviceId/:packageId', authenticate, authorization, async (req, res) => {
+  try {
+    const { serviceId, packageId } = req.params;
+
+    // Check if the service exists
+    const existingService = await BaseService.findById(serviceId);
+    if (!existingService) {
+      return res.status(404).json({ msg: "Service not found" });
+    }
+
+    // Check if the vendor is authorized to delete this package
+    if (existingService.vendor_id.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(403).json({ msg: "Unauthorized to delete this package" });
+    }
+
+    // Find the index of the package to delete
+    const packageIndex = existingService.packages.findIndex(pkg => pkg._id.toString() === packageId);
+    if (packageIndex === -1) {
+      return res.status(404).json({ msg: "Package not found" });
+    }
+
+    // Remove the package from the packages array
+    existingService.packages.splice(packageIndex, 1);
+
+    // Save the updated service to the database
+    await existingService.save();
+
+    res.status(200).json({ msg: 'Package deleted successfully!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+
 
 // Delete any service. -- TESTED
-router.post("/deleteby", async (req, res) => {
+router.post('/deleteService/:serviceId', authenticate, authorization, async (req, res) => {
   try {
-    const service = await Service.findById(req.body.id);
-    if (!service) {
-      console.log("Service not found.");
+    const serviceId = req.params.serviceId;
+
+    // Check if the service exists
+    const existingService = await BaseService.findById(serviceId);
+    if (!existingService) {
       return res.status(404).json({ msg: "Service not found" });
     }
 
-    // Check if the user is an admin or the vendor associated with the service
-    if (req.user.role === "admin" || (req.user.role === "vendor" && service.vendor_id.toString() === req.user.userId.toString())) {
-      await Service.deleteOne({ _id: req.body.id });
-      console.log("Service deleted.");
-      return res.json({ msg: "Service deleted" });
-    } else {
-      console.log("Unauthorized access.");
-      return res.status(403).json({ msg: "Not authorized to delete this service" });
+    // Check if the vendor is authorized to delete this service
+    if (existingService.vendor_id.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(403).json({ msg: "Unauthorized to delete this service" });
     }
+
+    // Remove the service from the database
+    await BaseService.deleteOne({ _id: serviceId });
+
+    res.status(200).json({ msg: 'Service deleted successfully!' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ msg: "Internal server error" });
+    res.status(500).json({ msg: 'Internal Server Error' });
   }
 });
+
 
 module.exports = router;
