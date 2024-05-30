@@ -1,36 +1,31 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 import {
   setVenues,
   setLoading,
   setError,
   addFavorite,
   removeFavorite,
-  setBookingStatus
-} from './venueSlice';
-import {
-  setCaterings,
-} from './CateringSlice';
-import {
-  setPhotographys,
-} from './PhotographySlice';
-import {
-  setDecors,
-} from './DecorSlice';
-import {
-  setServices,
-} from './ServiceSlice';
+  setBookingStatus,
+} from "./venueSlice";
+import { setCaterings } from "./CateringSlice";
+import { setPhotographys } from "./PhotographySlice";
+import { setDecors } from "./DecorSlice";
+import { setServices, setServiceDetail } from "./serviceSlice"; // Import setServiceDetail
 
 
 // Fetch venues with filtering and sorting
 export const fetchVenues = createAsyncThunk(
-  'venues/fetchVenues',
+  "venues/fetchVenues",
   async ({ page, limit, search, sort, filters }, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.get('http://localhost:5600/services/venues1', {
-        params: { page, limit, search, sort, ...filters }
-      });
+      const response = await axios.get(
+        "http://localhost:5600/services/venues1",
+        {
+          params: { page, limit, search, sort, ...filters },
+        }
+      );
       dispatch(setVenues(response.data.venues));
       dispatch(setLoading(false));
     } catch (error) {
@@ -39,15 +34,19 @@ export const fetchVenues = createAsyncThunk(
     }
   }
 );
-// Fetch venues with filtering and sorting
+
+// Fetch caterings with filtering and sorting
 export const fetchCaterings = createAsyncThunk(
-  'venues/fetchCaterings',
+  "venues/fetchCaterings",
   async ({ page, limit, search, sort, filters }, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.get('http://localhost:5600/services/catering1', {
-        params: { page, limit, search, sort, ...filters }
-      }); 
+      const response = await axios.get(
+        "http://localhost:5600/services/catering1",
+        {
+          params: { page, limit, search, sort, ...filters },
+        }
+      );
       dispatch(setCaterings(response.data.caterings));
       console.log(response.data);
       dispatch(setLoading(false));
@@ -57,15 +56,19 @@ export const fetchCaterings = createAsyncThunk(
     }
   }
 );
-// Fetch venues with filtering and sorting
+
+// Fetch photographys with filtering and sorting
 export const fetchPhotographys = createAsyncThunk(
-  'venues/fetchPhotographys',
+  "venues/fetchPhotographys",
   async ({ page, limit, search, sort, filters }, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.get('http://localhost:5600/services/photography1', {
-        params: { page, limit, search, sort, ...filters }
-      }); 
+      const response = await axios.get(
+        "http://localhost:5600/services/photography1",
+        {
+          params: { page, limit, search, sort, ...filters },
+        }
+      );
       dispatch(setPhotographys(response.data.photographys));
       console.log(response.data);
       dispatch(setLoading(false));
@@ -76,15 +79,18 @@ export const fetchPhotographys = createAsyncThunk(
   }
 );
 
-// Fetch venues with filtering and sorting
+// Fetch decors with filtering and sorting
 export const fetchDecors = createAsyncThunk(
-  'venues/fetchDecors',
+  "venues/fetchDecors",
   async ({ page, limit, search, sort, filters }, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.get('http://localhost:5600/services/decor1', {
-        params: { page, limit, search, sort, ...filters }
-      }); 
+      const response = await axios.get(
+        "http://localhost:5600/services/decor1",
+        {
+          params: { page, limit, search, sort, ...filters },
+        }
+      );
       dispatch(setDecors(response.data.decors));
       console.log(response.data);
       dispatch(setLoading(false));
@@ -94,17 +100,38 @@ export const fetchDecors = createAsyncThunk(
     }
   }
 );
-// Fetch venues with filtering and sorting
+
+// Fetch services with filtering and sorting
 export const fetchServices = createAsyncThunk(
-  'venues/fetchServices',
+  "venues/fetchServices",
   async ({ page, limit, search, sort, filters }, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.get('http://localhost:5600/services/getbyservicename', {
-        params: { page, limit, search, sort, ...filters }
-      }); 
+      const response = await axios.get(
+        "http://localhost:5600/venues/",
+        {
+          params: { page, limit, search, sort, ...filters },
+        }
+      );
       dispatch(setServices(response.data.services));
       console.log(response.data);
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setError(error.message));
+      dispatch(setLoading(false));
+    }
+  }
+);
+
+
+// Fetch service by ID
+export const fetchServiceById = createAsyncThunk(
+  "service/fetchServiceById",
+  async (id, { dispatch }) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axios.get(`http://localhost:5600/services/byid/${id}`);
+      dispatch(setServiceDetail(response.data)); // Dispatch setServiceDetail with the response data
       dispatch(setLoading(false));
     } catch (error) {
       dispatch(setError(error.message));
@@ -125,7 +152,6 @@ export const addToFavorites = createAsyncThunk(
     }
   }
 );
-
 // Remove a venue from favorites
 export const removeFromFavorites = createAsyncThunk(
   'venues/removeFromFavorites',

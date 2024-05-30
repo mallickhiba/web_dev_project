@@ -1,4 +1,3 @@
-
 var express = require("express");
 const mongoose = require("mongoose");
 const axios = require('axios');
@@ -8,14 +7,34 @@ const adminMiddleware = require('../middlewares/adminMiddleware');
 const customerMiddleware = require('../middlewares/customerMiddleware');
 const vendorMiddleware = require('../middlewares/vendorMiddleware');
 const Service = require('../models/Services'); // Add the missing import statement for the Service model
-const Users = require('../models/User'); // Add the missing import statement for the Service model
 const VenueService = require('../models/Services').model('VenueService');
 const PhotographyService = require('../models/Services').model('PhotographyService');
 const CateringService = require('../models/Services').model('CateringService');
 const DecorService = require('../models/Services').model('DecorService');
 const BaseService = require('../models/Services'); // Adjust the path as per your project structure
 var router = express.Router();
+
+
 //*************************FOLLOWING APIS CAN BE ACCESSED WITHOUT LOGIN********************************************
+// Getting Service based on ID-TESTED
+// Define the GET route to fetch a service by ID
+router.get('/byid/:id', async (req, res) => {
+  try {
+    console.log("Getting service with id " + req.params.id);
+    const service = await Service.findById(req.params.id);
+    console.log("searching")
+    if (!service) {
+      console.log("fjfioej")
+     return res.status(404).json({ msg: "Service not found" });
+    }
+    res.json({ msg: "SERVICE FOUND", data: service });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+
 router.get('/venues1', async (req, res) => {
   try {
     const page = parseInt(req.query.page) - 1 || 0;
@@ -476,20 +495,7 @@ router.get('/:serviceType', async (req, res) => {
 });
 
 
-// Getting Service based on ID-TESTED
-router.get("/:id", async (req, res) => {
-  try {
-    console.log("getting service with id " + req.params.id);
-    const service = await Service.findById(req.params.id);
-    if (!service) {
-      return res.status(404).json({ msg: "Service not found" });
-    }
-    res.json({ msg: "SERVICE FOUND", data: service });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
+
 
 
 
@@ -507,7 +513,7 @@ router.post('/getbyservicename', async (req, res) => {
     const regexPattern = serviceName.replace(/\s+/g, '\\s+');
     const regex = new RegExp(regexPattern, 'i');
 
-    // Populate service with packages and vendor name from the 'users' collection
+    // Populate service with packages and vendor name
     const services = await Service.find({ service_name: regex })
       .populate({
         path: 'vendor_id',
@@ -528,7 +534,7 @@ router.post('/getbyservicename', async (req, res) => {
 });
 
 
-// Get Service with vendor details using service ID. -- Tested 
+// Get Service with vendor details using service ID. -- Tested GIVES VENDOR ID NULL 
 router.post("/getbyservicewithvendor", async (req, res) => {
   try {
     console.log("Request received to get service with vendor details.");
@@ -585,7 +591,7 @@ router.post("/findclosest", async (req, res) => {
 });
 
 //api to get service tpye in a specific city
-router.get('/:serviceType/:city', async (req, res) => {
+router.get('/getbycity/:serviceType/:city', async (req, res) => {
   try {
     const { serviceType, city } = req.params;
     
