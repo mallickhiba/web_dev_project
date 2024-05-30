@@ -5,6 +5,7 @@ const ServiceCard = ({ service, onAddToFavorites, onBookVenue }) => {
     <div className="col-lg-12 wow fadeInUp" data-wow-delay="0.1s">
       <div className="room-item shadow rounded overflow-hidden">
         <div className="position-relative">
+          {/* Add any image or additional content here */}
         </div>
         <div className="p-4 mt-2">
           <div className="d-flex justify-content-between mb-3">

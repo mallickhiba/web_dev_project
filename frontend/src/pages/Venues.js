@@ -126,7 +126,7 @@ const Venues = () => {
           </Grid>
         </div>
       </div>
-      <Footer />
+     
     </div>
   );
 };
