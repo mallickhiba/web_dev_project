@@ -17,7 +17,7 @@ export default function Book() {
       sessionStorage.setItem("serviceResponse", JSON.stringify(response.data));
 
       // Redirect to services.js
-      navigate("./pages/test.js");
+      navigate("./services");
     } catch (error) {
       console.error("Error fetching data:", error);
     }

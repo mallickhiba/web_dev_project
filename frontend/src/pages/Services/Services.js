@@ -1,40 +1,37 @@
-import React from "react";
-import Header from "../../common/Header";
-import CommonHeading from "../../common/CommonHeading";
-import Footer from "../../common/Footer";
-import ServiceCard from "./ServiceCard"; // assuming you have a ServiceCard component
+import React from 'react';
+import ServiceCard from './ServiceCard';
 
-const Services1 = ({ services, loading, error }) => {
+export default function Services() {
+  // Retrieve the stored API response data from sessionStorage
+  const serviceResponse = JSON.parse(sessionStorage.getItem("serviceResponse"));
+
+  const handleAddToFavorites = (serviceId) => {
+    // Implement the logic to add the service to favorites
+    console.log(`Add to favorites: ${serviceId}`);
+  };
+
+  const handleBookVenue = (serviceId) => {
+    // Implement the logic to book the service
+    console.log(`Book venue: ${serviceId}`);
+  };
+
   return (
-    <div>
-      <Header />
-      <CommonHeading
-        heading="Our Services"
-        title="Services"
-        subtitle="Explore Our"
-      />
-      <div className="container-xxl py-5">
-        <div className="container">
-          <div className="row g-4">
-            {loading ? (
-              <p>Loading...</p>
-            ) : error ? (
-              <p>{error}</p>
-            ) : services.length > 0 ? (
-              services.map((service) => (
-                <div className="col-md-4" key={service._id}>
-                  <ServiceCard service={service} />
-                </div>
-              ))
-            ) : (
-              <p>No services available.</p>
-            )}
-          </div>
+    <div className="container">
+      <h3>Services Page</h3>
+      {serviceResponse && serviceResponse.data ? (
+        <div className="row">
+          {serviceResponse.data.map((service) => (
+            <ServiceCard
+              key={service._id}
+              service={service}
+              onAddToFavorites={handleAddToFavorites}
+              onBookVenue={handleBookVenue}
+            />
+          ))}
         </div>
-      </div>
-      <Footer />
+      ) : (
+        <p>No search results available.</p>
+      )}
     </div>
   );
-};
-
-export default Services1;
+}

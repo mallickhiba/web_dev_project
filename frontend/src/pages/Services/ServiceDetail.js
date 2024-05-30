@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchAllServiceByIdAsync } from "../../redux/serviceSlice";
+import { fetchAllServiceByIdAsync } from "../../redux/ServiceSlice.js";
 import Header from "../../common/Header";
 import Footer from "../../common/Footer";
 import PackagesTable from "./PackagesTable";

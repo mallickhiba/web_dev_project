@@ -4,7 +4,7 @@ import cateringReducer from "./CateringSlice.js";
 import userSlice from "./userSlice";
 import photographyReducer from "./PhotographySlice.js";
 import decorReducer from "./DecorSlice.js";
-import serviceReducer from "./serviceSlice.js";
+import serviceReducer from './ServiceSlice.js';
 
 const rootReducer = combineReducers({
   venues: venueReducer,

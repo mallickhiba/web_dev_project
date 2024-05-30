@@ -11,7 +11,7 @@ import {
 import { setCaterings } from "./CateringSlice";
 import { setPhotographys } from "./PhotographySlice";
 import { setDecors } from "./DecorSlice";
-import { setServices, setServiceDetail } from "./serviceSlice"; // Import setServiceDetail
+import { setServices, setServiceDetail } from "./ServiceSlice"; // Import setServiceDetail
 
 
 // Fetch venues with filtering and sorting
