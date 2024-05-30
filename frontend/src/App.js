@@ -19,13 +19,19 @@ import Footer from "./common/Footer";
 import Test from "./pages/test.js";
 import { Provider, useSelector } from 'react-redux';
 import store from './redux/store'; // Import the Redux store
-import VendorHome from './pages/VendorHome';
 import AdminHome from './pages/AdminHome';
 import Venues from './pages/Venues.js'; // Import your Venues component
 import Caterings from './pages/Catering.js'; 
 import Photography from './pages/Photography.js'; 
 import Decor from './pages/Decor.js'; 
 import Services1 from "./pages/Services.js";
+import VendorDashboardPage from "./pages/Vendor/VendorDashboardPage.js";
+import VendorProfile from "./pages/Vendor/VendorProfile.js";
+import VendorServices from "./pages/Vendor/VendorServices.js";
+import VendorBookingHistory from "./pages/Vendor/VendorBookingHistory.js";
+import VendorPendingBookings from "./pages/Vendor/VendorPendingBookings.js";
+import VendorConfirmedBookings from "./pages/Vendor/VendorConfirmedBookings.js";
+import VendorCancelledBookings from "./pages/Vendor/VendorCancelledBookings.js";
 
 
 
@@ -50,10 +56,20 @@ function App() {
             <Route path="/signup" element={<SignUp />} /> 
             <Route path="/login" element={<Login />} /> 
 
+
       {/* Vendor routes */}
-      {loggedIn && role === 'vendor' && (
-        <Route path="/vendorhome" element={<VendorHome />} />
-      )}
+            <Route path="/vendordashboard" element={<VendorDashboardPage />} />
+            <Route path="/vendorprofile" element={<VendorProfile />} />
+            <Route path="/vendorservices" element={<VendorServices />} />
+            <Route path="/allbookings" element={<VendorBookingHistory />} />
+            <Route path="/pendingbookings" element={<VendorPendingBookings />} />
+            <Route path="/confirmedbookings" element={<VendorConfirmedBookings />} />
+            <Route path="/cancelledbookings" element={<VendorCancelledBookings />} />
+
+      {/* {loggedIn && role === 'vendor' && (
+        <Route path="/vendordashboard" element={<VendorDashboardPage />} />
+      )} */}
+       
 
       {/* Admin routes */}
       {loggedIn && role === 'admin' && (
