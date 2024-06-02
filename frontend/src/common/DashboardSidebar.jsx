@@ -18,9 +18,6 @@ import {
     AccountCircle,
     CalendarMonth,
     AdminPanelSettingsOutlined,
-    Cancel,
-    Pending,
-    CheckCircle,
     Edit,
 
   } from "@mui/icons-material";
@@ -52,7 +49,6 @@ const DashboardSidebar = ({ active }) => {
         }
       };
 
-    //const userName = useSelector((state) => state.user.userDetails.firstName || state.user.userDetails.lastName );
     const userRole = useSelector((state) => state.user.role);
 
 
@@ -60,11 +56,7 @@ const DashboardSidebar = ({ active }) => {
         { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" },
       { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" },
       { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: "/vendorprofile" },
-      { text: "Bookings", icon: null },
-      { text: "Booking History", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/allbookings" },
-      { text: "Pending", icon: <Pending sx={{color: `${active === 5 ? "crimson" : "#555"}` }} />, link: "/pendingbookings" },
-      { text: "Cancelled", icon: <Cancel sx={{color: `${active === 6 ? "crimson" : "#555"}` }}/>, link: "/cancelledbookings" },
-      { text: "Confirmed", icon: <CheckCircle sx={{color: `${active === 7 ? "crimson" : "#555"}` }}/>, link: "/confirmedbookings" },
+      { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/vendorbookings" },
 
     ];
 
@@ -127,8 +119,9 @@ const DashboardSidebar = ({ active }) => {
 
     {/* User Info */}
     <Box>
+    
       <Typography fontWeight="bold" fontSize="0.9rem">
-        John Doe {/* Assuming user name */}
+      {localStorage.getItem('userName')}
       </Typography>
       <Typography fontSize="0.8rem">
         {userRole} 

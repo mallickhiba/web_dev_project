@@ -24,7 +24,7 @@ import {
   DialogTitle
 } from "@mui/material";
 import { Edit, Delete, MoreVert, Add, Close } from "@mui/icons-material";
-import { deletePackage, editService } from "../../../redux/vendorServiceSlice";
+import { deletePackage, editService } from "../../../../redux/vendorServiceSlice";
 
 const ServiceCard = ({ service, onEdit, onDelete }) => {
   const dispatch = useDispatch();
@@ -190,31 +190,38 @@ const ServiceCard = ({ service, onEdit, onDelete }) => {
 
   return (
     <>
-      <Box border="1px solid #ccc" borderRadius={4} p={3} mb={3}>
-        <Typography variant="h6">{service.service_name}</Typography>
-        <Typography>{service.description}</Typography>
-        <Typography>Category: {service.service_category}</Typography>
-        <Typography>Rating: {service.average_rating}</Typography>
-        <Box mt={2} display="flex" justifyContent="space-between" alignItems="center">
-          <IconButton color="primary" onClick={() => onEdit(service._id)}>
-            <Edit />
-          </IconButton>
-          <IconButton color="error" onClick={() => onDelete(service._id)}>
-            <Delete />
-          </IconButton>
-          <Tooltip title="View Details">
-            <IconButton color="primary" onClick={handleOpenModal}>
-              <MoreVert />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Add new package">
-          <IconButton color="primary" onClick={handleOpenAddPackageForm}>
-        <Add />
+      <Box border="1px solid #ccc" borderRadius={4} p={3} mb={3} display="flex" justifyContent="space-between">
+  <Box>
+    <Typography variant="h6">{service.service_name}</Typography>
+    <Typography>{service.description}</Typography>
+    <Typography>Category: {service.service_category}</Typography>
+    <Typography>Rating: {service.average_rating}</Typography>
+  </Box>
+  <Box display="flex" alignItems="center">
+    <Box>
+      <Tooltip title="Add new package">
+        <IconButton color="primary" onClick={handleOpenAddPackageForm}>
+          <Add />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Edit Service">
+      <IconButton color="primary" onClick={() => onEdit(service._id)}>
+        <Edit />
       </IconButton>
       </Tooltip>
-        </Box>
-      </Box>
-
+      <Tooltip title="Delete Service">
+      <IconButton color="error" onClick={() => onDelete(service._id)}>
+        <Delete />
+      </IconButton>
+      </Tooltip>
+      <Tooltip title="View Details">
+        <IconButton color="primary" onClick={handleOpenModal}>
+          <MoreVert />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  </Box>
+</Box>
 
 
       <Modal

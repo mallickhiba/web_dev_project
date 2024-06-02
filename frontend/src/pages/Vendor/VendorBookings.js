@@ -13,13 +13,13 @@ import DashboardSidebar from "../../common/DashboardSidebar";
 
 
 
-const VendorBookingHistory = () => {
+const VendorBookings = () => {
   return (
     <Container>
       <Grid container>
         {/* Render the DashboardSidebar component */}
         <Grid item xs={12} md={3}>
-          <DashboardSidebar active={2} />
+          <DashboardSidebar active={4} />
         </Grid>
 
         {/* Main content */}
@@ -40,4 +40,4 @@ const VendorBookingHistory = () => {
 };
   
 
-export default VendorBookingHistory
+export default VendorBookings
