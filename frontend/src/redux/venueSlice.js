@@ -28,10 +28,10 @@ const venueSlice = createSlice({
     setError(state, action) {
       state.error = action.payload;
     },
-    addFavorite(state, action) {
+    addFavoriteV(state, action) {
       state.favorites.push(action.payload);
     },
-    removeFavorite(state, action) {
+    removeFavoriteV(state, action) {
       state.favorites = state.favorites.filter(id => id !== action.payload);
     },
     setBookingStatus(state, action) {
@@ -46,8 +46,8 @@ export const {
   addVenue,
   setLoading,
   setError,
-  addFavorite,
-  removeFavorite,
+  addFavoriteV,
+  removeFavoriteV,
   setBookingStatus
 } = venueSlice.actions;
 

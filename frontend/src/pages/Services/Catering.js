@@ -3,18 +3,21 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchCaterings,
   addToFavorites,
-  bookVenue,
+  removeFromFavorites,
 } from "../../redux/serviceActions.js";
 import CommonHeading from "../../common/CommonHeading";
 import Heading from "../../common/Heading";
 import Header from "../../common/Header";
 import Footer from "../../common/Footer";
-import ServiceCard from "./ServiceCard.js"; // Import the ServiceCard component
-import FilterPanel from "./FilterPanel.js"; // Import the FilterPanel component
+import ServiceCard from "./ServiceCard.js";
+import FilterPanel from "./FilterPanel.js";
 import { Grid } from "@mui/material";
+import { NotificationContainer } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 const Caterings = () => {
   const dispatch = useDispatch();
+
   const { caterings, loading, error, favorites } = useSelector(
     (state) => state.caterings
   );
@@ -39,10 +42,8 @@ const Caterings = () => {
     dispatch(addToFavorites(serviceId));
   };
 
-  const handleBookVenue = (serviceId) => {
-    const date = "2024-06-01"; // Example date
-    const customer = "customerId123"; // Replace with actual customer ID
-    dispatch(bookVenue({ date, service: serviceId, customer }));
+  const handleRemoveFromFavorites = (serviceId) => {
+    dispatch(removeFromFavorites(serviceId));
   };
 
   const handleFilterChange = (e) => {
@@ -65,10 +66,9 @@ const Caterings = () => {
         ...prevFilters,
         priceMin: min,
         priceMax: max,
-        start_price: range, // Update to start_price if both min and max are set
+        start_price: range,
       }));
     } else {
-      // If checkbox is unchecked, remove it from filters
       if (!checked) {
         const updatedFilters = { ...filters };
         delete updatedFilters[name];
@@ -83,20 +83,16 @@ const Caterings = () => {
   };
 
   const handleApplyFilters = () => {
-    // Check if any filters are present
     if (Object.keys(filters).length === 0) {
-      // If no filters, fetch all data by setting appliedFilters to an empty object
       setAppliedFilters({});
     } else {
-      // If filters are present, apply them
       setAppliedFilters(filters);
     }
   };
+
   const handleSortChange = (e) => {
     setSort(e.target.value);
   };
-
-  console.log(caterings); // Add this line to log the caterings array
 
   return (
     <div>
@@ -111,7 +107,6 @@ const Caterings = () => {
           />
           <Grid container spacing={4}>
             <Grid item xs={3}>
-              {/* Render the FilterPanel with serviceType="venue" */}
               <FilterPanel
                 serviceType="catering"
                 handleFilterChange={handleFilterChange}
@@ -130,7 +125,8 @@ const Caterings = () => {
                       key={service._id}
                       service={service}
                       onAddToFavorites={handleAddToFavorites}
-                      onBookVenue={handleBookVenue}
+                      onRemoveFromFavorites={handleRemoveFromFavorites}
+                      isFavorite={favorites.includes(service._id)}
                     />
                   ))}
               </div>
@@ -139,6 +135,7 @@ const Caterings = () => {
         </div>
       </div>
       <Footer />
+      <NotificationContainer />
     </div>
   );
 };

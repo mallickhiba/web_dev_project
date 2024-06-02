@@ -15,8 +15,6 @@ const cateringSlice = createSlice({
   reducers: {
     setCaterings(state, action) {
       state.caterings = action.payload;
-      console.log(action.payload);
-
     },
     setFilteredCaterings(state, action) {
       state.filteredCaterings = action.payload;
@@ -30,10 +28,10 @@ const cateringSlice = createSlice({
     setError(state, action) {
       state.error = action.payload;
     },
-    addFavorite(state, action) {
+    addFavoriteC(state, action) {
       state.favorites.push(action.payload);
     },
-    removeFavorite(state, action) {
+    removeFavoriteC(state, action) {
       state.favorites = state.favorites.filter(id => id !== action.payload);
     },
     setBookingStatus(state, action) {
@@ -48,8 +46,8 @@ export const {
   addCatering,
   setLoading,
   setError,
-  addFavorite,
-  removeFavorite,
+  addFavoriteC,
+  removeFavoriteC,
   setBookingStatus
 } = cateringSlice.actions;
 

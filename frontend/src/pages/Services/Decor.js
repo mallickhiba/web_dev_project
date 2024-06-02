@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchDecors,
   addToFavorites,
+  removeFromFavorites,
   bookVenue,
 } from "../../redux/serviceActions.js";
 import CommonHeading from "../../common/CommonHeading";
@@ -12,6 +13,8 @@ import Footer from "../../common/Footer";
 import ServiceCard from "./ServiceCard.js"; // Import the ServiceCard component
 import FilterPanel from "./FilterPanel.js"; // Import the FilterPanel component
 import { Grid } from "@mui/material";
+import { NotificationContainer } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 const Decors = () => {
   const dispatch = useDispatch();
@@ -37,6 +40,11 @@ const Decors = () => {
   const handleAddToFavorites = (serviceId) => {
     dispatch(addToFavorites(serviceId));
   };
+
+  const handleRemoveFromFavorites = (serviceId) => {
+    dispatch(removeFromFavorites(serviceId));
+  };
+
 
   const handleBookVenue = (serviceId) => {
     const date = "2024-06-01"; // Example date
@@ -129,6 +137,8 @@ const Decors = () => {
                       key={service._id}
                       service={service}
                       onAddToFavorites={handleAddToFavorites}
+                      onRemoveFromFavorites={handleRemoveFromFavorites}
+                      isFavorite={favorites.includes(service._id)}
                       onBookVenue={handleBookVenue}
                     />
                   ))}
@@ -138,6 +148,7 @@ const Decors = () => {
         </div>
       </div>
       <Footer />
+      <NotificationContainer />
     </div>
   );
 };

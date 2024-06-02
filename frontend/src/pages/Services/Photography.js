@@ -12,6 +12,8 @@ import Footer from "../../common/Footer";
 import ServiceCard from "./ServiceCard.js"; // Import the ServiceCard component
 import FilterPanel from "./FilterPanel.js"; // Import the FilterPanel component
 import { Grid } from "@mui/material";
+import { NotificationContainer } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 const Photographys = () => {
   const dispatch = useDispatch();
@@ -139,6 +141,7 @@ const Photographys = () => {
         </div>
       </div>
       <Footer />
+      <NotificationContainer />
     </div>
   );
 };

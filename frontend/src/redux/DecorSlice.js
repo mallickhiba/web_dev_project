@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-
 const initialState = {
   decors: [],
   filteredDecors: [],
@@ -30,12 +29,13 @@ const decorSlice = createSlice({
     setError(state, action) {
       state.error = action.payload;
     },
-    addFavorite(state, action) {
+    addFavoriteD(state, action) {
       state.favorites.push(action.payload);
     },
-    removeFavorite(state, action) {
+    removeFavoriteD(state, action) {
       state.favorites = state.favorites.filter(id => id !== action.payload);
     },
+    
     setBookingStatus(state, action) {
       state.bookingStatus = action.payload;
     }
@@ -48,8 +48,8 @@ export const {
   addDecor,
   setLoading,
   setError,
-  addFavorite,
-  removeFavorite,
+  addFavoriteD,
+  removeFavoriteD,
   setBookingStatus
 } = decorSlice.actions;
 

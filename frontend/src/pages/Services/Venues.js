@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchVenues,
   addToFavorites,
+  removeFromFavorites,
   bookVenue,
 } from "../../redux/serviceActions.js";
 import { Link } from "react-router-dom";
@@ -13,6 +14,8 @@ import Footer from "../../common/Footer.jsx";
 import ServiceCard from "./ServiceCard.js"; // Import the ServiceCard component
 import FilterPanel from "./FilterPanel.js"; // Import the FilterPanel component
 import { Grid } from "@mui/material";
+import { NotificationContainer } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 const Venues = () => {
   const dispatch = useDispatch();
@@ -40,6 +43,9 @@ const Venues = () => {
     dispatch(addToFavorites(serviceId));
   };
 
+  const handleRemoveFromFavorites = (serviceId) => {
+    dispatch(removeFromFavorites(serviceId));
+  };
   const handleBookVenue = (serviceId) => {
     const date = "2024-06-01"; // Example date
     const customer = "customerId123"; // Replace with actual customer ID
@@ -124,20 +130,22 @@ const Venues = () => {
                 {loading && <p>Loading...</p>}
                 {error && <p>{error}</p>}
                 {venues.map((service) => (
-                  <Link to={`/service/${service._id}`} key={service._id}>
+                  
                     <ServiceCard
-                      service={service}
+                       key={service._id}
+                       service={service}
                       onAddToFavorites={handleAddToFavorites}
-                      onBookVenue={handleBookVenue}
+                      onRemoveFromFavorites={handleRemoveFromFavorites}
+                      isFavorite={favorites.includes(service._id)}
                     />
-                  </Link>
+                
                 ))}
               </div>
             </Grid>
           </Grid>
         </div>
       </div>
-     
+      <NotificationContainer />
     </div>
   );
 };
