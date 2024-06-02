@@ -238,10 +238,11 @@ router.post('/createBooking', authenticate, customerMiddleware, async (req, res)
 
 
 
-// PUT endpoint to approve booking. only vendor can do this ****TESTED***
-router.put('/approveBooking/:bookingId', authenticate, vendorMiddleware, async (req, res) => {
+// PUT endpoint to change booking status. Only vendor can do this.
+router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMiddleware, async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
+        const newStatus = req.params.newStatus;
         const vendorId = req.user.id;
 
         // Check if the booking belongs to the vendor
@@ -250,39 +251,19 @@ router.put('/approveBooking/:bookingId', authenticate, vendorMiddleware, async (
             return res.status(404).json({ message: "Booking not found or does not belong to the vendor." });
         }
 
-        // Update the booking status to approved
-        booking.status = 'confirmed';
-        await booking.save();
-
-        res.status(200).json({ message: "Booking approved successfully." });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-
-
-// Put endpoint api to cancel booking. only vendor can do this. ****TESTED***
-router.put('/cancelBooking/:bookingId', authenticate, vendorMiddleware, async (req, res) => {
-    try {
-        const bookingId = req.params.bookingId;
-        const vendorId = req.user.id;
-
-        // Check if the booking belongs to the vendor
-        const booking = await Booking.findOne({ _id: bookingId, vendor_id: vendorId });
-        if (!booking) {
-            return res.status(404).json({ message: "Booking not found or does not belong to the vendor." });
+        if (!["pending", "confirmed", "cancelled"].includes(newStatus)) {
+            return res.status(400).json({ message: "Invalid status. Allowed values: 'pending', 'confirmed', 'cancelled'." });
         }
-
-        // Update the booking status to approved
-        booking.status = 'cancelled';
+        // Update the booking status
+        booking.status = newStatus;
         await booking.save();
 
-        res.status(200).json({ message: "Booking cancelled successfully." });
+        res.status(200).json({ message: `Booking status changed to ${newStatus} successfully.` });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 
 module.exports = router;
