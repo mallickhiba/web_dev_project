@@ -1,4 +1,3 @@
-// VendorServices.js
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -10,15 +9,16 @@ import {
   InputBase,
   alpha,
   Button,
+  Typography,
 } from "@mui/material";
 import DashboardSidebar from "../../common/DashboardSidebar";
 import axios from "axios";
 import { setServices } from "../../redux/vendorServiceSlice";
 import SearchIcon from '@mui/icons-material/Search';
-import ServiceCard from "./components/ServiceCard";
-import ServiceEditModal from "./components/ServiceEditModal";
-import AddServiceForm from "./components/AddServiceForm";
-import DeleteServiceDialog from "./components/DeleteServiceDialog"; // Import the DeleteServiceDialog component
+import ServiceCard from "./components/Services/ServiceCard";
+import ServiceEditModal from "./components/Services/ServiceEditModal";
+import AddServiceForm from "./components/Services/AddServiceForm";
+import DeleteServiceDialog from "./components/Services/DeleteServiceDialog";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -69,11 +69,12 @@ const VendorServices = () => {
   const [page, setPage] = useState(1);
   const servicesPerPage = 5;
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedServiceId, setSelectedServiceId] = useState(null); // Track the ID of the selected service for deletion
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // State to control the delete dialog
-  const [selectedService, setSelectedService] = useState(null); // Track the selected service for editing
-  const [openEditModal, setOpenEditModal] = useState(false); // State to control the edit modal
-  const [openAddServiceForm, setOpenAddServiceForm] = useState(false); // State to control the add service form
+  const [selectedServiceId, setSelectedServiceId] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openAddServiceForm, setOpenAddServiceForm] = useState(false);
+  const [showHeader, setShowHeader] = useState(true);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -126,13 +127,12 @@ const VendorServices = () => {
   };
 
   const handleConfirmDeleteService = () => {
-    // Perform delete service action here
     console.log("Deleting service with ID:", selectedServiceId);
-    // Call your delete service API or Redux action here
     setOpenDeleteDialog(false);
   };
 
   const handleAddService = () => {
+    setShowHeader(false);
     setOpenAddServiceForm(true);
   };
 
@@ -143,20 +143,34 @@ const VendorServices = () => {
           <DashboardSidebar active={2} />
         </Grid>
         <Grid item xs={12} md={9}>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-            />
-          </Search>
-          <Box mx={4} my={4}>
-            {!openAddServiceForm && (
-              <Button variant="contained" color="primary" onClick={handleAddService}>Add Service</Button>
+          <Box mb={3} mt={5}>
+            {showHeader && (
+              <Typography variant="h4">Find your listed services</Typography>
+            )}
+          </Box>
+          {showHeader && (
+          
+            <Box mb={3} ml={3} display="flex" alignItems="center">
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ 'aria-label': 'search' }}
+                  value={searchQuery}
+                  onChange={handleSearchInputChange}
+                />
+              </Search>
+              <Box ml="auto" mr={3}>
+                <Button variant="contained" color="primary" onClick={handleAddService}>Add new Service</Button>
+              </Box>
+            </Box>
+         
+          )}
+          <Box mx={3} mb={3} mt={3}>
+            {!openAddServiceForm && !showHeader && (
+             setShowHeader(true)
             )}
             {openAddServiceForm ? (
               <AddServiceForm setOpenAddServiceForm={setOpenAddServiceForm} />
@@ -167,32 +181,32 @@ const VendorServices = () => {
                     key={service._id}
                     service={service}
                     onEdit={handleEditService}
-                    onDelete={handleDeleteService} // Pass the delete function
+                    onDelete={handleDeleteService}
                   />
                 ))}
-                <Pagination
-                  count={Math.ceil(services.length / servicesPerPage)}
-                  page={page}
-                  onChange={handlePageChange}
-                />
+                <Box mt={3} display="flex" justifyContent="center">
+                  <Pagination
+                    count={Math.ceil(services.length / servicesPerPage)}
+                    page={page}
+                    onChange={handlePageChange}
+                  />
+                </Box>
               </>
             )}
           </Box>
         </Grid>
       </Grid>
-      {/* Render the edit modal */}
       <ServiceEditModal
         open={openEditModal}
         onClose={() => setOpenEditModal(false)}
         service={selectedService}
       />
-      {/* Render the delete dialog */}
       <DeleteServiceDialog
         open={openDeleteDialog}
         onClose={() => setOpenDeleteDialog(false)}
         onConfirm={handleConfirmDeleteService}
-        serviceId={selectedServiceId} // Pass the selected service ID
-        token={token} // Pass the token
+        serviceId={selectedServiceId}
+        token={token}
       />
     </Container>
   );

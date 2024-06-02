@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setServices } from "../../../redux/vendorServiceSlice";
+import { setServices } from "../../../../redux/vendorServiceSlice";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import {
@@ -18,7 +18,6 @@ const AddServiceForm = ({ setOpenAddServiceForm }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
   const services = useSelector((state) => state.vendorServices.services);
-
 
   // Define the serviceCategoryValidation function
   const serviceCategoryValidation = (values) => {
@@ -146,11 +145,11 @@ const AddServiceForm = ({ setOpenAddServiceForm }) => {
             helperText={touched.service_category && errors.service_category}
             id="service_category"
           >
-         {["decor", "venue", "catering", "photography"].map((category) => (
-  <MenuItem key={category} value={category}>
-    {category.charAt(0).toUpperCase() + category.slice(1)}
-  </MenuItem>
-))}
+            {["decor", "venue", "catering", "photography"].map((category) => (
+              <MenuItem key={category} value={category}>
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </MenuItem>
+            ))}
           </Field>
           {/* Description */}
           <Field
@@ -175,7 +174,6 @@ const AddServiceForm = ({ setOpenAddServiceForm }) => {
           />
           {/* Staff */}
           <Field
-    
             name="staff"
             as={TextField}
             select
@@ -239,12 +237,11 @@ const AddServiceForm = ({ setOpenAddServiceForm }) => {
                 margin="normal"
                 id="outdoor"
               >
-               {["outdoor", "banquet"].map((type) => (
-  <MenuItem key={type} value={type}>
-    {type.charAt(0).toUpperCase() + type.slice(1)}
-  </MenuItem>
-))}
-
+                {["outdoor", "banquet"].map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </MenuItem>
+                ))}
               </Field>
             </>
           )}
@@ -289,13 +286,11 @@ const AddServiceForm = ({ setOpenAddServiceForm }) => {
                 }}
                 renderValue={(selected) => selected.join(", ")}
               >
-    {["wedding", "birthday party", "anniversary", "formal events"].map((type) => (
-  <MenuItem key={type} value={type}>
-    {type.charAt(0).toUpperCase() + type.slice(1)}
-  </MenuItem>
-))}
-
-
+                {["wedding", "birthday party", "anniversary", "formal events"].map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </MenuItem>
+                ))}
               </Select>
               <ErrorMessage name="decortype" component="div" />
             </Field>
@@ -323,36 +318,36 @@ const AddServiceForm = ({ setOpenAddServiceForm }) => {
           />
           {/* City */}
           <Field
-  name="city"
-  as={TextField}
-  select
-  label="City"
-  fullWidth
-  margin="normal"
-  id="city"
->
-  {["Karachi", "Lahore", "Islamabad"].map((city) => (
-    <MenuItem key={city} value={city}>
-      {city}
-    </MenuItem>
-  ))}
-</Field>
-{/* Area */}
-<Field
-  name="area"
-  as={TextField}
-  select
-  label="Area"
-  fullWidth
-  margin="normal"
-  id="area"
->
-  {["Saddar", "Gulshan-e-Iqbal", "DHA", "North Nazimabad", "Other"].map((area) => (
-    <MenuItem key={area} value={area}>
-      {area}
-    </MenuItem>
-  ))}
-</Field>
+            name="city"
+            as={TextField}
+            select
+            label="City"
+            fullWidth
+            margin="normal"
+            id="city"
+          >
+            {["Karachi", "Lahore", "Islamabad"].map((city) => (
+              <MenuItem key={city} value={city}>
+                {city}
+              </MenuItem>
+            ))}
+          </Field>
+          {/* Area */}
+          <Field
+            name="area"
+            as={TextField}
+            select
+            label="Area"
+            fullWidth
+            margin="normal"
+            id="area"
+          >
+            {["Saddar", "Gulshan-e-Iqbal", "DHA", "North Nazimabad", "Other"].map((area) => (
+              <MenuItem key={area} value={area}>
+                {area}
+              </MenuItem>
+            ))}
+          </Field>
 
           {/* Packages Field Array */}
           <FieldArray name="packages">
