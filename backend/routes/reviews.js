@@ -10,7 +10,7 @@ const vendorMiddleware = require('../middlewares/vendorMiddleware');
 
 
 // View all reviews -- TESTED
-router.get('/viewReviews', async (req, res) => {
+router.get('/view-reviews', async (req, res) => {
   try {
       const reviews = await Review.find().populate('user', 'firstName lastName').populate('service', 'service_name');
       res.json({ reviews });
@@ -21,7 +21,7 @@ router.get('/viewReviews', async (req, res) => {
 });
 
 // Place middleware here to ensure only customer can place review
-router.use(customerMiddleware);
+router.use(adminMiddleware);
 
 // Post a new review -- TESTED
 router.post('/add', async (req, res) => {
@@ -47,9 +47,6 @@ router.post('/add', async (req, res) => {
 });
 
 //Place middleware here to ensure only customer or admin can view customer's review and delete them.  
-router.use(adminMiddleware);
-router.use(customerMiddleware);
-
 // Get a specific review by id. (useful for admin implementation) -- TESTED
 router.get('/review/:id', async (req, res) => {
   try {

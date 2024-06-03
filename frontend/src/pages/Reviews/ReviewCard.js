@@ -1,47 +1,37 @@
 import React from "react";
-import {
-  Card,
-  CardActions,
-  CardContent,
-  Button,
-  Typography,
-  Box,
-} from "@mui/material";
-import SeeRating from "./SeeRating.js";
+import { Card, CardActions, CardContent, Button, Typography, Box } from "@mui/material";
+import Rating from "@mui/material/Rating";
 
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: "inline-block", mx: "2px", transform: "scale(0.8)" }}
-  >
-    •
-  </Box>
-);
+const ReviewCard = ({ review }) => {
+  const user = review.user ? `${review.user.firstName} ${review.user.lastName}` : "Anonymous";
+  const service = review.service ? review.service.service_name : "Unknown Service";
 
-const card = (
-  <React.Fragment>
-    <CardContent>
-      <SeeRating></SeeRating>
-      <Typography variant="h5" component="div">
-        Review Summary
-      </Typography>
-      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-        [username]
-      </Typography>
-      <Typography variant="body2">
-        *review text*
-      </Typography>
-    </CardContent>
-    <CardActions>
-      <Button size="small">Learn More</Button>
-    </CardActions>
-  </React.Fragment>
-);
-
-export default function ReviewCard() {
   return (
     <Box sx={{ minWidth: 275 }}>
-      <Card variant="outlined">{card}</Card>
+      <Card variant="outlined">
+        <CardContent>
+          <Box
+            sx={{
+              "& > legend": { mt: 2 },
+            }}
+          >
+            <Typography component="legend">{review.rating}/5</Typography>
+            <Rating name="read-only" value={review.rating} readOnly />
+          </Box>
+          <Typography variant="h5" component="div">
+            {service}
+          </Typography>
+          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+            {user}
+          </Typography>
+          <Typography variant="body2">
+            {review.review}
+          </Typography>
+        </CardContent>
+    
+      </Card>
     </Box>
   );
-}
+};
+
+export default ReviewCard;
