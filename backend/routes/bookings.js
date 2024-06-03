@@ -159,8 +159,6 @@ router.get('/vendorBookings', authenticate, vendorMiddleware, async (req, res) =
             sortQuery = { bookingDate: -1 }; // Sort by booking date in descending order
         }
 
-        console.log("Constructed Query:", query); // Log the constructed query
-
         const totalCount = await Booking.countDocuments(query);
 
         const bookings = await Booking.find(query)
@@ -203,7 +201,7 @@ router.post('/createBooking', authenticate, customerMiddleware, async (req, res)
     try {
         const customerID = req.user.id; 
 
-        if (!req.body.date || !req.body.service || !req.body.service.service_id || !req.body.service.selected_package || !req.body.service.selected_package.package_id || !req.body.service.selected_package.name || req.body.guests == null) {
+        if (!req.body.bookingDate || !req.body.service || !req.body.service.service_id || !req.body.service.selected_package || !req.body.service.selected_package.package_id || !req.body.service.selected_package.name || req.body.guests == null) {
             return res.status(400).json({ message: "Please provide all required fields." });
         }
 
@@ -225,7 +223,7 @@ router.post('/createBooking', authenticate, customerMiddleware, async (req, res)
             },
             vendor_id: vendor_id, // Set vendor_id to the extracted vendor_id
             guests: req.body.guests,
-            date: req.body.date,
+            bookingDate: req.body.bookingDate,
         };
 
         // Create new booking
