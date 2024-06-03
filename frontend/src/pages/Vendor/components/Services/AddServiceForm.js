@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setServices } from "../../../../redux/vendorServiceSlice";
+import { setServices } from "../../../../redux/vendor/vendorServiceSlice";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import {
