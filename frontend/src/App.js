@@ -35,8 +35,6 @@ import VendorDashboardPage from "./pages/Vendor/VendorDashboardPage.js";
 import VendorProfile from "./pages/Vendor/VendorProfile.js";
 import VendorServices from "./pages/Vendor/VendorServices.js";
 import VendorBookings from "./pages/Vendor/VendorBookings.js";
-import VendorList from "./pages/Admin/VendorList.js"
-
 function App() {
   const { loggedIn, role } = useSelector((state) => state.user);
 

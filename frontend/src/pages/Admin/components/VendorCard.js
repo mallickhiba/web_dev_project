@@ -9,27 +9,22 @@ import {
   Fade,
   IconButton,
   Tooltip,
-  TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Switch,
 } from "@mui/material";
-import { Edit, Delete, MoreVert, Close } from "@mui/icons-material";
-import { deleteVendor, editVendor } from "../../../redux/adminVendorSlice";
+import { Delete, MoreVert, Close } from "@mui/icons-material";
+import { editVendor } from "../../../redux/adminVendorSlice";
 
-const VendorCard = ({ vendor, onEdit, onDelete }) => {
+const VendorCard = ({ vendor }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
 
   const [openModal, setOpenModal] = useState(false);
-  const [editingVendor, setEditingVendor] = useState(null);
-  const [editedFields, setEditedFields] = useState({
-    firstName: "",
-    email: "",
-  });
-  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [approved, setApproved] = useState(vendor.approved);
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -39,48 +34,40 @@ const VendorCard = ({ vendor, onEdit, onDelete }) => {
     setOpenModal(false);
   };
 
-  const handleEditVendor = (vendorId) => {
-    setEditingVendor(vendorId);
-    setEditedFields({
-      firstName: vendor.firstName,
-      email: vendor.email,
-    });
+  const handleApprovedChange = async () => {
+    setApproved(!approved);
+    // Dispatch action to update vendor's approved field
+    dispatch(editVendor({ ...vendor, approved: !approved }));
+
+    try {
+      // Make the POST request to update vendor's approval status
+      const response = await fetch('http://localhost:5600/admin/vendors/approve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ email: vendor.email }) // Send vendor's email in the request body
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update vendor approval status');
+      }
+
+      const data = await response.json();
+      console.log(data); // Log success message or handle response data as needed
+    } catch (error) {
+      console.error(error);
+      // Handle error (e.g., show error message to the user)
+    }
   };
 
-  const handleCancelEdit = () => {
-    setEditingVendor(null);
-    setEditedFields({ firstName: "", email: "" });
-  };
-
-  const handleSaveEdit = async () => {
-    dispatch(editVendor({ ...vendor, ...editedFields }));
-    setEditingVendor(null);
-  };
-
-  const handleOpenDeleteConfirmation = () => {
-    setDeleteConfirmationOpen(true);
-  };
-
-  const handleCancelDelete = () => {
-    setDeleteConfirmationOpen(false);
-  };
-
-  const handleDeleteVendor = async () => {
-    dispatch(deleteVendor(vendor._id));
-    setDeleteConfirmationOpen(false);
-  };
-
-  const keyMappings = {
-    firstName: "Vendor Name",
-    email: "Email",
-  };
-
-  const excludeKeys = ["__v", "createdAt", "updatedAt", "_id"];
+  const excludeKeys = ["__v", "_id", "password", "favourites", "createdAt", "updatedAt"];
 
   return (
     <>
       <Box border="1px solid #ccc" borderRadius={4} p={3} mb={3}>
-        <Typography variant="h6">{vendor.firstName}</Typography>
+        <Typography variant="h6">{vendor.firstName} {vendor.lastName}</Typography>
         <Typography>{vendor.email}</Typography>
         <Box
           mt={2}
@@ -88,19 +75,16 @@ const VendorCard = ({ vendor, onEdit, onDelete }) => {
           justifyContent="space-between"
           alignItems="center"
         >
-          <IconButton
-            color="primary"
-            onClick={() => handleEditVendor(vendor._id)}
-          >
-            <Edit />
-          </IconButton>
-          <IconButton color="error" onClick={handleOpenDeleteConfirmation}>
-            <Delete />
-          </IconButton>
-          <Tooltip title="View Details">
-            <IconButton color="primary" onClick={handleOpenModal}>
-              <MoreVert />
-            </IconButton>
+           <Button color="primary" onClick={handleOpenModal}>
+    View Details
+  </Button>
+
+          <Tooltip title="Approve Vendor">
+            <Switch
+              checked={approved}
+              onChange={handleApprovedChange}
+              inputProps={{ 'aria-label': 'approved switch' }}
+            />
           </Tooltip>
         </Box>
       </Box>
@@ -139,43 +123,16 @@ const VendorCard = ({ vendor, onEdit, onDelete }) => {
             <Typography variant="h6" align="center" gutterBottom>
               Vendor Details
             </Typography>
-            {Object.entries(vendor).map(
-              ([key, value]) =>
-                !excludeKeys.includes(key) &&
-                value && (
-                  <Typography key={key} variant="body1">
-                    {keyMappings[key]}: {value}
-                  </Typography>
-                )
+            {Object.entries(vendor).map(([key, value]) =>
+              !excludeKeys.includes(key) ? (
+                <Typography key={key} variant="body1">
+                  {key}: {value}
+                </Typography>
+              ) : null
             )}
           </Box>
         </Fade>
-      </Modal>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteConfirmationOpen}
-        onClose={handleCancelDelete}
-        aria-labelledby="delete-confirmation-dialog-title"
-        aria-describedby="delete-confirmation-dialog-description"
-      >
-        <DialogTitle id="delete-confirmation-dialog-title">
-          Confirm Deletion
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="delete-confirmation-dialog-description">
-            Are you sure you want to delete this vendor?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            No
-          </Button>
-          <Button onClick={handleDeleteVendor} color="primary" autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+      </Modal>    
     </>
   );
 };

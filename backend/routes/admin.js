@@ -11,6 +11,7 @@ router.use(adminMiddleware)
 router.get("/users", async (req, res) => {
   try {
     const users = await Users.find();
+    console.log("fethcing all users");
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -27,6 +28,7 @@ router.get("/users/:id", async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
     res.json(user);
+    console.log("fetched user");
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server Error" });
@@ -80,6 +82,7 @@ router.post("/vendors/approve", async (req, res) => {
     user.approved = true;
     await user.save();
     res.json({ message: "User is a vendor and approved." });
+    console.log("vendor approved!")
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server Error" });
@@ -131,7 +134,7 @@ router.put("/users/update/:id", async (req, res) => {
       { new: true }
     );
     updatedUser.save();
-    console.log("USER UPDATED")
+    console.log("USER UPDATED", updatedUser.email)
     if (!updatedUser) {
       return res.status(404).json({ error: "User not found." });
     }
@@ -151,6 +154,7 @@ router.delete("/users/delete/:id", async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
     res.json({ message: "User deleted successfully." });
+    console.log("user deleted")
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server Error" });

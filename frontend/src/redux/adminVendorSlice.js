@@ -24,7 +24,7 @@ const adminVendorSlice = createSlice({
     },
   },
 });
-
+ 
 export const { setVendors, editVendor, deleteVendor } = adminVendorSlice.actions;
 
 export default adminVendorSlice.reducer;

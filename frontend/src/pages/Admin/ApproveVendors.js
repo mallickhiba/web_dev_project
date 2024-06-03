@@ -8,17 +8,16 @@ import {
   styled,
   InputBase,
   alpha,
-  Button,
   Typography,
+  Tabs,
+  Tab,
 } from "@mui/material";
-import AdminSidebar from '../Admin/components/AdminSidebar';
+import AdminSidebar from './components/AdminSidebar';
 import axios from "axios";
-import { setVendors } from "../../redux//adminVendorSlice";
+import { setVendors } from "../../redux/adminVendorSlice";
 import SearchIcon from '@mui/icons-material/Search';
 import VendorCard from "./components/VendorCard";
 import VendorEditModal from "./components/VendorEditModal";
-import AddVendorForm from "./components/AddVendorForm";
-import DeleteVendorDialog from "./components/DeleteVendorDialog";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -61,20 +60,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const AdminVendors = () => {
+const ApproveVendors = () => {
   const dispatch = useDispatch();
-  const vendors = useSelector((state) => state.adminVendors.vendors);
+  const allVendors = useSelector((state) => state.adminVendors.vendors);
   const token = useSelector((state) => state.user.token);
 
   const [page, setPage] = useState(1);
-  const vendorsPerPage = 5;
+  const vendorsPerPage = 20;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVendorId, setSelectedVendorId] = useState(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [openAddVendorForm, setOpenAddVendorForm] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -83,8 +85,8 @@ const AdminVendors = () => {
         const response = await axios.get("http://localhost:5600/admin/vendors", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Vendor details:", response.data.vendors);
-        dispatch(setVendors(response.data.vendors));
+        console.log("Vendor details:", response.data);
+        dispatch(setVendors(response.data));
       } catch (error) {
         console.error("Error fetching vendors:", error);
       }
@@ -92,14 +94,12 @@ const AdminVendors = () => {
     fetchVendors();
   }, [dispatch, token]);
 
-
-
   const handlePageChange = (event, value) => {
     setPage(value);
   };
 
   const handleSearch = () => {
-    return vendors.filter(vendor => {
+    return allVendors.filter(vendor => {
       const email = vendor.email.toLowerCase();
       const query = searchQuery.toLowerCase();
       return email.includes(query);
@@ -112,10 +112,9 @@ const AdminVendors = () => {
 
   const indexOfLastVendor = page * vendorsPerPage;
   const indexOfFirstVendor = indexOfLastVendor - vendorsPerPage;
-  const currentVendors = searchQuery ? handleSearch() : vendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
   const handleEditVendor = (id) => {
-    const vendor = vendors.find(vendor => vendor._id === id);
+    const vendor = allVendors.find(vendor => vendor._id === id);
 
     if (vendor) {
       setSelectedVendor(vendor);
@@ -123,20 +122,13 @@ const AdminVendors = () => {
     }
   };
 
-  const handleDeleteVendor = (id) => {
-    setSelectedVendorId(id);
-    setOpenDeleteDialog(true);
-  };
 
-  const handleConfirmDeleteVendor = () => {
-    console.log("Deleting vendor with ID:", selectedVendorId);
-    setOpenDeleteDialog(false);
-  };
+  const approvedVendors = allVendors.filter(vendor => vendor.approved);
+  const pendingVendors = allVendors.filter(vendor => !vendor.approved);
 
-  const handleAddVendor = () => {
-    setShowHeader(false);
-    setOpenAddVendorForm(true);
-  };
+  const currentAllVendors = searchQuery ? handleSearch() : allVendors.slice(indexOfFirstVendor, indexOfLastVendor);
+  const currentApprovedVendors = searchQuery ? handleSearch() : approvedVendors.slice(indexOfFirstVendor, indexOfLastVendor);
+  const currentPendingVendors = searchQuery ? handleSearch() : pendingVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
   return (
     <Container>
@@ -146,12 +138,13 @@ const AdminVendors = () => {
         </Grid>
         <Grid item xs={12} md={9}>
           <Box mb={3} mt={5}>
-            {showHeader && (
-              <Typography variant="h4">Find your listed Vendors</Typography>
-            )}
+            <Tabs value={value} onChange={handleChange} centered>
+              <Tab label="All Vendors" />
+              <Tab label="Approved Vendors" />
+              <Tab label="Pending Vendors" />
+            </Tabs>
           </Box>
           {showHeader && (
-          
             <Box mb={3} ml={3} display="flex" alignItems="center">
               <Search>
                 <SearchIconWrapper>
@@ -164,38 +157,74 @@ const AdminVendors = () => {
                   onChange={handleSearchInputChange}
                 />
               </Search>
-              <Box ml="auto" mr={3}>
-                <Button variant="contained" color="primary" onClick={handleAddVendor}>Add new Vendor</Button>
-              </Box>
             </Box>
-         
           )}
-          <Box mx={3} mb={3} mt={3}>
-            {!openAddVendorForm && !showHeader && (
-             setShowHeader(true)
-            )}
-            {openAddVendorForm ? (
-              <AddVendorForm setOpenAddVendorForm={setOpenAddVendorForm} />
-            ) : (
-              <>
-                {currentVendors.map((vendor) => (
-                  <VendorCard
-                    key={vendor._id}
-                    vendor={vendor}
-                    onEdit={handleEditVendor}
-                    onDelete={handleDeleteVendor}
-                  />
+          {value === 0 && ( // Display All Vendors tab content
+            <>
+              <Grid container spacing={3}>
+                {currentAllVendors.map((vendor) => (
+                  <Grid item xs={12} sm={6} md={4} key={vendor._id}>
+                    <VendorCard
+                      vendor={vendor}
+                      onEdit={handleEditVendor}
+                    />
+                  </Grid>
                 ))}
-                <Box mt={3} display="flex" justifyContent="center">
-                  <Pagination
-                    count={Math.ceil(vendors.length / vendorsPerPage)}
-                    page={page}
-                    onChange={handlePageChange}
-                  />
-                </Box>
-              </>
-            )}
-          </Box>
+              </Grid>
+              <Pagination
+                count={Math.ceil(allVendors.length / vendorsPerPage)}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                size="large"
+                style={{ marginTop: '20px', marginBottom: '20px' }}
+              />
+            </>
+          )}
+          {value === 1 && ( // Display Approved Vendors tab content
+            <>
+              <Grid container spacing={3}>
+                {currentApprovedVendors.map((vendor) => (
+                  <Grid item xs={12} sm={6} md={4} key={vendor._id}>
+                    <VendorCard
+                      vendor={vendor}
+                      onEdit={handleEditVendor}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              <Pagination
+                count={Math.ceil(approvedVendors.length / vendorsPerPage)}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                size="large"
+                style={{ marginTop: '20px', marginBottom: '20px' }}
+              />
+            </>
+          )}
+          {value === 2 && ( // Display Pending Vendors tab content
+            <>
+              <Grid container spacing={3}>
+                {currentPendingVendors.map((vendor) => (
+                  <Grid item xs={12} sm={6} md={4} key={vendor._id}>
+                    <VendorCard
+                      vendor={vendor}
+                      onEdit={handleEditVendor}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              <Pagination
+                count={Math.ceil(pendingVendors.length / vendorsPerPage)}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                size="large"
+                style={{ marginTop: '20px', marginBottom: '20px' }}
+              />
+            </>
+          )}
         </Grid>
       </Grid>
       <VendorEditModal
@@ -203,15 +232,9 @@ const AdminVendors = () => {
         onClose={() => setOpenEditModal(false)}
         vendor={selectedVendor}
       />
-      <DeleteVendorDialog
-        open={openDeleteDialog}
-        onClose={() => setOpenDeleteDialog(false)}
-        onConfirm={handleConfirmDeleteVendor}
-        vendorId={selectedVendorId}
-        token={token}
-      />
+    
     </Container>
   );
 };
 
-export default AdminVendors;
+export default ApproveVendors;
