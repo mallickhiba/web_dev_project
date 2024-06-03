@@ -12,13 +12,18 @@ import {
     ListItemIcon,
     ListItemText,
     Typography,
+    
+
   } from "@mui/material";
   import {
     DashboardOutlined,
     AccountCircle,
     CalendarMonth,
     AdminPanelSettingsOutlined,
-    Edit,
+    
+    Pending,
+  CheckCircle,
+  Edit,
 
   } from "@mui/icons-material";
 import axios from "axios";
@@ -36,7 +41,7 @@ const DashboardSidebar = ({ active }) => {
   const navigate = useNavigate();
 
   const token = useSelector((state) => state.user.token);
-  const userRole = useSelector((state) => state.user.role);
+  
 
     const handleLogout = async () => {
         try {
@@ -50,12 +55,16 @@ const DashboardSidebar = ({ active }) => {
         }
       };
 
-    const userRole = useSelector((state) => state.user.role);
+      const userRole = useSelector((state) => state.user.role);
+
 
 
     const navItems = [
-        { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" },
-      { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" },
+      { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" },
+  userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" } :
+    
+  { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
+    
       { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: "/vendorprofile" },
       { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/vendorbookings" },
 
