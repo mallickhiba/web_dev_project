@@ -6,6 +6,8 @@ import photographyReducer from "./PhotographySlice.js";
 import decorReducer from "./DecorSlice.js";
 import serviceReducer from './ServiceSlice.js';
 import vendorServiceReducer from './vendorServiceSlice.js';
+import adminVendorReducer from './adminVendorSlice';
+import adminUserReducer from "./adminUserSlice.js";
 
 
 const rootReducer = combineReducers({
@@ -15,7 +17,9 @@ const rootReducer = combineReducers({
   photographys: photographyReducer,
   decors: decorReducer,
   services: serviceReducer,
-  vendorServices :vendorServiceReducer
+  vendorServices :vendorServiceReducer,
+  adminVendors: adminVendorReducer,
+  adminUsers: adminUserReducer
 });
 
 const store = configureStore({
