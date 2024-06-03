@@ -489,3 +489,52 @@
     padding-right: 0;
     border-right: none;
 }
+
+.filter-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    width: 100%; /* Make filter panel wider */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sort-panel {
+    margin-bottom: 20px;
+  }
+  
+  .filter-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .apply-filters-btn {
+    background-color: #dc3545; /* Danger button color */
+    color: #fff;
+    border-radius: 4px;
+    padding: 8px 16px;
+  }
+  
+  .custom-checkbox .MuiSvgIcon-root {
+    border: 2px solid #555; /* Thicken checkbox border */
+  }
+  
+  .custom-checkbox .MuiCheckbox-root {
+    padding: 0;
+  }
+  
+  .filter-panel .MuiFormControlLabel-root {
+    margin: 0;
+  }
+  
+  .filter-panel .MuiTypography-root {
+    font-family: 'Arial', sans-serif; /* Custom font family */
+    font-weight: normal;
+  }
+  
+  .filter-panel .MuiFormLabel-root {
+    font-family: 'Arial', sans-serif; /* Custom font family */
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  

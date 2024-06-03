@@ -21,14 +21,14 @@ const ServiceCard = ({ service, onAddToFavorites, onRemoveFromFavorites, isFavor
       <div>
         {isFavorite ? (
           <button
-            className="btn btn-sm btn-danger rounded py-2 px-4 ms-2"
+            className="btn btn-sm btn-primary rounded py-2 px-4"
             onClick={() => onRemoveFromFavorites(service._id)}
           >
             Remove from Favorites
           </button>
         ) : (
           <button
-            className="btn btn-sm btn-danger rounded py-2 px-4 ms-2"
+            className="btn btn-sm btn-primary rounded py-2 px-4"
             onClick={() => onAddToFavorites(service._id)}
           >
             Add to Favorites

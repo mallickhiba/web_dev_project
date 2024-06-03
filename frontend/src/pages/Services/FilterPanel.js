@@ -9,7 +9,7 @@ const FilterPanel = ({ serviceType, handleFilterChange, handleApplyFilters, hand
         area: ['Saddar', 'Gulshan-e-Iqbal', 'DHA', 'North Nazimabad', 'Other'],
         cancellation_policy: ['Flexible', 'Moderate', 'Strict'],
         staff: ['Male', 'Female'],
-        type: ['banquet', 'outdoor', ],
+        type: ['banquet', 'outdoor'],
         capacity: true, // Add capacity only for venues
         price: true, // Add price for all service types
       }
@@ -158,4 +158,3 @@ switch (field) {
 };
 
 export default FilterPanel;
-

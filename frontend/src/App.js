@@ -39,6 +39,8 @@ import VendorBookingHistory from "./pages/Vendor/VendorBookingHistory.js";
 import VendorPendingBookings from "./pages/Vendor/VendorPendingBookings.js";
 import VendorConfirmedBookings from "./pages/Vendor/VendorConfirmedBookings.js";
 import VendorCancelledBookings from "./pages/Vendor/VendorCancelledBookings.js";
+import CustomerProfile from "./pages/Customer/CustomerProfile.js";
+import CustomerFavourites from "./pages/Customer/CustomerFavourites.js";
 
 function App() {
   const { loggedIn, role } = useSelector((state) => state.user);
@@ -69,7 +71,9 @@ function App() {
             <Route path="/pendingbookings" element={<VendorPendingBookings />} />
             <Route path="/confirmedbookings" element={<VendorConfirmedBookings />} />
             <Route path="/cancelledbookings" element={<VendorCancelledBookings />} />
-
+      {/* Customer routes */}
+      <Route path="/customerprofile" element={<CustomerProfile />} />
+      <Route path="/customerfavourites" element={<CustomerFavourites />} />
       {/* {loggedIn && role === 'vendor' && (
         <Route path="/vendordashboard" element={<VendorDashboardPage />} />
       )} */}
