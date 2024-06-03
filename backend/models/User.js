@@ -52,6 +52,6 @@ const UserSchema = new mongoose.Schema(
 );
 
 // Create the base model
-const User = mongoose.model('Users', UserSchema); // Corrected from 'Users' to 'User'
+const User = mongoose.model('User', UserSchema); // Corrected from 'Users' to 'User'
 
 module.exports = User;

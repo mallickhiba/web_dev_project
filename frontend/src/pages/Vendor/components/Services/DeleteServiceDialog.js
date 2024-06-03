@@ -9,7 +9,7 @@ import {
   Button
 } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { deleteService } from "../../../redux/vendorServiceSlice";
+import { deleteService } from "../../../../redux/vendorServiceSlice";
 
 const DeleteServiceDialog = ({ open, onClose, serviceId, token }) => {
   const [loading, setLoading] = useState(false);
