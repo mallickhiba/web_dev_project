@@ -4,15 +4,13 @@ import {
   setVenues,
   setLoading,
   setError,
-  addFavorite,
-  removeFavorite,
-  setBookingStatus,
+  setBookingStatus,addFavoriteV, removeFavoriteV
 } from "./venueSlice";
-import { setCaterings } from "./CateringSlice";
-import { setPhotographys } from "./PhotographySlice";
-import { setDecors } from "./DecorSlice";
-import { setServices, setServiceDetail } from "./ServiceSlice"; // Import setServiceDetail
-
+import { setCaterings,addFavoriteC, removeFavoriteC} from "./CateringSlice";
+import { setPhotographys,addFavoriteP, removeFavoriteP} from "./PhotographySlice";
+import { setDecors,addFavoriteD, removeFavoriteD} from "./DecorSlice";
+import { setServices, setServiceDetail ,addFavorite, removeFavorite,getFavourites} from "./ServiceSlice"; // Import setServiceDetail
+import { NotificationManager } from "react-notifications";
 
 // Fetch venues with filtering and sorting
 export const fetchVenues = createAsyncThunk(
@@ -140,30 +138,101 @@ export const fetchServiceById = createAsyncThunk(
   }
 );
 
-// Add a venue to favorites
+
+
+
+const getToken = () => localStorage.getItem('token');
+
 export const addToFavorites = createAsyncThunk(
-  'venues/addToFavorites',
+  'caterings/addToFavorites',
   async (serviceId, { dispatch }) => {
+    const token = getToken();
+    if (!token) {
+      const errorMessage = 'TOKEN NOT FOUND / INVALID. PLEASE LOG IN';
+      dispatch(setError(errorMessage));
+      NotificationManager.error(errorMessage);
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:5600/customer/addtofavs', { sid: serviceId });
+      const response = await axios.post(
+        'http://localhost:5600/customer/addtofavs',
+        { sid: serviceId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      dispatch(addFavoriteV(serviceId));
+      dispatch(addFavoriteC(serviceId));
+      dispatch(addFavoriteD(serviceId));
       dispatch(addFavorite(serviceId));
+      
+      NotificationManager.success("Service added to favorites successfully");
     } catch (error) {
-      dispatch(setError(error.message));
+      const errorMessage = error.response?.data?.msg || error.message;
+      dispatch(setError(errorMessage));
+      NotificationManager.error(errorMessage);
     }
   }
 );
-// Remove a venue from favorites
+
 export const removeFromFavorites = createAsyncThunk(
-  'venues/removeFromFavorites',
+  'caterings/removeFromFavorites',
   async (serviceId, { dispatch }) => {
+    const token = getToken();
+    if (!token) {
+      dispatch(setError('TOKEN NOT FOUND / INVALID. PLEASE LOG IN'));
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:5600/customer/removefromfavs', { sid: serviceId });
+      const response = await axios.post(
+        'http://localhost:5600/customer/removefromfavs',
+        { sid: serviceId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      dispatch(removeFavoriteV(serviceId));
+      dispatch(removeFavoriteC(serviceId));
+      dispatch(removeFavoriteD(serviceId));
+      
       dispatch(removeFavorite(serviceId));
+      
     } catch (error) {
-      dispatch(setError(error.message));
+      dispatch(setError(error.response?.data?.msg || error.message));
     }
   }
 );
+export const getFromFavorites = createAsyncThunk(
+  'caterings/getFromFavorites',
+  async (_, { dispatch }) => {
+    const token = getToken();
+    if (!token) {
+      const errorMessage = 'TOKEN NOT FOUND / INVALID. PLEASE LOG IN';
+      dispatch(setError(errorMessage));
+      NotificationManager.error(errorMessage);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        'http://localhost:5600/customer/favs',
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(response.data); // Debugging log
+      if (Array.isArray(response.data.favourites)) {
+        dispatch(getFavourites(response.data.favourites));
+        NotificationManager.success('Favorites fetched successfully');
+      } else {
+        console.error('Invalid response format', response.data); // Log the response for debugging
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.msg || error.message;
+      dispatch(setError(errorMessage));
+      NotificationManager.error(errorMessage);
+    }
+  }
+);
+
 
 // Book a venue
 export const bookVenue = createAsyncThunk(

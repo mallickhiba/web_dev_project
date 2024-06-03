@@ -204,7 +204,7 @@ router.get('/catering1', async (req, res) => {
 });
 
  // Adjust the path to your model
-router.get('/photography', async (req, res) => {
+router.get('/photography1', async (req, res) => {
   try {
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 5;

@@ -25,6 +25,16 @@ export const navList = [
       path: "/photography",
       text: "Photography",
     },
+    {
+      id: 11,
+      path: "/login",
+      text: "Login",
+    },
+    {
+      id: 11,
+      path: "/signup",
+      text: "Signup",
+    },
   ];
  
   export const carouselData = [

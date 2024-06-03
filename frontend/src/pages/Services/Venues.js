@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchVenues,
   addToFavorites,
+  removeFromFavorites,
   bookVenue,
 } from "../../redux/serviceActions.js";
 import { Link } from "react-router-dom";
@@ -12,7 +13,9 @@ import Header from "../../common/Header.jsx";
 import Footer from "../../common/Footer.jsx";
 import ServiceCard from "./ServiceCard.js"; // Import the ServiceCard component
 import FilterPanel from "./FilterPanel.js"; // Import the FilterPanel component
-import { Grid } from "@mui/material";
+import { Grid,Pagination } from "@mui/material";
+import { NotificationContainer } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 const Venues = () => {
   const dispatch = useDispatch();
@@ -39,7 +42,13 @@ const Venues = () => {
   const handleAddToFavorites = (serviceId) => {
     dispatch(addToFavorites(serviceId));
   };
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
+  const handleRemoveFromFavorites = (serviceId) => {
+    dispatch(removeFromFavorites(serviceId));
+  };
   const handleBookVenue = (serviceId) => {
     const date = "2024-06-01"; // Example date
     const customer = "customerId123"; // Replace with actual customer ID
@@ -48,51 +57,65 @@ const Venues = () => {
 
   const handleFilterChange = (e) => {
     const { name, value, checked } = e.target;
-    if (name === "capacityMin" || name === "capacityMax") {
-      const min = name === "capacityMin" ? value : filters.capacityMin;
-      const max = name === "capacityMax" ? value : filters.capacityMax;
-      const range = `${min}-${max}`;
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        capacityMin: min,
-        capacityMax: max,
-        capacity: range,
-      }));
-    } else if (name === "priceMin" || name === "priceMax") {
-      const min = name === "priceMin" ? value : filters.priceMin;
-      const max = name === "priceMax" ? value : filters.priceMax;
-      const range = `${min}-${max}`;
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        priceMin: min,
-        priceMax: max,
-        start_price: range, // Update to start_price if both min and max are set
-      }));
-    } else {
-      // If checkbox is unchecked, remove it from filters
-      if (!checked) {
-        const updatedFilters = { ...filters };
-        delete updatedFilters[name];
-        setFilters(updatedFilters);
-      } else {
-        setFilters((prevFilters) => ({
+
+    setFilters((prevFilters) => {
+      const updatedFilters = { ...prevFilters };
+
+      if (name === "capacityMin" || name === "capacityMax") {
+        const min = name === "capacityMin" ? value : prevFilters.capacityMin;
+        const max = name === "capacityMax" ? value : prevFilters.capacityMax;
+        const range = `${min}-${max}`;
+        return {
           ...prevFilters,
-          [name]: value ?? checked,
-        }));
+          capacityMin: min,
+          capacityMax: max,
+          capacity: range,
+        };
+      } else if (name === "priceMin" || name === "priceMax") {
+        const min = name === "priceMin" ? value : prevFilters.priceMin;
+        const max = name === "priceMax" ? value : prevFilters.priceMax;
+        const range = `${min}-${max}`;
+        return {
+          ...prevFilters,
+          priceMin: min,
+          priceMax: max,
+          start_price: range,
+        };
+      } else {
+        if (checked) {
+          if (!updatedFilters[name]) {
+            updatedFilters[name] = [];
+          }
+          updatedFilters[name].push(value);
+        } else {
+          if (updatedFilters[name]) {
+            updatedFilters[name] = updatedFilters[name].filter(
+              (val) => val !== value
+            );
+            if (updatedFilters[name].length === 0) {
+              delete updatedFilters[name];
+            }
+          }
+        }
+        return updatedFilters;
       }
-    }
+    });
   };
 
   const handleApplyFilters = () => {
-    // Check if any filters are present
-    if (Object.keys(filters).length === 0) {
-      // If no filters, fetch all data by setting appliedFilters to an empty object
-      setAppliedFilters({});
-    } else {
-      // If filters are present, apply them
-      setAppliedFilters(filters);
-    }
+    const formattedFilters = {};
+
+    Object.keys(filters).forEach((key) => {
+      if (Array.isArray(filters[key])) {
+        formattedFilters[key] = filters[key].join(",");
+      } else {
+        formattedFilters[key] = filters[key];
+      }
+    });
+
+    setAppliedFilters(formattedFilters);
   };
+
 
   const handleSortChange = (e) => {
     setSort(e.target.value);
@@ -124,20 +147,32 @@ const Venues = () => {
                 {loading && <p>Loading...</p>}
                 {error && <p>{error}</p>}
                 {venues.map((service) => (
-                  <Link to={`/service/${service._id}`} key={service._id}>
+                  
                     <ServiceCard
-                      service={service}
+                       key={service._id}
+                       service={service}
                       onAddToFavorites={handleAddToFavorites}
-                      onBookVenue={handleBookVenue}
+                      onRemoveFromFavorites={handleRemoveFromFavorites}
+                      isFavorite={favorites.includes(service._id)}
                     />
-                  </Link>
+                
                 ))}
               </div>
+              <Pagination
+                count={Math.ceil(venues / limit)}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                showFirstButton
+                showLastButton
+                
+                style={{ marginTop: "20px" }}
+              />
             </Grid>
           </Grid>
         </div>
       </div>
-     
+      <NotificationContainer />
     </div>
   );
 };

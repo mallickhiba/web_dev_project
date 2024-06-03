@@ -12,30 +12,36 @@ import {
     ListItemIcon,
     ListItemText,
     Typography,
+    
+
   } from "@mui/material";
   import {
     DashboardOutlined,
     AccountCircle,
     CalendarMonth,
     AdminPanelSettingsOutlined,
-    Edit,
+    
+    Pending,
+  CheckCircle,
+  Edit,
 
   } from "@mui/icons-material";
 import axios from "axios";
 import { logout } from "../redux/userSlice";
-  const { styled } = require("@mui/system");
+const { styled } = require("@mui/system");
 
-  const FlexBetween = styled(Box)({
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  });
-  
+const FlexBetween = styled(Box)({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+});
+
 const DashboardSidebar = ({ active }) => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const token = useSelector((state) => state.user.token);
   
-    const token = useSelector((state) => state.user.token);
 
     const handleLogout = async () => {
         try {
@@ -49,68 +55,71 @@ const DashboardSidebar = ({ active }) => {
         }
       };
 
-    const userRole = useSelector((state) => state.user.role);
+      const userRole = useSelector((state) => state.user.role);
+
 
 
     const navItems = [
-        { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" },
-      { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" },
+      { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" },
+  userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" } :
+    
+  { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
+    
       { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: "/vendorprofile" },
       { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/vendorbookings" },
 
     ];
 
-   return (
-   <Box component="nav">
-    <Drawer
-      open={true}
-      variant="persistent"
-      anchor="left"
-      sx={{
-        width: 240,
-        "& .MuiDrawer-paper": {
-          color: "text.secondary",
-          backgroundColor: "background.alt",
-          boxSizing: "border-box",
-          width: 240,
-        },
-      }}
-    >
-      <Box width="100%">
-        {/* Sidebar Header */}
-        <Box m="1.5rem 2rem 2rem 3rem">
-          <FlexBetween>
-          <Link to="/vendordashboard" className="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
-             <img src="https://www.shadiyana.pk/images/logo.svg" alt="" />
-           </Link>
-          </FlexBetween>
-        </Box>
-        
-        {/* Sidebar Items */}
-        <List>
-  {navItems.map(({ text, icon, link, active: itemActive }) => (
-    <ListItem key={text} disablePadding>
-      <ListItemButton
-        component="a"
-        href={link}
-        selected={itemActive}
+  return (
+    <Box component="nav">
+      <Drawer
+        open={true}
+        variant="persistent"
+        anchor="left"
         sx={{
-          backgroundColor: itemActive ? "secondary.300" : "transparent",
-          color: itemActive ? "crimson" : "text.secondary", // Set font color dynamically
+          width: 240,
+          "& .MuiDrawer-paper": {
+            color: "text.secondary",
+            backgroundColor: "background.alt",
+            boxSizing: "border-box",
+            width: 240,
+          },
         }}
       >
-        {icon && (
-          <ListItemIcon sx={{ ml: "2rem" }}>
-            {icon}
-          </ListItemIcon>
-        )}
-        <ListItemText primary={text} sx={{ fontWeight: icon === null ? "bold" : "normal" }} />
-      </ListItemButton>
-    </ListItem>
-  ))}
-</List>
+        <Box width="100%">
+          {/* Sidebar Header */}
+          <Box m="1.5rem 2rem 2rem 3rem">
+            <FlexBetween>
+              <Link to="/vendordashboard" className="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
+                <img src="https://www.shadiyana.pk/images/logo.svg" alt="" />
+              </Link>
+            </FlexBetween>
+          </Box>
 
-      </Box>
+          {/* Sidebar Items */}
+          <List>
+            {navItems.map(({ text, icon, link }, index) => (
+              <ListItem key={text} disablePadding>
+                <ListItemButton
+                  component="a"
+                  href={link}
+                  selected={active === index + 1}
+                  sx={{
+                    backgroundColor: active === index + 1 ? "secondary.300" : "transparent",
+                    color: active === index + 1 ? "crimson" : "text.secondary",
+                  }}
+                >
+                  {icon && (
+                    <ListItemIcon sx={{ ml: "2rem" }}>
+                      {icon}
+                    </ListItemIcon>
+                  )}
+                  <ListItemText primary={text} sx={{ fontWeight: icon === null ? "bold" : "normal" }} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
 
       {/* Sidebar Footer */}
       <Box position="absolute" bottom="2rem" width="100%">
@@ -128,26 +137,22 @@ const DashboardSidebar = ({ active }) => {
       </Typography>
     </Box>
 
-    {/* Admin Settings Icon */}
-    <Box>
-      <AdminPanelSettingsOutlined sx={{ fontSize: "25px" }} />
+            {/* Admin Settings Icon */}
+            <Box>
+              <AdminPanelSettingsOutlined sx={{ fontSize: "25px" }} />
+            </Box>
+          </FlexBetween>
+
+          {/* Logout Button */}
+          <Box textAlign="center">
+            <Button onClick={handleLogout} variant="contained" color="secondary" sx={{ m: "1rem", backgroundColor: "crimson" }}>
+              Logout
+            </Button>
+          </Box>
+        </Box>
+      </Drawer>
     </Box>
-
-  </FlexBetween>
-
-  {/* Logout Button */}
-  <Box textAlign="center">
-  <Button onClick={handleLogout} variant="contained" color="secondary" sx={{ m: "1rem", backgroundColor: "crimson" }}>
-    Logout
-  </Button>
-</Box>
-
-</Box>
-
-
-    </Drawer>
-  </Box>
-);
+  );
 };
 
 export default DashboardSidebar;

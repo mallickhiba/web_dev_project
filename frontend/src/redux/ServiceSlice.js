@@ -27,6 +27,10 @@ const serviceSlice = createSlice({
       state.services = action.payload;
       console.log(action.payload);
     },
+    getFavourites(state, action) {
+      state.favorites = action.payload;
+      console.log(action.payload);
+    },
     setServiceDetail(state, action) {
       state.serviceDetail = action.payload; // Define setServiceDetail action
     },
@@ -72,8 +76,8 @@ export const {
   addFavorite,
   removeFavorite,
   setBookingStatus,
-  selectedService
+  selectedService,
+  getFavourites
 
 } = serviceSlice.actions;
-
 export default serviceSlice.reducer;
