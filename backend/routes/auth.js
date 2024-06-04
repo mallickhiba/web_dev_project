@@ -212,8 +212,8 @@ router.post("/resetpassword", async (req, res) => {
         console.log("CORRECT TOKEN");
         if (
           newPassword.length < 8 ||
-          !/\d/.test(password) ||
-          !/[a-zA-Z]/.test(password)
+          !/\d/.test(newPassword) ||
+          !/[a-zA-Z]/.test(newPassword)
         ) {
           throw new Error("Password must be at least 8 characters long and include both numbers and alphabets.");
         }

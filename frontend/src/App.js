@@ -12,6 +12,8 @@ import {
 import { NotificationContainer } from "react-notifications";
 import SignUp from "./pages/Auth/SignupPage.js";
 import Login from "./pages/Auth/LoginPage.js";
+import ForgotPassword from "./pages/Auth/ForgotPasswordPage.js";
+import ResetPassword from "./pages/Auth/ResetPasswordPage.js";
 import "./css/style.css";
 import "./css/bootstrap.min.css";
 import "./css/animate.css";
@@ -60,6 +62,9 @@ function App() {
             <Route path="/service/:id" element={<ServiceDetail />} />  
             <Route path="/signup" element={<SignUp />} /> 
             <Route path="/login" element={<Login />} /> 
+            <Route path="/forgot-password" element={<ForgotPassword />} /> 
+            <Route path="/reset-password" element={<ResetPassword />} /> 
+
 
         {loggedIn && role === 'vendor' && (
         <Route path="/vendordashboard" element={<VendorDashboardPage />} />
