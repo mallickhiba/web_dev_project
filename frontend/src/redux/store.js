@@ -24,7 +24,7 @@ const rootReducer = combineReducers({
   adminVendors: adminVendorReducer,
   adminUsers: adminUserReducer,
   adminReviews: adminReviewReducer,
-  adminBookings: adminBookingReducer
+  adminBookings: adminBookingReducer,
   vendorbookings : bookingReducer ,
 
 });
