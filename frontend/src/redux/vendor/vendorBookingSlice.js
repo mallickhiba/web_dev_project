@@ -23,9 +23,10 @@ const vendorBookingSlice = createSlice({
     updateBookingStatus(state, action) {
       const { bookingId, status } = action.payload;
       state.bookings = state.bookings.map((booking) =>
-        booking.id === bookingId ? { ...booking, status } : booking
+        booking._id === bookingId ? { ...booking, status } : booking
       );
     },
+    
   },
 });
 

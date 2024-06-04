@@ -169,6 +169,7 @@ router.get(
       } else if (sortDirection === "desc") {
         sortQuery = { bookingDate: -1 }; // Sort by booking date in descending order
       }
+      const totalCount = await Booking.countDocuments(query);
 
         const bookings = await Booking.find(query)
             .populate({
@@ -186,22 +187,6 @@ router.get(
             .limit(limit)
             .skip(startIndex);
 
-      const bookings = await Booking.find(query)
-        .populate({
-          path: "customer",
-          select: "firstName lastName email",
-        })
-        .populate({
-          path: "service._id",
-          select: "service_name service_category",
-        })
-        .populate({
-          path: "vendor_id",
-          select: "firstName lastName email",
-        })
-        .sort(sortQuery) // Apply sorting based on sortQuery
-        .limit(limit)
-        .skip(startIndex);
 
       const totalPages = Math.ceil(totalCount / limit);
 
@@ -270,7 +255,7 @@ router.post(
 router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMiddleware, async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
-        const newStatus = req.params.newStatus;
+        const newStatus = req.params.newStatus.toLowerCase(); // Convert to lowercase for case-insensitive comparison
         const vendorId = req.user.id;
 
         // Check if the booking belongs to the vendor
@@ -279,17 +264,24 @@ router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMid
             return res.status(404).json({ message: "Booking not found or does not belong to the vendor." });
         }
 
+        // Check for valid status
         if (!["pending", "confirmed", "cancelled"].includes(newStatus)) {
             return res.status(400).json({ message: "Invalid status. Allowed values: 'pending', 'confirmed', 'cancelled'." });
         }
+
         // Update the booking status
         booking.status = newStatus;
         await booking.save();
+        console.log("Booking updated");
+
+        // Send response
+        res.status(200).json({ message: "Booking status updated successfully" });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 // DELETE a booking by ID. Only admin can do this.
 router.delete(
   "/deleteBooking/:bookingId",
