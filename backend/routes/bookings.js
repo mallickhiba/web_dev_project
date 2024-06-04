@@ -187,7 +187,6 @@ router.get(
             .limit(limit)
             .skip(startIndex);
 
-
       const totalPages = Math.ceil(totalCount / limit);
 
       const pagination = {
