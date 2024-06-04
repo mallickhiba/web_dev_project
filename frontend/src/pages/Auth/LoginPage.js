@@ -37,19 +37,24 @@ const Login = () => {
       e.preventDefault();
       const res = await axios.post('http://localhost:5600/auth/login', data);
       if (res.status === 200) {
-        NotificationManager.success(res.data.msg);
-        const { token } = res.data;
-        const role = JSON.parse(atob(token.split('.')[1])).role;
-        dispatch(login({ token, role }));
+        const { msg, token, user } = res.data;
+        NotificationManager.success(msg);
+        const { role, approved } = user;
+        dispatch(login({ token, role, approved }));
         redirectToRolePage(role);
       } else {
         NotificationManager.error(res.data.error);
       }
     } catch (error) {
       console.error(error);
-      NotificationManager.error(error.response.data.error); 
+      if (error.response && error.response.data && error.response.data.error) {
+        NotificationManager.error(error.response.data.error);
+      } else {
+        NotificationManager.error('An error occurred during login.');
+      }
     }
   };
+  
   
   const redirectToRolePage = (role) => {
     switch (role) {

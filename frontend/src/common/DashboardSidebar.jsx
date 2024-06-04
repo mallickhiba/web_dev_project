@@ -37,6 +37,7 @@ const DashboardSidebar = ({ active }) => {
   const userRole = useSelector((state) => state.user.role);
 
   const token = useSelector((state) => state.user.token);
+  const approved = localStorage.getItem('approved');
 
   const handleLogout = async () => {
     try {
@@ -109,33 +110,33 @@ const DashboardSidebar = ({ active }) => {
     },
   ];
 
-  let navItems = [];
-  if (userRole === "vendor") {
-    navItems = vendorNavItems;
-    if (token.approved) {
-      navItems = [
-        ...navItems,
-        {
-          text: "Services",
-          icon: (
-            <Edit sx={{ color: `${active === 5 ? "#dab61e" : "white"}` }} />
-          ),
-          link: "/vendorservices",
-        },
-        {
-          text: "Bookings",
-          icon: (
-            <CalendarMonth
-              sx={{ color: `${active === 6 ? "#dab61e" : "white"}` }}
-            />
-          ),
-          link: "/vendorbookings",
-        },
-      ];
-    }
-  } else {
-    navItems = customerNavItems;
+  if (userRole === "vendor" && approved) {
+    vendorNavItems.push(
+      {
+        text: "Services",
+        icon: (
+          <Edit sx={{ color: `${active === 2 ? "#dab61e" : "white"}` }} />
+        ),
+        link: "/vendorservices",
+      },
+      {
+        text: "Bookings",
+        icon: (
+          <CalendarMonth
+            sx={{ color: `${active === 4 ? "#dab61e" : "white"}` }}
+          />
+        ),
+        link: "/vendorbookings",
+      }
+    );
   }
+
+  let navItems = [];
+if (userRole === "vendor") {
+  navItems = vendorNavItems;
+} else {
+  navItems = customerNavItems;
+}
 
   return (
     <Box component="nav">
