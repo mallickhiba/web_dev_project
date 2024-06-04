@@ -47,7 +47,7 @@ router.get('/allBookings', authenticate, adminMiddleware, async (req, res) => {
                 select: 'firstName lastName email'
             })
             .populate({
-                path: 'service_id',
+                path: 'service._id',
                 select: 'service_name service_category'    
             })
             .populate({
@@ -102,7 +102,7 @@ router.get('/customerBookings', authenticate, customerMiddleware, async (req, re
 
         const bookings = await Booking.find(query)
             .populate({
-                path: 'service_id',
+                path: 'service._id',
                 select: 'service_name service_category'
             })
             .populate({
@@ -167,7 +167,7 @@ router.get('/vendorBookings', authenticate, vendorMiddleware, async (req, res) =
                 select: 'firstName lastName email'
             })
             .populate({
-                path: 'service_id',
+                path: 'service._id',
                 select: 'service_name service_category'
             }).populate({
                 path: 'vendor_id',
@@ -199,24 +199,25 @@ router.get('/vendorBookings', authenticate, vendorMiddleware, async (req, res) =
 // POST a new booking. only customer can make bookings ****TESTED***
 router.post('/createBooking', authenticate, customerMiddleware, async (req, res) => {
     try {
-        const customerID = req.user.id; 
+        const customerID = req.body.customer_id; 
+        console.log(req.body);
 
-        if (!req.body.bookingDate || !req.body.service || !req.body.service.service_id || !req.body.service.selected_package || !req.body.service.selected_package.package_id || !req.body.service.selected_package.name || req.body.guests == null) {
+        if ( !req.body.service._id || !req.body.service.selected_package || !req.body.service.selected_package.package_id || req.body.guests == null) {
             return res.status(400).json({ message: "Please provide all required fields." });
         }
 
         // Extract vendor_id from service_id
-        const service = await Service.findById(req.body.service.service_id);
+        const service = await Service.findById(req.body.service._id);
         if (!service) {
             return res.status(404).json({ message: "Service not found." });
         }
 
-        const vendor_id = service.vendor_id; // Assuming the vendor_id is stored in the service document
+        const vendor_id = req.body.vendor_id; // Assuming the vendor_id is stored in the service document
 
         // Create booking data object
         const bookingData = {
             customer: customerID,
-            service_id: req.body.service.service_id,
+            service_id: req.body.service._id,
             selected_package: {
                 package_id: req.body.service.selected_package.package_id,
                 name: req.body.service.selected_package.name,
