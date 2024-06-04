@@ -6,6 +6,8 @@ const customerMiddleware = require("../middlewares/customerMiddleware");
 const authenticate = require("../middlewares/authenticate");
 const adminMiddleware = require("../middlewares/adminMiddleware");
 const vendorMiddleware = require("../middlewares/vendorMiddleware");
+const transporter = require('../emailService.js'); 
+
 
 const router = express.Router();
 
@@ -212,7 +214,7 @@ router.post(
   customerMiddleware,
   async (req, res) => {
     try {
-        const customerID = req.user.id; 
+        const customerID = req.user.id;
 
         if (!req.body.bookingDate || !req.body.service || !req.body.service.service_id || !req.body.service.selected_package || !req.body.service.selected_package.package_id || !req.body.service.selected_package.name || req.body.guests == null) {
             return res.status(400).json({ message: "Please provide all required fields." });
@@ -241,12 +243,31 @@ router.post(
 
       // Create new booking
       const newBooking = await Booking.create(bookingData);
-      res
-        .status(201)
-        .json({ message: "Booking created successfully", booking: newBooking });
+      res.status(201).json({ message: "Booking created successfully", booking: newBooking });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
+    console.log(req.body.customer_id)
+
+    const customer = await User.findById(req.body.customer_id);
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: customer.email,
+      subject: 'Booking Created',
+      text: `Your booking has been created! You will recieve an email update when it is confirmed`
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          console.error('Error sending email:', error);
+          return res.status(500).send('Error sending email');
+      } else {
+          console.log('Email sent: ' + info.response);
+          return res.send('Email sent to customer');
+      }
+  });
+
+
   }
 );
 
@@ -262,7 +283,6 @@ router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMid
         if (!booking) {
             return res.status(404).json({ message: "Booking not found or does not belong to the vendor." });
         }
-
         // Check for valid status
         if (!["pending", "confirmed", "cancelled"].includes(newStatus)) {
             return res.status(400).json({ message: "Invalid status. Allowed values: 'pending', 'confirmed', 'cancelled'." });
@@ -279,6 +299,23 @@ router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMid
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
+    const customer = await User.findById(req.body.customer_id);
+    if (newStatus == 'confirmed'){
+    const mailOptions2 = {
+      from: process.env.EMAIL_USER,
+      to: customer.email,
+      subject: 'Booking Confirmed',
+      text: `Yay! Your booking has been confirmed`
+  };
+  transporter.sendMail(mailOptions2, (error, info) => {
+      if (error) {
+          console.error('Error sending email:', error);
+          return res.status(500).send('Error sending email');
+      } else {
+          console.log('Email sent: ' + info.response);
+          return res.send('Confirmation mail sent to customer');
+      }
+  });}
 });
 
 // DELETE a booking by ID. Only admin can do this.
