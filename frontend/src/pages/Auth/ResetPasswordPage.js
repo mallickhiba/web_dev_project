@@ -10,7 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const defaultTheme = createTheme();
 
@@ -70,7 +70,7 @@ const ResetPassword = () => {
               value={data.email}
               onChange={handleForm}
             />
-             <TextField
+            <TextField
               margin="normal"
               required
               fullWidth
@@ -101,6 +101,15 @@ const ResetPassword = () => {
             >
               Reset Password
             </Button>
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                sx={{ mt: 2, mb: 2 }}
+              >
+                Back to Login
+              </Button>
+            </Link>
           </Box>
         </Box>
       </Container>
