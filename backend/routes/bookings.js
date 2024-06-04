@@ -47,7 +47,7 @@ router.get('/allBookings', authenticate, adminMiddleware, async (req, res) => {
                 select: 'firstName lastName email'
             })
             .populate({
-                path: 'service._id',
+                path: 'service_id',
                 select: 'service_name service_category'    
             })
             .populate({

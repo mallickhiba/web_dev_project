@@ -21,7 +21,7 @@ router.get('/getreviews/:serviceId', async (req, res) => {
   }
 });
 // View all reviews
-router.get('/viewReviews', async (req, res) => {
+router.get('/view-reviews', async (req, res) => {
   try {
     const reviews = await Review.find().populate('user', 'firstName lastName').populate('service', 'service_name');
     res.json({ reviews });
