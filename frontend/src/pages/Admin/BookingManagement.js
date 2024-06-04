@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Grid, Container } from "@mui/material";
 import axios from "axios";
-import BookingCard from "../Bookings/BookingCard"; // Update path if needed
+import BookingCard from "../Bookings/EditableBookingCard"; // Update path if needed
 import { useSelector, useDispatch } from "react-redux";
 import AdminSidebar from "./components/AdminSidebar";
 import { setBookings, deleteBooking, editBooking } from "../../redux/adminBookingSlice"; // Update path if needed
@@ -69,10 +69,12 @@ const BookingManagement = () => {
             <Box border="1px solid #ccc" borderRadius={4} p={3} mb={3} mt={2}>
               <Typography variant="h4">Showing all bookings</Typography>
             </Box>
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
               {allBookings?.map((booking, index) => (
                 <Grid item xs={12} md={6} lg={4} key={index}>
-                  <BookingCard booking={booking} />
+                  <Box display="flex" justifyContent="center">
+                    <BookingCard booking={booking} />
+                  </Box> 
                 </Grid>
               ))}
             </Grid>
