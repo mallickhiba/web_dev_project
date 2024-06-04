@@ -72,7 +72,7 @@ const EditableBookingCard = ({ booking }) => {
         throw new Error("Failed to delete booking");
       }
 
-      dispatch(deleteBooking(booking._id));
+      dispatch(deleteBooking(booking._id));4
       setDeleteConfirmationOpen(false);
     } catch (error) {
       console.error(error);
@@ -95,14 +95,17 @@ const EditableBookingCard = ({ booking }) => {
               <EventIcon />
             </Avatar>
             <Typography
-              variant="h6"
+              variant="h10"
               component="div"
               sx={{ fontWeight: "bold", color: "#1976d2" }}
             >
-              {service}
+              Booking #: {booking._id}
             </Typography>
           </Box>
           <Divider sx={{ mb: 2 }} />
+          <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
+            Service: <span style={{ fontWeight: "normal" }}>{service}</span>
+          </Typography>
           <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
             Customer: <span style={{ fontWeight: "normal" }}>{customer}</span>
           </Typography>
@@ -116,7 +119,7 @@ const EditableBookingCard = ({ booking }) => {
             Guests: <span style={{ fontWeight: "normal" }}>{booking.guests}</span>
           </Typography>
           <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
-            Status: <span style={{ fontWeight: "normal" }}>{booking.status}</span>
+            Status: <span style={{ fontWeight: "normal" }}>{status}</span>
           </Typography>
           <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
             Booking Date: <span style={{ fontWeight: "normal" }}>{new Date(booking.bookingDate).toLocaleDateString()}</span>
@@ -172,3 +175,4 @@ const EditableBookingCard = ({ booking }) => {
 };
 
 export default EditableBookingCard;
+

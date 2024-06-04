@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux"; // Import useSelector from react-redux
 import { navList } from "../data/Data";
+import icon from "./favicon.ico"; // Adjust the path to where your icon is saved
 
 export default function Header() {
   const [navbarCollapse, setNavbarCollapse] = useState(false);
@@ -37,13 +38,14 @@ export default function Header() {
               to="/"
               className="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center"
             >
-              <h1 className="m-0 text-primary text-uppercase">Shaadi</h1>
+              <img src={icon} alt="Icon" style={{ width: 50, height: 50, marginRight: 10 }} />
+              <h3 className="m-0 text" style={{ color: "#dab61e" }}>Shadiyana</h3>
             </Link>
           </div>
           <div className="col-lg-9">
             <nav className="navbar navbar-expand-lg bg-dark navbar-dark p-3 p-lg-0">
               <Link to="/" className="navbar-brand d-block d-lg-none">
-                <h1 className="m-0 text-primary text-uppercase">Shaadi</h1>
+              <h3 className="m-0 text" style={{ color: "#dab61e" }}>Shadiyana</h3>
               </Link>
               <button
                 type="button"
