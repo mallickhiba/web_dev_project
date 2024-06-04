@@ -665,6 +665,34 @@
 				"url": "http://localhost:5600/bookings/deleteBooking/665f2b885bba5c5e828ce903"
 			},
 			"response": []
+		},
+		{
+			"name": "CREATE BOOKING",
+			"id": "9aa777ff-a3be-4dc4-b468-6be3d5c0a413",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NWYyM2I0ODQyZmMxMTk2ZDdhZTg2ZSIsImVtYWlsIjoiY0BnbWFpbC5jb20iLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MTc1MTExMDIsImV4cCI6MTcxNzU5NzUwMn0.8KS6_8kP15Uf7jrfoIyE_cJhX0p3obRKwTeH9Job6sQ"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n            \"customer_id\": \"662205e15816f697d31d3098\",\r\n            \"service\": {\r\n                \"service_id\": \"660e3901d2a1ddf7dfe40c8c\",\r\n                \"selected_package\": {\r\n                \"package_id\": 1,\r\n                \"name\": \"Basic Venue Package\"            }\r\n            },\r\n            \"vendor_id\": \"6149d56d760b08dcb7c47a58\",\r\n            \"guests\": 70,\r\n            \"status\": \"pending\",\r\n            \"bookingDate\": \"2022-08-01T10:00:00.000Z\"\r\n        }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/bookings/createBooking"
+			},
+			"response": []
 		}
 	]
 }
