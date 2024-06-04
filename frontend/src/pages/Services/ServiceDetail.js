@@ -132,7 +132,7 @@ const ServiceDetail = () => {
                     color="primary"
                     sx={{ marginBottom: 2 }}
                   >
-                    Check Availability
+                    Book Now
                   </Button>
                   <Button variant="contained" color="secondary">
                     Contact Vendor
