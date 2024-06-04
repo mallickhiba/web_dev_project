@@ -14,7 +14,8 @@ import axios from "axios";
 import BookingCard from "../Bookings/EditableBookingCard"; // Update path if needed
 import SearchIcon from '@mui/icons-material/Search';
 import AdminSidebar from "./components/AdminSidebar";
-import { setBookings, deleteBooking } from "../../redux/adminBookingSlice"; // Update path if needed
+import { setBookings, deleteBooking, editBooking } from "../../redux/adminBookingSlice"; // Update path if needed
+import DeleteBookingDialog from "./components/DeleteBookingDialog";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -96,9 +97,9 @@ const BookingManagement = () => {
 
   const handleSearch = () => {
     return allBookings.filter(booking => {
-      const customer_name = booking.customer.firstName.toLowerCase();
+      const service_name = booking.service_id.service_name.toLowerCase();
       const query = searchQuery.toLowerCase();
-      return customer_name.includes(query);
+      return service_name.includes(query);
     });
   };
 
@@ -125,7 +126,6 @@ const BookingManagement = () => {
 
   const handleConfirmDeleteBooking = () => {
     console.log("Deleting booking with ID:", selectedBookingId);
-    dispatch(deleteBooking(selectedBookingId));
     setOpenDeleteDialog(false);
   };
 
@@ -156,7 +156,9 @@ const BookingManagement = () => {
               {handleSearch().slice(indexOfFirstBooking, indexOfLastBooking).map((booking, index) => (
                 <Grid item xs={12} md={6} lg={4} key={index}>
                   <Box display="flex" justifyContent="center">
-                    <BookingCard booking={booking} />
+                    <BookingCard 
+                    booking={booking}
+                    onDelete={handleDeleteBooking} />
                   </Box>
                 </Grid>
               ))}
@@ -171,6 +173,13 @@ const BookingManagement = () => {
           </Box>
         </Grid>
       </Grid>
+      <DeleteBookingDialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleConfirmDeleteBooking}
+        bookingId={selectedBookingId}
+        token={token}
+      />
     </Container>
   );
 };
