@@ -9,7 +9,7 @@ import {
 import { setCaterings,addFavoriteC, removeFavoriteC} from "./CateringSlice";
 import { setPhotographys,addFavoriteP, removeFavoriteP} from "./PhotographySlice";
 import { setDecors,addFavoriteD, removeFavoriteD} from "./DecorSlice";
-import { setServices, setServiceDetail ,addFavorite, removeFavorite,getFavourites} from "./ServiceSlice"; // Import setServiceDetail
+import { setServices, setServiceDetail ,addFavorite, removeFavorite,getFavourites,postareview,getReviews} from "./serviceSlice"; // Import setServiceDetail
 import { NotificationManager } from "react-notifications";
 
 // Fetch venues with filtering and sorting
@@ -201,6 +201,28 @@ export const removeFromFavorites = createAsyncThunk(
     }
   }
 );
+
+export const postReview = createAsyncThunk(
+  'caterings/postreview',
+  async ({ serviceId, rating, review }, { dispatch }) => {
+    const token = getToken();
+    if (!token) {
+      dispatch(setError('TOKEN NOT FOUND / INVALID. PLEASE LOG IN'));
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        'http://localhost:5600/reviews/add',
+        { service: serviceId, rating, review }, // Send all necessary data
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      dispatch(postareview(response.data));
+    } catch (error) {
+      dispatch(setError(error.response?.data?.msg || error.message));
+    }
+  }
+);
 export const getFromFavorites = createAsyncThunk(
   'caterings/getFromFavorites',
   async (_, { dispatch }) => {
@@ -232,6 +254,23 @@ export const getFromFavorites = createAsyncThunk(
     }
   }
 );
+
+// Fetch service by ID
+export const fetchreviews = createAsyncThunk(
+  "service/fetchServiceById",
+  async (id, { dispatch }) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axios.get(`http://localhost:5600/reviews/getreviews/${id}`);
+      dispatch(getReviews(response.data.reviews)); // Dispatch setServiceDetail with the response data
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setError(error.message));
+      dispatch(setLoading(false));
+    }
+  }
+);
+
 
 
 // Book a venue

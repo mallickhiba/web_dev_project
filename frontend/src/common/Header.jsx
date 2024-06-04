@@ -1,12 +1,16 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux"; // Import useSelector from react-redux
 import { navList } from "../data/Data";
-
 
 export default function Header() {
   const [navbarCollapse, setNavbarCollapse] = useState(false);
-
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const navigate = useNavigate();
+  
+  // Use Redux selectors to access token and user role
+  const token = useSelector((state) => state.user.token);
+  const userRole = useSelector((state) => state.user.role);
 
   const handleMouseEnter = (itemId) => {
     setActiveDropdown(itemId);
@@ -14,6 +18,14 @@ export default function Header() {
 
   const handleMouseLeave = () => {
     setActiveDropdown(null);
+  };
+
+  const handleProfileClick = () => {
+    if (token) {
+      navigate(userRole === "customer" ? "/customerprofile" : "/vendorprofile");
+    } else {
+      alert("Please log in or sign up to access your profile.");
+    }
   };
 
   return (
@@ -65,21 +77,28 @@ export default function Header() {
                             }`}
                           >
                             {item.subItems.map((sub) => (
-                              <Link to={sub.path} className="dropdown-item">
+                              <Link key={sub.path} to={sub.path} className="dropdown-item">
                                 {sub.text}
                               </Link>
                             ))}
                           </div>
                         </div>
                       ) : (
-                        <Link to={item.path} className="nav-item nav-link">
+                        <Link key={item.path} to={item.path} className="nav-item nav-link">
                           {item.text}
                         </Link>
                       )}
                     </div>
                   ))}
+                  <Link
+                    to={token ? (userRole === "customer" ? "/customerprofile" : "/vendorprofile") : "/"}
+                    className="nav-item nav-link bg-transparent border-0"
+                    style={{ color: "#fff" }}
+                    onClick={handleProfileClick}
+                  >
+                    Profile
+                  </Link>
                 </div>
-               
               </div>
             </nav>
           </div>

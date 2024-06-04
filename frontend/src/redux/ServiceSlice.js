@@ -8,13 +8,22 @@ const initialState = {
   error: null,
   favorites: [],
   bookingStatus: null,
-  selectedService: null
+  selectedService: null,
+  reviews:[]
 };
 export const fetchAllServiceByIdAsync = createAsyncThunk(
   'service/fetchServiceById',
   async (id) => {
     const response = await axios.get(`http://localhost:5600/services/byid/${id}`);
     return response.data.data;
+  }
+);
+
+export const fetchreviews = createAsyncThunk(
+  'service/fetchreviews',
+  async (id) => {
+    const response = await axios.get(`http://localhost:5600/reviews/getreviews/${id}`);
+    return response.data.reviews;
   }
 );
 
@@ -31,6 +40,7 @@ const serviceSlice = createSlice({
       state.favorites = action.payload;
       console.log(action.payload);
     },
+    
     setServiceDetail(state, action) {
       state.serviceDetail = action.payload; // Define setServiceDetail action
     },
@@ -52,6 +62,13 @@ const serviceSlice = createSlice({
     removeFavorite(state, action) {
       state.favorites = state.favorites.filter(id => id !== action.payload);
     },
+    postareview(state, action) {
+      state.reviews.push(action.payload);
+    },
+    getReviews(state, action) {
+      state.reviews = action.payload;
+      console.log(action.payload);
+    },
     setBookingStatus(state, action) {
       state.bookingStatus = action.payload;
     },
@@ -62,6 +79,9 @@ const serviceSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchAllServiceByIdAsync.fulfilled, (state, action) => {
       state.selectedService = action.payload;
+    });
+    builder.addCase(fetchreviews.fulfilled, (state, action) => {
+      state.reviews = action.payload;
     });
   }
 });
@@ -77,7 +97,10 @@ export const {
   removeFavorite,
   setBookingStatus,
   selectedService,
-  getFavourites
+  getFavourites,
+  postareview,
+  getReviews,
+
 
 } = serviceSlice.actions;
 export default serviceSlice.reducer;

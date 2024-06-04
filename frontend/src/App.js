@@ -80,8 +80,14 @@ function App() {
             <Route path="/vendorbookings" element={<VendorBookings />} />
       )}
 {/* Customer routes */}
-<Route path="/customerprofile" element={<CustomerProfile />} />
-      <Route path="/customerfavourites" element={<CustomerFavourites />} />
+{loggedIn && role === 'customer' && (
+            <Route path="/customerprofile" element={<CustomerProfile />} />
+      )}
+      {loggedIn && role === 'customer' && (
+             <Route path="/customerfavourites" element={<CustomerFavourites />} />
+      )}
+
+     
        
 
       {/* Admin routes */}

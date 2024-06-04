@@ -1,47 +1,34 @@
-import React from "react";
-import {
-  Card,
-  CardActions,
-  CardContent,
-  Button,
-  Typography,
-  Box,
-} from "@mui/material";
-import SeeRating from "./SeeRating.js";
+import React from 'react';
+import { Card, CardContent, Typography } from '@mui/material';
 
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: "inline-block", mx: "2px", transform: "scale(0.8)" }}
-  >
-    •
-  </Box>
-);
+const ReviewCard = ({ review }) => {
+  if (!review || typeof review !== 'object') {
+    return null; // Or render a placeholder if review is not a valid object
+  }
 
-const card = (
-  <React.Fragment>
-    <CardContent>
-      <SeeRating></SeeRating>
-      <Typography variant="h5" component="div">
-        Review Summary
-      </Typography>
-      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-        [username]
-      </Typography>
-      <Typography variant="body2">
-        *review text*
-      </Typography>
-    </CardContent>
-    <CardActions>
-      <Button size="small">Learn More</Button>
-    </CardActions>
-  </React.Fragment>
-);
+  const { _id, user, rating, review: reviewText } = review;
 
-export default function ReviewCard() {
+  if (!user || typeof user !== 'object') {
+    return null; // Or handle cases where user is not a valid object
+  }
+
+  const { firstName, lastName } = user;
+
   return (
-    <Box sx={{ minWidth: 275 }}>
-      <Card variant="outlined">{card}</Card>
-    </Box>
+    <Card key={_id}>
+      <CardContent>
+        <Typography variant="h6">
+          {firstName} {lastName}
+        </Typography>
+        <Typography variant="body2">
+          Rating: {rating}
+        </Typography>
+        <Typography variant="body1">
+          {reviewText}
+        </Typography>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+export default ReviewCard;
