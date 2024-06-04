@@ -27,6 +27,7 @@ const DashboardSidebar = ({ active }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       dispatch(logout());
+      localStorage.setItem('userName', "");
       navigate('/login');
     } catch (error) {
       console.error('Error logging out:', error);
@@ -36,11 +37,11 @@ const DashboardSidebar = ({ active }) => {
   const userRole = useSelector((state) => state.user.role);
 
   const navItems = [
-    { text: "Dashboard", icon: <DashboardOutlined sx={{ color: `${active === 1 ? "crimson" : "#f2fdfb"}` }} />, link: "/adminhome" },
-    { text: "User Management", icon: <PeopleIcon sx={{ color: `${active === 2 ? "crimson" : "#f2fdfb"}` }} />, link: "/user-management" },
-    { text: "Approve Vendors", icon: <CheckCircleOutlineIcon sx={{ color: `${active === 3 ? "crimson" : "#f2fdfb"}` }} />, link: "/approve-vendors" },
-    { text: "Booking Management", icon: <CalendarMonth sx={{ color: `${active === 4 ? "crimson" : "#f2fdfb"}` }} />, link: "/booking-management" },
-    { text: "Review Management", icon: <ReviewsIcon sx={{ color: `${active === 5 ? "crimson" : "#f2fdfb"}` }} />, link: "/review-management" },
+    { text: "Dashboard", icon: <DashboardOutlined sx={{ color: `${active === 1 ? "#dab61e" : "#f2fdfb"}` }} />, link: "/adminhome" },
+    { text: "User Management", icon: <PeopleIcon sx={{ color: `${active === 2 ? "#dab61e" : "#f2fdfb"}` }} />, link: "/user-management" },
+    { text: "Approve Vendors", icon: <CheckCircleOutlineIcon sx={{ color: `${active === 3 ? "#dab61e" : "#f2fdfb"}` }} />, link: "/approve-vendors" },
+    { text: "Booking Management", icon: <CalendarMonth sx={{ color: `${active === 4 ? "#dab61e" : "#f2fdfb"}` }} />, link: "/booking-management" },
+    { text: "Review Management", icon: <ReviewsIcon sx={{ color: `${active === 5 ? "#dab61e" : "#f2fdfb"}` }} />, link: "/review-management" },
   ];
 
   return (
@@ -82,14 +83,14 @@ const DashboardSidebar = ({ active }) => {
                   selected={itemActive}
                   sx={{
                     backgroundColor: itemActive ? "secondary.300" : "transparent",
-                    color: itemActive ? "crimson" : "#f2fdfb", // Set font color dynamically
+                    color: itemActive ? "#dab61e" : "#f2fdfb", // Set font color dynamically
                     fontFamily: "Heebo, sans-serif",
                     fontWeight: 400,
                     fontSize: "15px",
                   }}
                 >
                   {icon && (
-                    <ListItemIcon sx={{ ml: "2rem", color: `${active === 1 ? "crimson" : "#f2fdfb"}` }}>
+                    <ListItemIcon sx={{ ml: "2rem", color: `${active === 1 ? "#dab61e" : "#f2fdfb"}` }}>
                       {icon}
                     </ListItemIcon>
                   )}
@@ -108,7 +109,7 @@ const DashboardSidebar = ({ active }) => {
             {/* User Info */}
             <Box>
               <Typography fontWeight="bold" fontSize="0.9rem" sx={{ color: "#f2fdfb", fontFamily: "Heebo, sans-serif", fontWeight: 400, fontSize: "15px" }}>
-                John Doe {/* Assuming user name */}
+              {localStorage.getItem('userName')}
               </Typography>
               <Typography fontSize="0.8rem" sx={{ color: "#f2fdfb", fontFamily: "Heebo, sans-serif", fontWeight: 400, fontSize: "15px" }}>
                 {userRole}
@@ -122,7 +123,7 @@ const DashboardSidebar = ({ active }) => {
 
           {/* Logout Button */}
           <Box textAlign="center">
-            <Button onClick={handleLogout} variant="contained" color="secondary" sx={{ m: "1rem", backgroundColor: "crimson" }}>
+            <Button onClick={handleLogout} variant="contained" color="secondary" sx={{ m: "1rem", backgroundColor: "#dab61e" }}>
               Logout
             </Button>
           </Box>

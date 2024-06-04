@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Typography,
+  Paper,
+  Checkbox
+} from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 
 const headCells = [
@@ -84,9 +85,7 @@ export default function EnhancedTable({ bookings = [], pagination, onPageChange,
     const [selected, setSelected] = useState([]);
   
     const handleRequestSort = (event, property) => {
-      if (property === 'bookingDate') {
-        onSortChange(property);
-      }
+      onSortChange(property);
     };
   
     const handleSelectAllClick = (event) => {
@@ -103,27 +102,27 @@ export default function EnhancedTable({ bookings = [], pagination, onPageChange,
       let newSelected = [];
   
       if (selectedIndex === -1) {
-        newSelected = newSelected.concat(selected, id);
+        newSelected = [...selected, id];
       } else if (selectedIndex === 0) {
-        newSelected = newSelected.concat(selected.slice(1));
+        newSelected = selected.slice(1);
       } else if (selectedIndex === selected.length - 1) {
-        newSelected = newSelected.concat(selected.slice(0, -1));
+        newSelected = selected.slice(0, -1);
       } else if (selectedIndex > 0) {
-        newSelected = newSelected.concat(
-          selected.slice(0, selectedIndex),
-          selected.slice(selectedIndex + 1),
-        );
+        newSelected = [
+          ...selected.slice(0, selectedIndex),
+          ...selected.slice(selectedIndex + 1),
+        ];
       }
       setSelected(newSelected);
     };
   
     const handleChangePage = (event, newPage) => {
-      onPageChange(newPage); // Update onPageChange to pass newPage directly
+      onPageChange(newPage);
     };
   
     const handleChangeRowsPerPage = (event) => {
       const newRowsPerPage = parseInt(event.target.value, 10) || 5; 
-      onRowsPerPageChange(newRowsPerPage); // Update onRowsPerPageChange to pass newRowsPerPage
+      onRowsPerPageChange(newRowsPerPage);
     };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
@@ -147,7 +146,7 @@ export default function EnhancedTable({ bookings = [], pagination, onPageChange,
               rowCount={bookings.length}
             />
             <TableBody>
-              {bookings.map((row, index) => {
+              {bookings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                 const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -177,7 +176,7 @@ export default function EnhancedTable({ bookings = [], pagination, onPageChange,
                     <TableCell align="left">{row.bookingDate}</TableCell>
                     <TableCell align="left">{row.customer.firstName} {row.customer.lastName}</TableCell>
                     <TableCell align="left">{row.customer.email}</TableCell>
-                    <TableCell align="left">{/* Add phone field from customer object */}</TableCell>
+                    <TableCell align="left">{row.customer.phone}</TableCell>
                     <TableCell align="left">{row.service_id.service_name}</TableCell>
                     <TableCell align="left">{row.service_id.service_category}</TableCell>
                     <TableCell align="left">{row.selected_package.package_id}</TableCell>
