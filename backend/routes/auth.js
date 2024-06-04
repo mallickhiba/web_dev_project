@@ -70,7 +70,8 @@ router.post("/login", async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
-        role: user.role
+        role: user.role,
+        approved: user.approved
       }
     });
   } catch (error) {
