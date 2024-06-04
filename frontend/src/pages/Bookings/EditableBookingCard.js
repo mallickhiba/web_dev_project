@@ -22,7 +22,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EventIcon from "@mui/icons-material/Event";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteBooking } from "../../redux/adminBookingSlice"; // Update the path if needed
+import { deleteBooking, editBooking } from "../../redux/adminBookingSlice"; // Update the path if needed
 
 const EditableBookingCard = ({ booking }) => {
   const dispatch = useDispatch();
@@ -79,15 +79,41 @@ const EditableBookingCard = ({ booking }) => {
     }
   };
 
-  const handleChange = (event) => {
-    setStatus(event.target.value);
+  const handleChange = async (event) => {
+    const newStatus = event.target.value;
+    try {
+      const response = await fetch(
+        `http://localhost:5600/bookings/changeBookingStatus/${booking._id}/${newStatus}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update booking status");
+      }
+
+      dispatch(editBooking({ ...booking, status: newStatus }));
+      setStatus(newStatus);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <Box sx={{ minWidth: 275, mb: 2 }}>
       <Card
         variant="outlined"
-        sx={{ backgroundColor: "#f5f5f5", borderRadius: 2, p: 2, width: '100%' }}
+        sx={{
+          backgroundColor: "#f5f5f5",
+          borderRadius: 2,
+          p: 2,
+          width: "100%",
+        }}
       >
         <CardContent>
           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -103,30 +129,58 @@ const EditableBookingCard = ({ booking }) => {
             </Typography>
           </Box>
           <Divider sx={{ mb: 2 }} />
-          <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
+          <Typography
+            sx={{ mb: 1.5, fontWeight: "bold" }}
+            color="text.secondary"
+          >
             Service: <span style={{ fontWeight: "normal" }}>{service}</span>
           </Typography>
-          <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
+          <Typography
+            sx={{ mb: 1.5, fontWeight: "bold" }}
+            color="text.secondary"
+          >
             Customer: <span style={{ fontWeight: "normal" }}>{customer}</span>
           </Typography>
-          <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
+          <Typography
+            sx={{ mb: 1.5, fontWeight: "bold" }}
+            color="text.secondary"
+          >
             Vendor: <span style={{ fontWeight: "normal" }}>{vendor}</span>
           </Typography>
-          <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
+          <Typography
+            sx={{ mb: 1.5, fontWeight: "bold" }}
+            color="text.secondary"
+          >
             Package: <span style={{ fontWeight: "normal" }}>{packageName}</span>
           </Typography>
-          <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
-            Guests: <span style={{ fontWeight: "normal" }}>{booking.guests}</span>
+          <Typography
+            sx={{ mb: 1.5, fontWeight: "bold" }}
+            color="text.secondary"
+          >
+            Guests:{" "}
+            <span style={{ fontWeight: "normal" }}>{booking.guests}</span>
           </Typography>
-          <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
+          <Typography
+            sx={{ mb: 1.5, fontWeight: "bold" }}
+            color="text.secondary"
+          >
             Status: <span style={{ fontWeight: "normal" }}>{status}</span>
           </Typography>
-          <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
-            Booking Date: <span style={{ fontWeight: "normal" }}>{new Date(booking.bookingDate).toLocaleDateString()}</span>
+          <Typography
+            sx={{ mb: 1.5, fontWeight: "bold" }}
+            color="text.secondary"
+          >
+            Booking Date:{" "}
+            <span style={{ fontWeight: "normal" }}>
+              {new Date(booking.bookingDate).toLocaleDateString()}
+            </span>
           </Typography>
 
           <Typography sx={{ fontWeight: "bold" }} color="text.secondary">
-            Created At: <span style={{ fontWeight: "normal" }}>{new Date(booking.createdAt).toLocaleDateString()}</span>
+            Created At:{" "}
+            <span style={{ fontWeight: "normal" }}>
+              {new Date(booking.createdAt).toLocaleDateString()}
+            </span>
           </Typography>
         </CardContent>
         <CardActions>
@@ -159,7 +213,8 @@ const EditableBookingCard = ({ booking }) => {
         <DialogTitle>{"Delete Booking"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this booking? This action cannot be undone.
+            Are you sure you want to delete this booking? This action cannot be
+            undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

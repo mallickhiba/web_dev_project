@@ -1,4 +1,4 @@
-// DeleteUserDialog.js
+// DeleteBookingDialog.js
 import React, { useState } from "react";
 import {
   Dialog,
@@ -9,27 +9,27 @@ import {
   Button
 } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { deleteUser } from "../../../redux/adminUserSlice";
+import { deleteBooking } from "../../../redux/adminBookingSlice";
 
-const DeleteUserDialog = ({ open, onClose,userId, token }) => {
+const DeleteBookingDialog = ({ open, onClose, bookingId, token }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const handleConfirm = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5600/admin/user/delete/${userId}`, {
-        method: 'POST',
+      const response = await fetch(`http://localhost:5600/bookings/deleteBooking/${bookingId}`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         }
       });
       if (response.ok) {
-        console.log('User deleted successfully');
-        dispatch(deleteUser(userId)); // Dispatch the deleteUser action
+        console.log('Booking deleted successfully');
+        dispatch(deleteBooking(bookingId)); // Dispatch the deleteBooking action
       } else {
-        console.error('Failed to delete user');
+        console.error('Failed to delete booking');
       }
     } catch (error) {
       console.error(error);
@@ -48,7 +48,7 @@ const DeleteUserDialog = ({ open, onClose,userId, token }) => {
       <DialogTitle id="delete-confirmation-dialog-title">Confirm Deletion</DialogTitle>
       <DialogContent>
         <DialogContentText id="delete-confirmation-dialog-description">
-          Are you sure you want to delete this user?
+          Are you sure you want to delete this booking?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -63,4 +63,4 @@ const DeleteUserDialog = ({ open, onClose,userId, token }) => {
   );
 };
 
-export default DeleteUserDialog;
+export default DeleteBookingDialog;

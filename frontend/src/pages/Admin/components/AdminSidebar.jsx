@@ -51,12 +51,12 @@ const DashboardSidebar = ({ active }) => {
         variant="persistent"
         anchor="left"
         sx={{
-          width: 240,
+          width: 280,
           "& .MuiDrawer-paper": {
             color: "#f2fdfb",  // Default text color
             backgroundColor: "#0f172b",  // Sidebar background color
             boxSizing: "border-box",
-            width: 240,
+            width: 280,
           },
         }}
       >
