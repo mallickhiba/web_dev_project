@@ -22,11 +22,15 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EventIcon from "@mui/icons-material/Event";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteBooking, editBooking } from "../../redux/adminBookingSlice"; // Update the path if needed
+import { deleteBooking } from "../../redux/adminBookingSlice"; // Update the path if needed
+import { updateBookingStatus } from "../../redux/vendor/vendorBookingSlice";
+import { NotificationManager } from "react-notifications"; 
 
 const EditableBookingCard = ({ booking }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
+  const role = useSelector((state) => state.user.role);
+
   const customer = booking.customer
     ? `${booking.customer.firstName} ${booking.customer.lastName}`
     : "Anonymous";
@@ -97,10 +101,12 @@ const EditableBookingCard = ({ booking }) => {
         throw new Error("Failed to update booking status");
       }
 
-      dispatch(editBooking({ ...booking, status: newStatus }));
-      setStatus(newStatus);
+      dispatch(updateBookingStatus({ bookingId: booking._id, status: newStatus }));
+    
+      NotificationManager.success(`Booking status updated to ${newStatus}`);
     } catch (error) {
       console.error(error);
+      NotificationManager.error("Failed to update booking status");
     }
   };
 
@@ -184,28 +190,30 @@ const EditableBookingCard = ({ booking }) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-            <InputLabel id="demo-select-small-label">Status</InputLabel>
-            <Select
-              labelId="demo-select-small-label"
-              id="demo-select-small"
-              value={status}
-              label="Booking Status"
-              onChange={handleChange}
-            >
-              <MenuItem value="">
-                <em>Pending</em>
-              </MenuItem>
-              <MenuItem value="Confirmed">Confirmed</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
-            </Select>
-          </FormControl>
-          <IconButton
-            onClick={handleOpenDeleteConfirmation}
-            aria-label="delete"
-          >
-            <DeleteIcon />
-          </IconButton>
+          {role === "vendor" && (
+            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+              <InputLabel id="demo-select-small-label">Status</InputLabel>
+              <Select
+                labelId="demo-select-small-label"
+                id="demo-select-small"
+                value={status}
+                label="Booking Status"
+                onChange={handleChange}
+              >
+                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="Confirmed">Confirmed</MenuItem>
+                <MenuItem value="Cancelled">Cancelled</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+          {role === "admin" && (
+  <IconButton
+    onClick={handleOpenDeleteConfirmation}
+    aria-label="delete"
+  >
+    <DeleteIcon />
+  </IconButton>
+)}
         </CardActions>
       </Card>
 
