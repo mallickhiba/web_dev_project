@@ -23,6 +23,10 @@ import Services from "./pages/Services/Services.js";
 import { Provider, useSelector } from "react-redux";
 import store from "./redux/store"; // Import the Redux store
 import AdminHome from "./pages/Admin/AdminHome.js"; 
+import UserManagement from "./pages/Admin/UserManagement.js";
+import ApproveVendors from "./pages/Admin/ApproveVendors.js";
+import BookingManagement from "./pages/Admin/BookingManagement.js";
+import ReviewManagement from "./pages/Admin/ReviewManagement.js";
 import Venues from "./pages/Services/Venues.js"; // Import your Venues component
 import Caterings from "./pages/Services/Catering.js";
 import Photography from "./pages/Services/Photography.js";
@@ -57,17 +61,9 @@ function App() {
             <Route path="/signup" element={<SignUp />} /> 
             <Route path="/login" element={<Login />} /> 
 
-
-      {/* Vendor routes */}
-            {/* <Route path="/vendordashboard" element={<VendorDashboardPage />} />
-            <Route path="/vendorprofile" element={<VendorProfile />} />
-            <Route path="/vendorprofile" element={<VendorProfile />} />
-            <Route path="/vendorbookings" element={<VendorBookings />} />
-          */}
-
-      {loggedIn && role === 'vendor' && (
+        {loggedIn && role === 'vendor' && (
         <Route path="/vendordashboard" element={<VendorDashboardPage />} />
-      )}
+          )}
        
        {loggedIn && role === 'vendor' && (
             <Route path="/vendorprofile" element={<VendorProfile />} />
@@ -80,18 +76,33 @@ function App() {
             <Route path="/vendorbookings" element={<VendorBookings />} />
       )}
 {/* Customer routes */}
-<Route path="/customerprofile" element={<CustomerProfile />} />
-      <Route path="/customerfavourites" element={<CustomerFavourites />} />
+{loggedIn && role === 'customer' && (
+            <Route path="/customerprofile" element={<CustomerProfile />} />
+      )}
+      {loggedIn && role === 'customer' && (
+             <Route path="/customerfavourites" element={<CustomerFavourites />} />
+      )}
+
+     
        
 
       {/* Admin routes */}
       {loggedIn && role === 'admin' && (
-        <Route path="/adminhome" element={<AdminHome />} />
-      )}
-
-     
-            
-            {/* Add other routes as needed */}
+            <Route path="/adminhome" element={<AdminHome />} />
+          )}
+       {loggedIn && role === 'admin' && (
+            <Route path="/user-management" element={<UserManagement />} />
+          )}
+        {loggedIn && role === 'admin' && (
+           <Route path="/approve-vendors" element={<ApproveVendors />} />
+          )}
+        {loggedIn && role === 'admin' && (
+           <Route path="/booking-management" element={<BookingManagement />} />            
+          )}
+        {loggedIn && role === 'admin' && (      
+           <Route path="/review-management" element={<ReviewManagement />} />
+          )}
+          
           </Routes>
         </div>
       </Router>
@@ -100,5 +111,3 @@ function App() {
 }
 
 export default App;
-
-

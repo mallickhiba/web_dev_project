@@ -4,11 +4,13 @@ import cateringReducer from "./CateringSlice.js";
 import userSlice from "./userSlice";
 import photographyReducer from "./PhotographySlice.js";
 import decorReducer from "./DecorSlice.js";
-import serviceReducer from './ServiceSlice.js';
+import serviceReducer from "./serviceSlice.js";
 import vendorServiceReducer from './vendor/vendorServiceSlice.js';
-
 import bookingReducer from './vendor/vendorBookingSlice.js';
-
+import adminVendorReducer from "./adminVendorSlice";
+import adminUserReducer from "./adminUserSlice.js";
+import adminReviewReducer from "./adminReviewSlice.js";
+import adminBookingReducer from "./adminBookingSlice.js";
 
 
 const rootReducer = combineReducers({
@@ -18,7 +20,11 @@ const rootReducer = combineReducers({
   photographys: photographyReducer,
   decors: decorReducer,
   services: serviceReducer,
-  vendorServices :vendorServiceReducer,
+  vendorServices: vendorServiceReducer,
+  adminVendors: adminVendorReducer,
+  adminUsers: adminUserReducer,
+  adminReviews: adminReviewReducer,
+  adminBookings: adminBookingReducer
   vendorbookings : bookingReducer ,
 
 });

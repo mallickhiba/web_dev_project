@@ -618,6 +618,25 @@
 				"url": "http://localhost:5600/customer/getfavs"
 			},
 			"response": []
+		},
+		{
+			"name": "VIEW ALL REVIEWS",
+			"id": "d1572885-153e-40a8-8970-e512a369022e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTI1MDU3NzljM2YwMTkzYmJjNDRkMSIsImVtYWlsIjoiaEBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTc0NDY0NjEsImV4cCI6MTcxNzUzMjg2MX0.ij6W1Mmv9a647IgFZaIcG3I5Hw8aMvTST66qi5lk0Es"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:5600/reviews/view-reviews"
+			},
+			"response": []
 		}
 	]
 }

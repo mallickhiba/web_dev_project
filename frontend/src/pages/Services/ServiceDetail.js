@@ -1,9 +1,8 @@
-// src/components/ServiceDetail.js
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchAllServiceByIdAsync } from "../../redux/ServiceSlice.js";
+import { fetchAllServiceByIdAsync, fetchreviews } from "../../redux/serviceSlice";
+import { postReview } from "../../redux/serviceActions";
 import Header from "../../common/Header";
 import Footer from "../../common/Footer";
 import PackagesTable from "./PackagesTable";
@@ -19,25 +18,29 @@ import {
   Button,
   TextField,
 } from "@mui/material";
+import { NotificationContainer } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 const ServiceDetail = () => {
   const service = useSelector((state) => state.services.selectedService);
+  const reviews = useSelector((state) => state.services.reviews);
   const dispatch = useDispatch();
   const params = useParams();
 
-  const [rating, setRating] = useState(2); // State for rating
-  const [review, setReview] = useState(""); // State for review text
+  const [rating, setRating] = useState(5);
+  const [review, setReview] = useState("");
 
   useEffect(() => {
     dispatch(fetchAllServiceByIdAsync(params.id));
+    dispatch(fetchreviews(params.id));
   }, [dispatch, params.id]);
 
-  const handleReviewSubmit = () => {
-    // Handle review submission logic
-    console.log("Review submitted:", { rating, review });
-    // Clear the form
-    setRating(2);
-    setReview("");
+  const handlepostreview = () => {
+    dispatch(postReview({ serviceId: params.id, rating, review })).then(() => {
+      dispatch(fetchreviews(params.id)); // Fetch updated reviews after posting a new one
+      setRating(2);
+      setReview("");
+    });
   };
 
   return (
@@ -50,8 +53,6 @@ const ServiceDetail = () => {
               <Typography variant="h4" gutterBottom>
                 {service.service_name}
               </Typography>
-
-              {/* Image Section */}
               <Box sx={{ textAlign: "center", marginBottom: 3 }}>
                 <img
                   src="https://via.placeholder.com/600x400" // Replace with actual image URL
@@ -63,11 +64,9 @@ const ServiceDetail = () => {
                   }}
                 />
               </Box>
-
               <Typography variant="body1" paragraph>
                 {service.description}
               </Typography>
-
               <Grid container spacing={2}>
                 <Grid item xs={12} md={8}>
                   <Grid container spacing={2}>
@@ -111,8 +110,6 @@ const ServiceDetail = () => {
                     </Grid>
                   </Grid>
                 </Grid>
-
-                {/* Buttons */}
                 <Grid
                   item
                   xs={12}
@@ -142,18 +139,15 @@ const ServiceDetail = () => {
                   </Button>
                 </Grid>
               </Grid>
-
               <Box mt={4}>
                 <Typography variant="h5" gutterBottom>
                   Packages:
                 </Typography>
                 <PackagesTable packages={service.packages} />
               </Box>
-
-              {/* Add Review Section */}
               <Box mt={4}>
                 <Typography variant="h5" gutterBottom>
-                  Add a Review (need to add functionality for this to only be available for logged users who have availed the service)
+                  Add a Review
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
@@ -174,38 +168,31 @@ const ServiceDetail = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={handleReviewSubmit}
+                      onClick={handlepostreview}  
                     >
                       Post Review
                     </Button>
                   </Grid>
                 </Grid>
               </Box>
-
-              {/* Reviews Section */}
               <Box mt={4}>
                 <Typography variant="h5" gutterBottom>
                   Reviews:
                 </Typography>
                 <Grid container spacing={2}>
-                  {/* Example Review Cards */}
-                  <Grid item xs={12} sm={6} md={4}>
-                    <ReviewCard />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <ReviewCard />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <ReviewCard />
-                  </Grid>
-                  {/* Add more <Grid item> components with <ReviewCard /> as needed */}
+                  {reviews.map((review) => (
+                    <Grid item xs={12} sm={6} md={4} key={review._id}>
+                       {review && <ReviewCard review={review} />}
+                    </Grid>
+                  ))}
                 </Grid>
               </Box>
             </CardContent>
           </Card>
         )}
       </Container>
-      <Footer />
+      
+      <NotificationContainer />
     </div>
   );
 };
