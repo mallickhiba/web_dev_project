@@ -2,27 +2,24 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {
-    Box,
-    Button,
-    Divider,
-    Drawer,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Typography,
-    
-
-  } from "@mui/material";
-  import {
-    DashboardOutlined,
-    AccountCircle,
-    CalendarMonth,
-    AdminPanelSettingsOutlined,
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import {
+  DashboardOutlined,
+  AccountCircle,
+  CalendarMonth,
+  AdminPanelSettingsOutlined,
   Edit,
-
-  } from "@mui/icons-material";
+} from "@mui/icons-material";
 import axios from "axios";
 import { logout } from "../redux/userSlice";
 const { styled } = require("@mui/system");
@@ -37,36 +34,109 @@ const DashboardSidebar = ({ active }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const userRole = useSelector((state) => state.user.role);
+
   const token = useSelector((state) => state.user.token);
-  
+  const approved = localStorage.getItem('approved');
 
-    const handleLogout = async () => {
-        try {
-          await axios.post('http://localhost:5600/auth/logout', null, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          localStorage.setItem('userName', "");
-          dispatch(logout());
-          navigate('/login')
-        } catch (error) {
-          console.error('Error logging out:', error);
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5600/auth/logout",
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-      };
+      );
+      localStorage.setItem("userName", "");
+      dispatch(logout());
+      navigate("/login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
-      const userRole = useSelector((state) => state.user.role);
+  const vendorNavItems = [
+    {
+      text: "Dashboard",
+      icon: (
+        <DashboardOutlined
+          sx={{ color: `${active === 1 ? "#dab61e" : "white"}` }}
+        />
+      ),
+      link: "/vendordashboard",
+    },
+    {
+      text: "Profile",
+      icon: (
+        <AccountCircle sx={{ color: `${active === 3 ? "#dab61e" : "white"}` }} />
+      ),
+      link: "/vendorprofile",
+    }
+  ];
 
+  const customerNavItems = [
+    {
+      text: "Dashboard",
+      icon: (
+        <DashboardOutlined
+          sx={{ color: `${active === 1 ? "#dab61e" : "white"}` }}
+        />
+      ),
+      link: "/customerdashboard",
+    },
+    {
+      text: "Favourites",
+      icon: (
+        <Edit sx={{ color: `${active === 2 ? "#dab61e" : "white"}` }} />
+      ),
+      link: "/customerfavourites",
+    },
+    {
+      text: "Profile",
+      icon: (
+        <AccountCircle sx={{ color: `${active === 3 ? "#dab61e" : "white"}` }} />
+      ),
+      link: "/customerprofile",
+    },
+    {
+      text: "Bookings",
+      icon: (
+        <CalendarMonth
+          sx={{ color: `${active === 4 ? "#dab61e" : "white"}` }}
+        />
+      ),
+      link: "/customerbookings",
+    },
+  ];
 
+  if (userRole === "vendor" && approved) {
+    vendorNavItems.push(
+      {
+        text: "Services",
+        icon: (
+          <Edit sx={{ color: `${active === 2 ? "#dab61e" : "white"}` }} />
+        ),
+        link: "/vendorservices",
+      },
+      {
+        text: "Bookings",
+        icon: (
+          <CalendarMonth
+            sx={{ color: `${active === 4 ? "#dab61e" : "white"}` }}
+          />
+        ),
+        link: "/vendorbookings",
+      }
+    );
+  }
 
-    const navItems = [
-      { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "#dab61e" : "white"}` }} />, link: "/vendordashboard" },
-  userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "#dab61e" : "white"}` }} />, link: "/vendorservices" } :
-    
-  { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "#dab61e" : "white"}` }} />, link: "/customerfavourites" },
-    
-      { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "#dab61e" : "white"}` }}/>, link: "/vendorprofile" },
-      { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "#dab61e" : "white"}` }}/>, link: "/vendorbookings" },
-
-    ];
+  let navItems = [];
+if (userRole === "vendor") {
+  navItems = vendorNavItems;
+} else {
+  navItems = customerNavItems;
+}
 
   return (
     <Box component="nav">
@@ -77,21 +147,37 @@ const DashboardSidebar = ({ active }) => {
         sx={{
           width: 240,
           "& .MuiDrawer-paper": {
-            color: "#f2fdfb",  
-            backgroundColor: "#0f172b",  
+            color: "#f2fdfb",
+            backgroundColor: "#0f172b",
             boxSizing: "border-box",
             width: 240,
           },
         }}
-
       >
         <Box width="100%">
           {/* Sidebar Header */}
           <Box m="1.5rem 2rem 2rem 3rem">
             <FlexBetween>
-              <Link to="/vendordashboard" className="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
-              <img src="./favicon.ico" alt="Sh" style={{ width: 50, height: 50 }} />
-                <Typography variant="h6" component="span" sx={{ ml: 2, color: "#dab61e", fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: "24px" }}>
+            <Link
+  to={userRole === "vendor" ? "/vendordashboard" : "/customerdashboard"}
+  className="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center"
+>
+                <img
+                  src="./favicon.ico"
+                  alt="Sh"
+                  style={{ width: 50, height: 50 }}
+                />
+                <Typography
+                  variant="h6"
+                  component="span"
+                  sx={{
+                    ml: 2,
+                    color: "#dab61e",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontWeight: 700,
+                    fontSize: "24px",
+                  }}
+                >
                   Shadiyana
                 </Typography>
               </Link>
@@ -115,42 +201,49 @@ const DashboardSidebar = ({ active }) => {
                   }}
                 >
                   {icon && (
-                    <ListItemIcon sx={{ ml: "2rem", color: `${active === 1 ? "#dab61e" : "#f2fdfb"}` }}>
-                    {icon}
+                    <ListItemIcon
+                      sx={{
+                        ml: "2rem",
+                        color: `${active === 1 ? "#dab61e" : "#f2fdfb"}`,
+                      }}
+                    >
+                      {icon}
                     </ListItemIcon>
                   )}
-                  <ListItemText primary={text} sx={{ fontWeight: icon === null ? "bold" : "normal", color: "#f2fdfb" }} />
+                  <ListItemText
+                    primary={text}
+                    sx={{ fontWeight: icon === null ? "bold" : "normal", color: "#f2fdfb" }}
+                  />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
         </Box>
 
-      {/* Sidebar Footer */}
-      <Box position="absolute" bottom="2rem" width="100%">
-  <Divider />
-  <FlexBetween gap="1rem" p="1.5rem 2rem" alignItems="center">
-
-    {/* User Info */}
-    <Box>
-    
-      <Typography fontWeight="bold" fontSize="0.9rem">
-      {localStorage.getItem('userName')}
-      </Typography>
-      <Typography fontSize="0.8rem">
-        {userRole} 
-      </Typography>
-    </Box>
-
+        {/* Sidebar Footer */}
+        <Box position="absolute" bottom="2rem" width="100%">
+          <Divider />
+          <FlexBetween gap="1rem" p="1.5rem 2rem" alignItems="center">
+            {/* User Info */}
+            <Box>
+              <Typography fontWeight="bold" fontSize="0.9rem">
+                {localStorage.getItem("userName")}
+              </Typography>
+              <Typography fontSize="0.8rem">{userRole}</Typography>
+            </Box>
             {/* Admin Settings Icon */}
             <Box>
               <AdminPanelSettingsOutlined sx={{ fontSize: "25px" }} />
             </Box>
           </FlexBetween>
-
           {/* Logout Button */}
           <Box textAlign="center">
-            <Button onClick={handleLogout} variant="contained" color="secondary" sx={{ m: "1rem", backgroundColor: "#dab61e" }}>
+            <Button
+              onClick={handleLogout}
+              variant="contained"
+              color="secondary"
+              sx={{ m: "1rem", backgroundColor: "#dab61e" }}
+            >
               Logout
             </Button>
           </Box>
@@ -161,3 +254,4 @@ const DashboardSidebar = ({ active }) => {
 };
 
 export default DashboardSidebar;
+
