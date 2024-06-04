@@ -290,7 +290,7 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmY0NTc0NjgyNTc0NGZkM2YyZmRmOCIsImVtYWlsIjoiYWW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzExMjMyNjA5LCJleHAiOjE3MTEzMTkwMDl9.f6ZOJBh24Veaz-gmpwclw00KZFaWnMiSV2BGRnIKFTM"
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTI1MDU3NzljM2YwMTkzYmJjNDRkMSIsImVtYWlsIjoiaEBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTc1MjE3MDcsImV4cCI6MTcxNzYwODEwN30.MYiwVnEjLyEbVl9CzEer6zJ4wDEvOf8bpFwj1lx3ZX0"
 							}
 						},
 						"method": "DELETE",
@@ -304,7 +304,7 @@
 								}
 							}
 						},
-						"url": "http://localhost:5600/admin/users/delete/65ff35c28dd78956dcfa0b0e"
+						"url": "http://localhost:5600/bookings/deleteBooking/665f2ba15bba5c5e828ce90a"
 					},
 					"response": []
 				},
@@ -635,6 +635,34 @@
 				"method": "GET",
 				"header": [],
 				"url": "http://localhost:5600/reviews/view-reviews"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE BOOKING BY ID",
+			"id": "e6a72af2-2369-4936-ae02-4d0f6905017a",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTI1MDU3NzljM2YwMTkzYmJjNDRkMSIsImVtYWlsIjoiaEBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTc1MjE3MDcsImV4cCI6MTcxNzYwODEwN30.MYiwVnEjLyEbVl9CzEer6zJ4wDEvOf8bpFwj1lx3ZX0"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"jhgdfdfsd\",\r\n    \"lastName\": \"hfsuifh\",\r\n    \"email\": \"mallickhiba@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5600/bookings/deleteBooking/665f2b885bba5c5e828ce903"
 			},
 			"response": []
 		}

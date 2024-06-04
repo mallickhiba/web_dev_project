@@ -72,7 +72,7 @@ const EditableBookingCard = ({ booking }) => {
         throw new Error("Failed to delete booking");
       }
 
-      dispatch(deleteBooking(booking._id));4
+      dispatch(deleteBooking(booking._id));
       setDeleteConfirmationOpen(false);
     } catch (error) {
       console.error(error);
@@ -124,6 +124,7 @@ const EditableBookingCard = ({ booking }) => {
           <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
             Booking Date: <span style={{ fontWeight: "normal" }}>{new Date(booking.bookingDate).toLocaleDateString()}</span>
           </Typography>
+
           <Typography sx={{ fontWeight: "bold" }} color="text.secondary">
             Created At: <span style={{ fontWeight: "normal" }}>{new Date(booking.createdAt).toLocaleDateString()}</span>
           </Typography>
@@ -175,4 +176,3 @@ const EditableBookingCard = ({ booking }) => {
 };
 
 export default EditableBookingCard;
-
