@@ -186,23 +186,6 @@ router.get(
             .limit(limit)
             .skip(startIndex);
 
-      const bookings = await Booking.find(query)
-        .populate({
-          path: "customer",
-          select: "firstName lastName email",
-        })
-        .populate({
-          path: "service._id",
-          select: "service_name service_category",
-        })
-        .populate({
-          path: "vendor_id",
-          select: "firstName lastName email",
-        })
-        .sort(sortQuery) // Apply sorting based on sortQuery
-        .limit(limit)
-        .skip(startIndex);
-
       const totalPages = Math.ceil(totalCount / limit);
 
       const pagination = {
