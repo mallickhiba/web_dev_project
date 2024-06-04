@@ -6,7 +6,6 @@ const customerMiddleware = require("../middlewares/customerMiddleware");
 const authenticate = require("../middlewares/authenticate");
 const adminMiddleware = require("../middlewares/adminMiddleware");
 const vendorMiddleware = require("../middlewares/vendorMiddleware");
-const adminVendorMiddleware = require("../middlewares/adminVendorMiddleware");
 
 const router = express.Router();
 
@@ -289,7 +288,7 @@ router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMid
 router.delete(
   "/deleteBooking/:bookingId",
   authenticate,
-  adminVendorMiddleware,
+  vendorMiddleware,
   async (req, res) => {
     try {
       console.log("delete api called");
