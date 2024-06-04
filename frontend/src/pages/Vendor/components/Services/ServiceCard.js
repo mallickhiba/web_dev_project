@@ -24,7 +24,7 @@ import {
   DialogTitle
 } from "@mui/material";
 import { Edit, Delete, MoreVert, Add, Close } from "@mui/icons-material";
-import { deletePackage, editService } from "../../../../redux/vendorServiceSlice";
+import { deletePackage, editService } from "../../../../redux/vendor/vendorServiceSlice";
 
 const ServiceCard = ({ service, onEdit, onDelete }) => {
   const dispatch = useDispatch();

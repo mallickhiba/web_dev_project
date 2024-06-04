@@ -16,7 +16,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { editService } from "../../../../redux/vendorServiceSlice";
+import { editService } from "../../../../redux/vendor/vendorServiceSlice";
 
 const ServiceEditModal = ({ open, onClose, service }) => {
   const dispatch = useDispatch();

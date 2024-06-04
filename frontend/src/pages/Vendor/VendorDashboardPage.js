@@ -28,10 +28,7 @@ localStorage.setItem('userName', userName);
       }
     };
 
-    if (Object.keys(vendorData).length === 0) {
-      console.log("Fetching vendor details...");
-      fetchVendorDetails();
-    }
+  
   }, [dispatch, token, vendorData]);
 
 
