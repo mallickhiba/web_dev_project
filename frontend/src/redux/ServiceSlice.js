@@ -7,7 +7,7 @@ const initialState = {
   loading: false,
   error: null,
   favorites: [],
-  bookingStatus: null,
+  booking: [],
   selectedService: null,
   reviews:[]
 };
@@ -65,6 +65,9 @@ const serviceSlice = createSlice({
     postareview(state, action) {
       state.reviews.push(action.payload);
     },
+    postabooking(state, action) {
+      state.booking.push(action.payload);
+    },
     getReviews(state, action) {
       state.reviews = action.payload;
       console.log(action.payload);
@@ -100,6 +103,7 @@ export const {
   getFavourites,
   postareview,
   getReviews,
+  postabooking
 
 
 } = serviceSlice.actions;
