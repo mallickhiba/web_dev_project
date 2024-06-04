@@ -70,7 +70,7 @@ const SignUp = () => {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: '#0f172b' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -90,7 +90,6 @@ const SignUp = () => {
                   >
                     <MenuItem value="customer">Customer</MenuItem>
                     <MenuItem value="vendor">Vendor</MenuItem>
-                    <MenuItem value="admin">Admin</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -151,7 +150,7 @@ const SignUp = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, backgroundColor: "#0f172b" }}
             >
               Sign Up
             </Button>
