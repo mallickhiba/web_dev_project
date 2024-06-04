@@ -23,6 +23,7 @@ const VendorDashboardPage = () => {
         const { firstName, lastName } = response.data;
 const userName = `${firstName} ${lastName}`;
 localStorage.setItem('userName', userName);
+console.log(localStorage.getItem(userName));
       } catch (error) {
         console.error("Error fetching vendor details:", error);
       }
@@ -62,4 +63,4 @@ localStorage.setItem('userName', userName);
   )
 }
 
-export default VendorDashboardPage
+export default VendorDashboardPage;

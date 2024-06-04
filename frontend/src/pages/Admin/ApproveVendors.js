@@ -134,7 +134,7 @@ const ApproveVendors = () => {
     <Container>
       <Grid container>
         <Grid item xs={12} md={3}>
-          <AdminSidebar active={2} />
+          <AdminSidebar active={3} />
         </Grid>
         <Grid item xs={12} md={9}>
           <Box mb={3} mt={5}>

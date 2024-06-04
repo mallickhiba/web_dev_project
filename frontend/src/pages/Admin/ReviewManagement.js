@@ -69,7 +69,7 @@ const ReviewManagement = () => {
       <Grid container>
         {/* Render the AdminSidebar component */}
         <Grid item xs={12} md={3}>
-          <AdminSidebar active={2} />
+          <AdminSidebar active={5} />
         </Grid>
 
         {/* Main content */}

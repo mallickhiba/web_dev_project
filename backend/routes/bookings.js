@@ -103,18 +103,18 @@ router.get(
 
       const totalCount = await Booking.countDocuments(query);
 
-      const bookings = await Booking.find(query)
-        .populate({
-          path: "service._id",
-          select: "service_name service_category",
-        })
-        .populate({
-          path: "vendor_id",
-          select: "firstName lastName email",
-        })
-        .sort(sortQuery) // Apply sorting based on sortQuery
-        .limit(limit)
-        .skip(startIndex);
+        const bookings = await Booking.find(query)
+            .populate({
+                path: 'service_id',
+                select: 'service_name service_category'
+            })
+            .populate({
+                path: 'vendor_id',
+                select: 'firstName lastName email'
+            })
+            .sort(sortQuery) // Apply sorting based on sortQuery
+            .limit(limit)
+            .skip(startIndex);
 
       const totalPages = Math.ceil(totalCount / limit);
 
@@ -170,7 +170,21 @@ router.get(
         sortQuery = { bookingDate: -1 }; // Sort by booking date in descending order
       }
 
-      const totalCount = await Booking.countDocuments(query);
+        const bookings = await Booking.find(query)
+            .populate({
+                path: 'customer',
+                select: 'firstName lastName email'
+            })
+            .populate({
+                path: 'service_id',
+                select: 'service_name service_category'
+            }).populate({
+                path: 'vendor_id',
+                select: 'firstName lastName email'
+            })
+            .sort(sortQuery) // Apply sorting based on sortQuery
+            .limit(limit)
+            .skip(startIndex);
 
       const bookings = await Booking.find(query)
         .populate({
@@ -214,40 +228,32 @@ router.post(
   customerMiddleware,
   async (req, res) => {
     try {
-      const customerID = req.body.customer_id;
-      console.log(req.body);
+        const customerID = req.user.id; 
 
-      if (
-        !req.body.service._id ||
-        !req.body.service.selected_package ||
-        !req.body.service.selected_package.package_id ||
-        req.body.guests == null
-      ) {
-        return res
-          .status(400)
-          .json({ message: "Please provide all required fields." });
-      }
+        if (!req.body.bookingDate || !req.body.service || !req.body.service.service_id || !req.body.service.selected_package || !req.body.service.selected_package.package_id || !req.body.service.selected_package.name || req.body.guests == null) {
+            return res.status(400).json({ message: "Please provide all required fields." });
+        }
 
-      // Extract vendor_id from service_id
-      const service = await Service.findById(req.body.service._id);
-      if (!service) {
-        return res.status(404).json({ message: "Service not found." });
-      }
+        // Extract vendor_id from service_id
+        const service = await Service.findById(req.body.service.service_id);
+        if (!service) {
+            return res.status(404).json({ message: "Service not found." });
+        }
 
-      const vendor_id = req.body.vendor_id; // Assuming the vendor_id is stored in the service document
+        const vendor_id = service.vendor_id; // Assuming the vendor_id is stored in the service document
 
-      // Create booking data object
-      const bookingData = {
-        customer: customerID,
-        service_id: req.body.service._id,
-        selected_package: {
-          package_id: req.body.service.selected_package.package_id,
-          name: req.body.service.selected_package.name,
-        },
-        vendor_id: vendor_id, // Set vendor_id to the extracted vendor_id
-        guests: req.body.guests,
-        bookingDate: req.body.bookingDate,
-      };
+        // Create booking data object
+        const bookingData = {
+            customer: customerID,
+            service_id: req.body.service.service_id,
+            selected_package: {
+                package_id: req.body.service.selected_package.package_id,
+                name: req.body.service.selected_package.name,
+            },
+            vendor_id: vendor_id, // Set vendor_id to the extracted vendor_id
+            guests: req.body.guests,
+            bookingDate: req.body.bookingDate,
+        };
 
       // Create new booking
       const newBooking = await Booking.create(bookingData);

@@ -20,9 +20,6 @@ import {
     AccountCircle,
     CalendarMonth,
     AdminPanelSettingsOutlined,
-    
-    Pending,
-  CheckCircle,
   Edit,
 
   } from "@mui/icons-material";
@@ -48,6 +45,7 @@ const DashboardSidebar = ({ active }) => {
           await axios.post('http://localhost:5600/auth/logout', null, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          localStorage.setItem('userName', "");
           dispatch(logout());
           navigate('/login')
         } catch (error) {
@@ -60,13 +58,13 @@ const DashboardSidebar = ({ active }) => {
 
 
     const navItems = [
-      { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" },
-  userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" } :
+      { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "#dab61e" : "white"}` }} />, link: "/vendordashboard" },
+  userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "#dab61e" : "white"}` }} />, link: "/vendorservices" } :
     
-  { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
+  { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "#dab61e" : "white"}` }} />, link: "/customerfavourites" },
     
-      { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: "/vendorprofile" },
-      { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/vendorbookings" },
+      { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "#dab61e" : "white"}` }}/>, link: "/vendorprofile" },
+      { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "#dab61e" : "white"}` }}/>, link: "/vendorbookings" },
 
     ];
 
@@ -79,19 +77,23 @@ const DashboardSidebar = ({ active }) => {
         sx={{
           width: 240,
           "& .MuiDrawer-paper": {
-            color: "text.secondary",
-            backgroundColor: "background.alt",
+            color: "#f2fdfb",  
+            backgroundColor: "#0f172b",  
             boxSizing: "border-box",
             width: 240,
           },
         }}
+
       >
         <Box width="100%">
           {/* Sidebar Header */}
           <Box m="1.5rem 2rem 2rem 3rem">
             <FlexBetween>
               <Link to="/vendordashboard" className="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
-                <img src="https://www.shadiyana.pk/images/logo.svg" alt="" />
+              <img src="./favicon.ico" alt="Sh" style={{ width: 50, height: 50 }} />
+                <Typography variant="h6" component="span" sx={{ ml: 2, color: "#dab61e", fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: "24px" }}>
+                  Shadiyana
+                </Typography>
               </Link>
             </FlexBetween>
           </Box>
@@ -105,16 +107,19 @@ const DashboardSidebar = ({ active }) => {
                   href={link}
                   selected={active === index + 1}
                   sx={{
-                    backgroundColor: active === index + 1 ? "secondary.300" : "transparent",
-                    color: active === index + 1 ? "crimson" : "text.secondary",
+                    backgroundColor: active ? "secondary.300" : "transparent",
+                    color: active ? "#dab61e" : "#f2fdfb", // Set font color dynamically
+                    fontFamily: "Heebo, sans-serif",
+                    fontWeight: 400,
+                    fontSize: "15px",
                   }}
                 >
                   {icon && (
-                    <ListItemIcon sx={{ ml: "2rem" }}>
-                      {icon}
+                    <ListItemIcon sx={{ ml: "2rem", color: `${active === 1 ? "#dab61e" : "#f2fdfb"}` }}>
+                    {icon}
                     </ListItemIcon>
                   )}
-                  <ListItemText primary={text} sx={{ fontWeight: icon === null ? "bold" : "normal" }} />
+                  <ListItemText primary={text} sx={{ fontWeight: icon === null ? "bold" : "normal", color: "#f2fdfb" }} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -145,7 +150,7 @@ const DashboardSidebar = ({ active }) => {
 
           {/* Logout Button */}
           <Box textAlign="center">
-            <Button onClick={handleLogout} variant="contained" color="secondary" sx={{ m: "1rem", backgroundColor: "crimson" }}>
+            <Button onClick={handleLogout} variant="contained" color="secondary" sx={{ m: "1rem", backgroundColor: "#dab61e" }}>
               Logout
             </Button>
           </Box>
