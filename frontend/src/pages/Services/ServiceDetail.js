@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchAllServiceByIdAsync, fetchreviews } from "../../redux/serviceSlice";
-import { postReview } from "../../redux/serviceActions";
+import { fetchAllServiceByIdAsync, fetchreviews } from "../../redux/serviceSlice.js";
+import { postReview, addToFavorites, removeFromFavorites } from "../../redux/serviceActions.js";
 import Header from "../../common/Header";
 import Footer from "../../common/Footer";
 import PackagesTable from "./PackagesTable";
 import ReviewCard from "../Reviews/ReviewCard";
 import AddRating from "../Reviews/AddRating";
-import {
- 
-  addToFavorites,
-  removeFromFavorites,
-} from "../../redux/serviceActions.js";
 import { Link } from "react-router-dom";
 
 import {
@@ -31,9 +26,9 @@ import "react-notifications/lib/notifications.css";
 const ServiceDetail = () => {
   const service = useSelector((state) => state.services.selectedService);
   const reviews = useSelector((state) => state.services.reviews);
+  const favorites = useSelector((state) => state.services.favorites);
   const dispatch = useDispatch();
   const params = useParams();
-  const favorites = useSelector((state) => state.caterings.favorites);
 
   const [rating, setRating] = useState(5);
   const [review, setReview] = useState("");
@@ -43,26 +38,33 @@ const ServiceDetail = () => {
     dispatch(fetchreviews(params.id));
   }, [dispatch, params.id]);
 
-  const handlepostreview = () => {
+  const handlePostReview = () => {
     dispatch(postReview({ serviceId: params.id, rating, review })).then(() => {
       dispatch(fetchreviews(params.id)); // Fetch updated reviews after posting a new one
       setRating(2);
       setReview("");
     });
   };
+
   const handleAddToFavorites = () => {
-    dispatch(addToFavorites(service._id));
+    if (service) {
+      dispatch(addToFavorites(service._id));
+    }
   };
+
   const handleRemoveFromFavorites = () => {
-    dispatch(removeFromFavorites(service._id));
+    if (service) {
+      dispatch(removeFromFavorites(service._id));
+    }
   };
-  const isFavorite = favorites.includes(service._id);
+
+  const isFavorite = service && favorites.includes(service._id);
 
   return (
     <div>
       <Header />
       <Container>
-        {service && (
+        {service ? (
           <Card sx={{ marginTop: 3 }}>
             <CardContent>
               <Typography
@@ -98,13 +100,13 @@ const ServiceDetail = () => {
               >
                 Description
               </Typography>
-                    <Typography
-                      variant="body1"
-                      paragraph
-                      sx={{ fontFamily: "Font Awesome 5 Free" }} // Description with sans-serif font
-                    >
-                      {service.description}
-                    </Typography>
+              <Typography
+                variant="body1"
+                paragraph
+                sx={{ fontFamily: "Font Awesome 5 Free" }} // Description with sans-serif font
+              >
+                {service.description}
+              </Typography>
 
               <Grid container spacing={2}>
                 <Grid item xs={12} md={8}>
@@ -148,7 +150,7 @@ const ServiceDetail = () => {
                     justifyContent: "center",
                   }}
                 >
-                 {isFavorite ? (
+                  {isFavorite ? (
                     <Button
                       variant="contained"
                       sx={{
@@ -191,9 +193,6 @@ const ServiceDetail = () => {
                       Book Now
                     </Button>
                   </Link>
-                  
-
-                  
                 </Grid>
               </Grid>
               <Box mt={4}>
@@ -247,7 +246,7 @@ const ServiceDetail = () => {
                         borderRadius: "25px",
                         width: "100%",
                       }}
-                      onClick={handlepostreview}
+                      onClick={handlePostReview}
                     >
                       Post Review
                     </Button>
@@ -276,6 +275,10 @@ const ServiceDetail = () => {
               </Box>
             </CardContent>
           </Card>
+        ) : (
+          <Typography variant="h6" align="center" sx={{ marginTop: 3 }}>
+            Loading service details...
+          </Typography>
         )}
       </Container>
       <NotificationContainer />

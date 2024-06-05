@@ -55,7 +55,6 @@ export const fetchCaterings = createAsyncThunk(
   }
 );
 
-// Fetch photographys with filtering and sorting
 export const fetchPhotographys = createAsyncThunk(
   "venues/fetchPhotographys",
   async ({ page, limit, search, sort, filters }, { dispatch }) => {
@@ -67,7 +66,7 @@ export const fetchPhotographys = createAsyncThunk(
           params: { page, limit, search, sort, ...filters },
         }
       );
-      dispatch(setPhotographys(response.data.photographys));
+      dispatch(setPhotographys(response.data.photographies)); // Ensure this is correct
       console.log(response.data);
       dispatch(setLoading(false));
     } catch (error) {
@@ -162,6 +161,7 @@ export const addToFavorites = createAsyncThunk(
       );
       
       dispatch(addFavoriteV(serviceId));
+      dispatch(addFavoriteP(serviceId));
       dispatch(addFavoriteC(serviceId));
       dispatch(addFavoriteD(serviceId));
       dispatch(addFavorite(serviceId));
@@ -193,7 +193,7 @@ export const removeFromFavorites = createAsyncThunk(
       dispatch(removeFavoriteV(serviceId));
       dispatch(removeFavoriteC(serviceId));
       dispatch(removeFavoriteD(serviceId));
-      
+      dispatch(removeFavoriteP(serviceId));
       dispatch(removeFavorite(serviceId));
       
     } catch (error) {
