@@ -58,10 +58,10 @@ const DashboardSidebar = ({ active }) => {
 
 
       const navItems = [
-        userRole === 'vendor' ? { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" } : { text: "Home", link: "/" },
-        userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" } : { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
-        { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: userRole === 'vendor' ? "/vendorprofile" : "/customerprofile" },
-        userRole === 'vendor' ? { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/vendorbookings" } : { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/customerbookings" },
+        userRole === 'vendor'? { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "#dab61e" : "#555"}` }} />, link: "/vendordashboard" } : { text: "Home", link: "/" },
+        userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "#dab61e" : "#555"}` }} />, link: "/vendorservices" } : { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
+        { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "#dab61e" : "#555"}` }}/>, link: userRole === 'vendor' ? "/vendorprofile" : "/customerprofile" },
+        userRole === 'vendor'  ? { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "#dab61e" : "#555"}` }}/>, link: "/vendorbookings" } : { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/customerbookings" },
       ].filter(Boolean);
       
       
