@@ -103,12 +103,12 @@ const Photographys = () => {
   return (
     <div>
       <Header />
-      <Heading heading="Photograoh" title="Home" subtitle="Catering" />
+      <Heading heading="Photography" title="Home" subtitle="Photography" />
       <div className="container-xxl py-5">
         <div className="container">
           <CommonHeading
-            heading="Our Catering"
-            title="Catering"
+            heading="Our Photography"
+            title="Photography"
             subtitle="Explore Our"
           />
           <Grid container spacing={4}>

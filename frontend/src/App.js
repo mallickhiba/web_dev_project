@@ -39,7 +39,8 @@ import VendorServices from "./pages/Vendor/VendorServices.js";
 import VendorBookings from "./pages/Vendor/VendorBookings.js";
 import CustomerProfile from "./pages/Customer/CustomerProfile.js";
 import CustomerFavourites from "./pages/Customer/CustomerFavourites.js";
-
+import CustomerBookings from "./pages/Customer/CustomerBookings.js";
+import Makebooking from "./pages/Bookings/Makebooking.js";
 
 function App() {
   const { loggedIn, role } = useSelector((state) => state.user);
@@ -81,6 +82,12 @@ function App() {
       )}
       {loggedIn && role === 'customer' && (
              <Route path="/customerfavourites" element={<CustomerFavourites />} />
+      )}
+      {loggedIn && role === 'customer' && (
+             <Route path="/makebooking/:id" element={<Makebooking />} />
+      )}
+{loggedIn && role === 'customer' && (
+             <Route path="/customerbookings" element={<CustomerBookings />} />
       )}
 
      

@@ -11,6 +11,7 @@ const initialState = {
   selectedService: null,
   reviews:[]
 };
+
 export const fetchAllServiceByIdAsync = createAsyncThunk(
   'service/fetchServiceById',
   async (id) => {
@@ -28,6 +29,42 @@ export const fetchreviews = createAsyncThunk(
 );
 
 
+const getToken = () => localStorage.getItem('token');
+
+
+export const postbooking = createAsyncThunk(
+  'caterings/postbooking',
+  async ({ customerId, serviceId, packageId, packageName, vendorId, guests, bookingDate }, { dispatch }) => {
+    const token = getToken();
+    if (!token) {
+      dispatch(setError('TOKEN NOT FOUND / INVALID. PLEASE LOG IN'));
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        'http://localhost:5600/bookings/createbooking',
+        {
+          customer_id: customerId,
+          service: {
+            _id: serviceId,
+            selected_package: {
+              _id: packageId,
+              name: packageName // Ensure package name is included
+            }
+          },
+          vendor_id: vendorId,
+          guests: guests,
+          bookingDate: bookingDate
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      dispatch(postabooking(response.data));
+    } catch (error) {
+      dispatch(setError(error.response?.data?.message || error.message));
+    }
+  }
+);
 const serviceSlice = createSlice({
   name: 'services',
   initialState,
@@ -40,9 +77,12 @@ const serviceSlice = createSlice({
       state.favorites = action.payload;
       console.log(action.payload);
     },
-    
+    getBookings(state, action) {
+      state.booking = action.payload;
+      console.log(action.payload);
+    },
     setServiceDetail(state, action) {
-      state.serviceDetail = action.payload; // Define setServiceDetail action
+      state.serviceDetail = action.payload;
     },
     setFilteredServices(state, action) {
       state.filteredServices = action.payload;
@@ -86,12 +126,13 @@ const serviceSlice = createSlice({
     builder.addCase(fetchreviews.fulfilled, (state, action) => {
       state.reviews = action.payload;
     });
+    
   }
 });
 
 export const {
   setServices,
-  setServiceDetail, // Export the action
+  setServiceDetail,
   setFilteredServices,
   addService,
   setLoading,
@@ -103,8 +144,8 @@ export const {
   getFavourites,
   postareview,
   getReviews,
-  postabooking
-
-
+  postabooking,
+  getBookings
 } = serviceSlice.actions;
+
 export default serviceSlice.reducer;

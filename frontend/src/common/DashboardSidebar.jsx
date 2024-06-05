@@ -66,7 +66,7 @@ const DashboardSidebar = ({ active }) => {
   { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
     
       { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: "/vendorprofile" },
-      { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/vendorbookings" },
+      { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/customerbookings" },
 
     ];
 

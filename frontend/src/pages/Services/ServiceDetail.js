@@ -8,6 +8,8 @@ import Footer from "../../common/Footer";
 import PackagesTable from "./PackagesTable";
 import ReviewCard from "../Reviews/ReviewCard";
 import AddRating from "../Reviews/AddRating";
+import { Link } from "react-router-dom";
+
 import {
   Card,
   CardContent,
@@ -127,13 +129,13 @@ const ServiceDetail = () => {
                   >
                     Add to Favourites
                   </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ marginBottom: 2 }}
-                  >
-                    Book Now
-                  </Button>
+                  <Link to={`/makebooking/${service._id}`} style={{ textDecoration: "none" }}>
+  <Button variant="contained" color="primary" sx={{ marginBottom: 2 }}>
+    Book Now
+  </Button>
+</Link>
+
+                  
                   <Button variant="contained" color="secondary">
                     Contact Vendor
                   </Button>
