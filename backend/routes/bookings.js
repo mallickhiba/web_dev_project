@@ -253,7 +253,26 @@ router.post('/createBooking', authenticate, customerMiddleware, async (req, res)
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
-    
+    customer = await User.findById(req.body.customer_id)
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: customer.email,
+      subject: 'Booking Created',
+      text: `
+      shadiyana.info@gmail.com
+      04:51 (7 hours ago)
+      Your booking has been created! You will recieve an email update when it is confirmed `
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          console.error('Error sending email:', error);
+          return res.status(500).send('Error sending email');
+      } else {
+          console.log('Email sent: ' + info.response);
+          return res.send('Email sent and booking created');
+
+      }
+  });
 });
 
 
