@@ -258,10 +258,8 @@ router.post('/createBooking', authenticate, customerMiddleware, async (req, res)
       from: process.env.EMAIL_USER,
       to: customer.email,
       subject: 'Booking Created',
-      text: `
-      shadiyana.info@gmail.com
-      04:51 (7 hours ago)
-      Your booking has been created! You will recieve an email update when it is confirmed `
+      text: `Your booking for ${req.body.service.selected_package.name} has been created. You will recieve an email update when it is confirmed. Thank you.
+      Team Shadiyana`
   };
   transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -269,7 +267,7 @@ router.post('/createBooking', authenticate, customerMiddleware, async (req, res)
           return res.status(500).send('Error sending email');
       } else {
           console.log('Email sent: ' + info.response);
-          return res.send('Email sent and booking created');
+          return res.send('Email sent and users token is saved in db', user.resetPasswordToken);
 
       }
   });
@@ -312,7 +310,8 @@ router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMid
       from: process.env.EMAIL_USER,
       to: customer.email,
       subject: 'Booking Confirmed',
-      text: `Yay! Your booking has been confirmed`
+      text: `Yay! Your booking for ${req.body.service.selected_package.name} has been confirmed.
+      Team Shadiyana `
   };
   transporter.sendMail(mailOptions2, (error, info) => {
       if (error) {
