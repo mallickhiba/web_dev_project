@@ -193,7 +193,7 @@ export const removeFromFavorites = createAsyncThunk(
       dispatch(removeFavoriteV(serviceId));
       dispatch(removeFavoriteC(serviceId));
       dispatch(removeFavoriteD(serviceId));
-      dispatch(removeFavoriteP(serviceId));
+       dispatch(removeFavoriteP(serviceId));
       dispatch(removeFavorite(serviceId));
       
     } catch (error) {

@@ -55,7 +55,7 @@ const FilterPanel = ({ serviceType, handleFilterChange, handleApplyFilters, hand
         <FormControl fullWidth margin="normal">
           <InputLabel>Sort By</InputLabel>
           <Select value={sort} onChange={handleSortChange}>
-            <MenuItem value="average_rating">Average Rating</MenuItem>
+            <MenuItem value="average_rating">Default</MenuItem>
             <MenuItem value="start_price">Price (Low to High)</MenuItem>
           </Select>
         </FormControl>

@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux"; // Import useSelector from react-redux
+import { useSelector } from "react-redux";
 import { navList } from "../data/Data";
-import icon from "./favicon.ico"; // Adjust the path to where your icon is saved
+import icon from "./favicon.ico";
 
 export default function Header() {
   const [navbarCollapse, setNavbarCollapse] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  
-  // Use Redux selectors to access token and user role
+
   const token = useSelector((state) => state.user.token);
   const userRole = useSelector((state) => state.user.role);
+
+  useEffect(() => {
+    const jwtToken = localStorage.getItem("token");
+    setIsLoggedIn(!!jwtToken);
+  }, []);
 
   const handleMouseEnter = (itemId) => {
     setActiveDropdown(itemId);
@@ -45,7 +50,7 @@ export default function Header() {
           <div className="col-lg-9">
             <nav className="navbar navbar-expand-lg bg-dark navbar-dark p-3 p-lg-0">
               <Link to="/" className="navbar-brand d-block d-lg-none">
-              <h3 className="m-0 text" style={{ color: "#dab61e" }}>Shadiyana</h3>
+                <h3 className="m-0 text" style={{ color: "#dab61e" }}>Shadiyana</h3>
               </Link>
               <button
                 type="button"
@@ -92,6 +97,16 @@ export default function Header() {
                       )}
                     </div>
                   ))}
+                  {!isLoggedIn && (
+                    <>
+                      <Link to="/login" className="nav-item nav-link">
+                        Login
+                      </Link>
+                      <Link to="/signup" className="nav-item nav-link">
+                        Signup
+                      </Link>
+                    </>
+                  )}
                   <Link
                     to={token ? (userRole === "customer" ? "/customerprofile" : "/vendorprofile") : "/"}
                     className="nav-item nav-link bg-transparent border-0"
