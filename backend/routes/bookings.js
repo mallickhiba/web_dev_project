@@ -305,7 +305,7 @@ router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMid
         res.status(500).json({ message: "Internal Server Error" });
     }
     const customer = await User.findById(req.body.customer_id);
-    if (newStatus == 'confirmed'){
+    if (req.params.newStatus == 'confirmed'){
     const mailOptions2 = {
       from: process.env.EMAIL_USER,
       to: customer.email,
