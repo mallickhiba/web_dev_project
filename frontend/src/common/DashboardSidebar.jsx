@@ -86,7 +86,7 @@ const DashboardSidebar = ({ active }) => {
           <Box m="1.5rem 2rem 2rem 3rem">
             <FlexBetween>
             <Link
-  to={userRole === "vendor" ? "/vendordashboard" : "/customerdashboard"}
+  to={userRole === "vendor" ? "/vendordashboard" : "/"}
   className="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center"
 >
                 <img
