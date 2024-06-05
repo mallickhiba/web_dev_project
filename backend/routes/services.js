@@ -13,7 +13,6 @@ const CateringService = require('../models/Services').model('CateringService');
 const DecorService = require('../models/Services').model('DecorService');
 const BaseService = require('../models/Services'); // Adjust the path as per your project structure
 const Users = require('../models/User');
-const vendorApprovalMiddleware = require("../middlewares/vendorApproval.js");
 var router = express.Router();
 
 
@@ -364,7 +363,7 @@ router.get('/decor1', async (req, res) => {
 
 
 // API to get all services for a specific vendor with pagination, filtering, and sorting -- TESTED
-router.get('/servicesbyVendor', authenticate, vendorMiddleware,vendorApprovalMiddleware, async (req, res) => {
+router.get('/servicesbyVendor', authenticate, vendorMiddleware, async (req, res) => {
   try {
       const vendorId = req.user.id;
       const page = parseInt(req.query.page) || 1;
@@ -641,7 +640,7 @@ router.get('/service/:id/reviews', async (req, res) => {
 // Vendor can also add/edit/delete a package of his service
 
 
-router.post('/addService', authenticate, authorization,vendorApprovalMiddleware, async (req, res) => {
+router.post('/addService', authenticate, authorization, async (req, res) => {
   try {
     let vendorId;
     if (req.user.role === "admin") {
@@ -756,7 +755,7 @@ router.post('/addService', authenticate, authorization,vendorApprovalMiddleware,
 
 
 // Edit service API - TESTED
-router.put('/editService/:serviceId', authenticate, vendorMiddleware,vendorApprovalMiddleware, async (req, res) => {
+router.put('/editService/:serviceId', authenticate, vendorMiddleware, async (req, res) => {
   try {
     const serviceId = req.params.serviceId;
     console.log("Editing service with ID:", serviceId);
@@ -841,7 +840,7 @@ router.put('/editService/:serviceId', authenticate, vendorMiddleware,vendorAppro
 
 
 // API to update a specific package of a service -- TESTED 
-router.put('/editPackage/:serviceId/:packageId', authenticate, vendorMiddleware,vendorApprovalMiddleware, async (req, res) => {
+router.put('/editPackage/:serviceId/:packageId', authenticate, vendorMiddleware, async (req, res) => {
   try {
     const { serviceId, packageId } = req.params;
 
@@ -876,7 +875,7 @@ router.put('/editPackage/:serviceId/:packageId', authenticate, vendorMiddleware,
 });
 
 
-router.post('/addPackage/:serviceId', authenticate, vendorMiddleware, vendorApprovalMiddleware, async (req, res) => {
+router.post('/addPackage/:serviceId', authenticate, vendorMiddleware, async (req, res) => {
   try {
     const serviceId = req.params.serviceId;
 
@@ -909,7 +908,7 @@ router.post('/addPackage/:serviceId', authenticate, vendorMiddleware, vendorAppr
 });
 
 
-router.post('/deletePackage/:serviceId/:packageId', authenticate, vendorMiddleware,vendorApprovalMiddleware, async (req, res) => {
+router.post('/deletePackage/:serviceId/:packageId', authenticate, vendorMiddleware, async (req, res) => {
   try {
     const { serviceId, packageId } = req.params;
 
@@ -945,7 +944,7 @@ router.post('/deletePackage/:serviceId/:packageId', authenticate, vendorMiddlewa
 
 
 // Delete any service. -- TESTED
-router.post('/deleteService/:serviceId', authenticate, authorization, vendorApprovalMiddleware, async (req, res) => {
+router.post('/deleteService/:serviceId', authenticate, authorization, async (req, res) => {
   try {
     const serviceId = req.params.serviceId;
 

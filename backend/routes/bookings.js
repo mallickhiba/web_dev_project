@@ -7,7 +7,6 @@ const authenticate = require("../middlewares/authenticate");
 const adminMiddleware = require("../middlewares/adminMiddleware");
 const vendorMiddleware = require("../middlewares/vendorMiddleware");
 const transporter = require('../emailService.js'); 
-const vendorApprovalMiddleware = require("../middlewares/vendorApproval.js");
 
 
 const router = express.Router();
@@ -144,7 +143,7 @@ Get API  for vendor to view all bookings made for services by him. includes sort
 router.get(
   "/vendorBookings",
   authenticate,
-  vendorMiddleware,vendorApprovalMiddleware,
+  vendorMiddleware,
   async (req, res) => {
     try {
       const statusFilter = req.query.status;
@@ -278,7 +277,7 @@ router.post('/createBooking', authenticate, customerMiddleware, async (req, res)
 
 
 // PUT endpoint to change booking status. Only vendor can do this.
-router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMiddleware,vendorApprovalMiddleware, async (req, res) => {
+router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMiddleware, async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
         const newStatus = req.params.newStatus.toLowerCase(); // Convert to lowercase for case-insensitive comparison
