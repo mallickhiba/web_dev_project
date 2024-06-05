@@ -9,7 +9,6 @@ import {
 import CommonHeading from "../../common/CommonHeading";
 import Heading from "../../common/Heading";
 import Header from "../../common/Header";
-import Footer from "../../common/Footer";
 import ServiceCard from "./ServiceCard.js"; // Import the ServiceCard component
 import FilterPanel from "./FilterPanel.js"; // Import the FilterPanel component
 import { Grid,Pagination } from "@mui/material";
@@ -119,17 +118,17 @@ const Decors = () => {
     setSort(e.target.value);
   };
 
-  console.log(decors); // Add this line to log the caterings array
+  console.log(decors);
 
   return (
     <div>
       <Header />
-      <Heading heading="Decor" title="Home" subtitle="Catering" />
+      <Heading heading="Decor" title="Home" subtitle="Decor" />
       <div className="container-xxl py-5">
         <div className="container">
           <CommonHeading
-            heading="Our Catering"
-            title="Catering"
+            heading="Our Decor"
+            title="Decor"
             subtitle="Explore Our"
           />
           <Grid container spacing={4}>
@@ -173,7 +172,7 @@ const Decors = () => {
           </Grid>
         </div>
       </div>
-      <Footer />
+
       <NotificationContainer />
     </div>
   );
