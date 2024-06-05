@@ -19,7 +19,9 @@ import {
   CalendarMonth,
   AdminPanelSettingsOutlined,
   Edit,
+  
 } from "@mui/icons-material";
+
 import axios from "axios";
 import { logout } from "../redux/userSlice";
 const { styled } = require("@mui/system");
@@ -51,21 +53,18 @@ const DashboardSidebar = ({ active }) => {
         }
       };
 
-      const userRole = useSelector((state) => state.user.role);
+  
 
 
 
-    const navItems = [
-      { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" },
-  userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" } :
-    
-  { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
-    
-      { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: "/vendorprofile" },
-      { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/customerbookings" },
-
-    ];
-
+      const navItems = [
+        userRole === 'vendor' ? { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" } : { text: "Home", link: "/" },
+        userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" } : { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
+        { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: userRole === 'vendor' ? "/vendorprofile" : "/customerprofile" },
+        userRole === 'vendor' ? { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/vendorbookings" } : { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/customerbookings" },
+      ].filter(Boolean);
+      
+      
   return (
     <Box component="nav">
       <Drawer
@@ -153,12 +152,13 @@ const DashboardSidebar = ({ active }) => {
           <Divider />
           <FlexBetween gap="1rem" p="1.5rem 2rem" alignItems="center">
             {/* User Info */}
-            <Box>
-              <Typography fontWeight="bold" fontSize="0.9rem">
-                {localStorage.getItem("userName")}
-              </Typography>
-              <Typography fontSize="0.8rem">{userRole}</Typography>
-            </Box>
+            {userRole === 'vendor' && (
+              <Box>
+                <Typography fontWeight="bold" fontSize="0.9rem">
+                  {localStorage.getItem("userName")}
+                </Typography>
+                <Typography fontSize="0.8rem">{userRole}</Typography>
+            </Box>)}
             {/* Admin Settings Icon */}
             <Box>
               <AdminPanelSettingsOutlined sx={{ fontSize: "25px" }} />

@@ -8,6 +8,11 @@ import Footer from "../../common/Footer";
 import PackagesTable from "./PackagesTable";
 import ReviewCard from "../Reviews/ReviewCard";
 import AddRating from "../Reviews/AddRating";
+import {
+ 
+  addToFavorites,
+  removeFromFavorites,
+} from "../../redux/serviceActions.js";
 import { Link } from "react-router-dom";
 
 import {
@@ -28,6 +33,7 @@ const ServiceDetail = () => {
   const reviews = useSelector((state) => state.services.reviews);
   const dispatch = useDispatch();
   const params = useParams();
+  const favorites = useSelector((state) => state.caterings.favorites);
 
   const [rating, setRating] = useState(5);
   const [review, setReview] = useState("");
@@ -44,6 +50,13 @@ const ServiceDetail = () => {
       setReview("");
     });
   };
+  const handleAddToFavorites = () => {
+    dispatch(addToFavorites(service._id));
+  };
+  const handleRemoveFromFavorites = () => {
+    dispatch(removeFromFavorites(service._id));
+  };
+  const isFavorite = favorites.includes(service._id);
 
   return (
     <div>
@@ -52,7 +65,15 @@ const ServiceDetail = () => {
         {service && (
           <Card sx={{ marginTop: 3 }}>
             <CardContent>
-              <Typography variant="h4" gutterBottom>
+              <Typography
+                variant="h4"
+                gutterBottom
+                sx={{
+                  fontWeight: "bold",
+                  color: "#0F172B",
+                  fontFamily: "Font Awesome 5 Free",
+                }}
+              >
                 {service.service_name}
               </Typography>
               <Box sx={{ textAlign: "center", marginBottom: 3 }}>
@@ -66,50 +87,55 @@ const ServiceDetail = () => {
                   }}
                 />
               </Box>
-              <Typography variant="body1" paragraph>
-                {service.description}
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{
+                  fontWeight: "bold",
+                  color: "#0F172B",
+                  fontFamily: "Font Awesome 5 Free",
+                }}
+              >
+                Description
               </Typography>
+                    <Typography
+                      variant="body1"
+                      paragraph
+                      sx={{ fontFamily: "Font Awesome 5 Free" }} // Description with sans-serif font
+                    >
+                      {service.description}
+                    </Typography>
+
               <Grid container spacing={2}>
                 <Grid item xs={12} md={8}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={6}>
-                      <Typography variant="subtitle1">
-                        Average Rating:
-                      </Typography>
-                      <Typography variant="body2">
-                        {service.average_rating}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6}>
-                      <Typography variant="subtitle1">Start Price:</Typography>
-                      <Typography variant="body2">
-                        ${service.start_price}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6}>
-                      <Typography variant="subtitle1">
-                        Cancellation Policy:
-                      </Typography>
-                      <Typography variant="body2">
-                        {service.cancellation_policy}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6}>
-                      <Typography variant="subtitle1">Staff:</Typography>
-                      <Typography variant="body2">{service.staff}</Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6}>
-                      <Typography variant="subtitle1">City:</Typography>
-                      <Typography variant="body2">{service.city}</Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6}>
-                      <Typography variant="subtitle1">
-                        Service Category:
-                      </Typography>
-                      <Typography variant="body2">
-                        {service.service_category}
-                      </Typography>
-                    </Grid>
+                    {[
+                      { label: "Average Rating", value: service.average_rating },
+                      { label: "Start Price", value: `$${service.start_price}` },
+                      { label: "Cancellation Policy", value: service.cancellation_policy },
+                      { label: "Staff", value: service.staff },
+                      { label: "City", value: service.city },
+                      { label: "Service Category", value: service.service_category },
+                    ].map((item) => (
+                      <Grid item xs={12} sm={6} md={6} key={item.label}>
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#0F172B",
+                            fontFamily: "Font Awesome 5 Free",
+                          }}
+                        >
+                          {item.label}:
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontFamily: "Font Awesome 5 Free" }}
+                        >
+                          {item.value}
+                        </Typography>
+                      </Grid>
+                    ))}
                   </Grid>
                 </Grid>
                 <Grid
@@ -122,33 +148,78 @@ const ServiceDetail = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    sx={{ marginBottom: 2 }}
-                  >
-                    Add to Favourites
-                  </Button>
-                  <Link to={`/makebooking/${service._id}`} style={{ textDecoration: "none" }}>
-  <Button variant="contained" color="primary" sx={{ marginBottom: 2 }}>
-    Book Now
-  </Button>
-</Link>
+                 {isFavorite ? (
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor: "#FEA116",
+                        color: "#fff",
+                        borderRadius: "25px",
+                        width: "100%",
+                        marginBottom: 2,
+                      }}
+                      onClick={handleRemoveFromFavorites}
+                    >
+                      Remove from Favorites
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor: "#FEA116",
+                        color: "#fff",
+                        borderRadius: "25px",
+                        width: "100%",
+                        marginBottom: 2,
+                      }}
+                      onClick={handleAddToFavorites}
+                    >
+                      Add to Favorites
+                    </Button>
+                  )}
+                  <Link to={`/makebooking/${service._id}`} style={{ textDecoration: "none", marginBottom: 2 }}>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor: "#FEA116",
+                        color: "#fff",
+                        borderRadius: "25px",
+                        width: "100%",
+                        marginBottom: 2,
+                      }}
+                    >
+                      Book Now
+                    </Button>
+                  </Link>
+                  
 
                   
-                  <Button variant="contained" color="secondary">
-                    Contact Vendor
-                  </Button>
                 </Grid>
               </Grid>
               <Box mt={4}>
-                <Typography variant="h5" gutterBottom>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#0F172B",
+                    fontFamily: "Font Awesome 5 Free",
+                  }}
+                >
                   Packages:
                 </Typography>
                 <PackagesTable packages={service.packages} />
               </Box>
               <Box mt={4}>
-                <Typography variant="h5" gutterBottom>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#0F172B",
+                    fontFamily: "Font Awesome 5 Free",
+                  }}
+                >
                   Add a Review
                 </Typography>
                 <Grid container spacing={2}>
@@ -164,13 +235,19 @@ const ServiceDetail = () => {
                       onChange={(e) => setReview(e.target.value)}
                       variant="outlined"
                       fullWidth
+                      sx={{ fontFamily: "Font Awesome 5 Free" }}
                     />
                   </Grid>
                   <Grid item xs={12} sx={{ textAlign: "center" }}>
                     <Button
                       variant="contained"
-                      color="primary"
-                      onClick={handlepostreview}  
+                      sx={{
+                        backgroundColor: "#FEA116",
+                        color: "#fff",
+                        borderRadius: "25px",
+                        width: "100%",
+                      }}
+                      onClick={handlepostreview}
                     >
                       Post Review
                     </Button>
@@ -178,13 +255,21 @@ const ServiceDetail = () => {
                 </Grid>
               </Box>
               <Box mt={4}>
-                <Typography variant="h5" gutterBottom>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#0F172B",
+                    fontFamily: "Font Awesome 5 Free",
+                  }}
+                >
                   Reviews:
                 </Typography>
                 <Grid container spacing={2}>
                   {reviews.map((review) => (
                     <Grid item xs={12} sm={6} md={4} key={review._id}>
-                       {review && <ReviewCard review={review} />}
+                      {review && <ReviewCard review={review} />}
                     </Grid>
                   ))}
                 </Grid>
@@ -193,7 +278,6 @@ const ServiceDetail = () => {
           </Card>
         )}
       </Container>
-      
       <NotificationContainer />
     </div>
   );
