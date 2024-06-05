@@ -17,6 +17,7 @@ import { login } from '../../redux/userSlice'; // Importing the login action
 import { NotificationManager } from "react-notifications";
 import { useNavigate } from 'react-router-dom';
 
+
 const defaultTheme = createTheme();
 
 const Login = () => {
@@ -73,8 +74,10 @@ const Login = () => {
   
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+      
+      <Container component="main" maxWidth="xs" >
         <CssBaseline />
+        
         <Box
           sx={{
             marginTop: 8,
