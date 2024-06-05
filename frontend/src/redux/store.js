@@ -5,7 +5,8 @@ import userSlice from "./userSlice";
 import photographyReducer from "./PhotographySlice.js";
 import decorReducer from "./DecorSlice.js";
 import serviceReducer from "./serviceSlice.js";
-import vendorServiceReducer from "./vendorServiceSlice.js";
+import vendorServiceReducer from './vendor/vendorServiceSlice.js';
+import bookingReducer from './vendor/vendorBookingSlice.js';
 import adminVendorReducer from "./adminVendorSlice";
 import adminUserReducer from "./adminUserSlice.js";
 import adminReviewReducer from "./adminReviewSlice.js";
@@ -23,7 +24,9 @@ const rootReducer = combineReducers({
   adminVendors: adminVendorReducer,
   adminUsers: adminUserReducer,
   adminReviews: adminReviewReducer,
-  adminBookings: adminBookingReducer
+  adminBookings: adminBookingReducer,
+  vendorbookings : bookingReducer ,
+
 });
 
 const store = configureStore({

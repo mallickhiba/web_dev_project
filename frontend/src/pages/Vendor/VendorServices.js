@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import DashboardSidebar from "../../common/DashboardSidebar";
 import axios from "axios";
-import { setServices } from "../../redux/vendorServiceSlice";
+import { setServices } from "../../redux/vendor/vendorServiceSlice";
 import SearchIcon from '@mui/icons-material/Search';
 import ServiceCard from "./components/Services/ServiceCard";
 import ServiceEditModal from "./components/Services/ServiceEditModal";
@@ -142,6 +142,8 @@ const VendorServices = () => {
         <Grid item xs={12} md={3}>
           <DashboardSidebar active={2} />
         </Grid>
+
+        
         <Grid item xs={12} md={9}>
           <Box mb={3} mt={5}>
             {showHeader && (

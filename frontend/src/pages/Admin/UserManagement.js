@@ -14,10 +14,10 @@ import {
 } from "@mui/material";
 import AdminSidebar from './components/AdminSidebar';
 import axios from "axios";
-import { setUsers } from "../../redux/adminUserSlice";
 import SearchIcon from '@mui/icons-material/Search';
 import UserCard from "./components/UserCard";
 import UserEditModal from "./components/UserEditModal";
+import { setUsers, deleteUser, editUser } from "../../redux/adminUserSlice";
 import DeleteUserDialog from "./components/DeleteUserDialog";
 
 const Search = styled('div')(({ theme }) => ({

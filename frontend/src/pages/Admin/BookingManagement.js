@@ -9,12 +9,15 @@ import {
   InputBase,
   alpha,
   Typography,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import axios from "axios";
 import BookingCard from "../Bookings/EditableBookingCard"; // Update path if needed
 import SearchIcon from '@mui/icons-material/Search';
 import AdminSidebar from "./components/AdminSidebar";
-import { setBookings, deleteBooking } from "../../redux/adminBookingSlice"; // Update path if needed
+import { setBookings, deleteBooking, editBooking } from "../../redux/adminBookingSlice"; // Update path if needed
+import DeleteBookingDialog from "./components/DeleteBookingDialog";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -70,6 +73,7 @@ const BookingManagement = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
+  const [value, setValue] = useState(0); // State for controlling tabs
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -96,18 +100,15 @@ const BookingManagement = () => {
 
   const handleSearch = () => {
     return allBookings.filter(booking => {
-      const customer_name = booking.customer.firstName.toLowerCase();
+      const service_name = booking.service_id.service_name.toLowerCase();
       const query = searchQuery.toLowerCase();
-      return customer_name.includes(query);
+      return service_name.includes(query);
     });
   };
 
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
   };
-
-  const indexOfLastBooking = page * bookingsPerPage;
-  const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
 
   const handleEditBooking = (id) => {
     const booking = allBookings.find((booking) => booking._id === id);
@@ -125,18 +126,39 @@ const BookingManagement = () => {
 
   const handleConfirmDeleteBooking = () => {
     console.log("Deleting booking with ID:", selectedBookingId);
-    dispatch(deleteBooking(selectedBookingId));
     setOpenDeleteDialog(false);
   };
+
+  const handleTabChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const tabs = [
+    { label: 'All Bookings', bookings: allBookings },
+    { label: 'Confirmed Bookings', bookings: allBookings.filter(booking => booking.status === 'confirmed') },
+    { label: 'Pending Bookings', bookings: allBookings.filter(booking => booking.status === 'pending') },
+    { label: 'Cancelled Bookings', bookings: allBookings.filter(booking => booking.status === 'cancelled') },
+  ];
+
+  const currentBookings = tabs[value].bookings;
+  const totalBookings = currentBookings.length;
+
+  const indexOfLastBooking = page * bookingsPerPage;
+  const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
 
   return (
     <Container>
       <Grid container>
         <Grid item xs={12} md={3}>
-          <AdminSidebar active={2} />
+          <AdminSidebar active={4} />
         </Grid>
         <Grid item xs={12} md={9}>
           <Box mx={4} my={4}>
+            <Tabs value={value} onChange={handleTabChange} centered>
+              {tabs.map((tab, index) => (
+                <Tab key={index} label={tab.label} />
+              ))}
+            </Tabs>
             {showHeader && (
               <Box mb={3} display="flex" alignItems="center">
                 <Search>
@@ -153,17 +175,22 @@ const BookingManagement = () => {
               </Box>
             )}
             <Grid container spacing={3}>
-              {handleSearch().slice(indexOfFirstBooking, indexOfLastBooking).map((booking, index) => (
-                <Grid item xs={12} md={6} lg={4} key={index}>
-                  <Box display="flex" justifyContent="center">
-                    <BookingCard booking={booking} />
-                  </Box>
-                </Grid>
-              ))}
+              {currentBookings
+                .slice(indexOfFirstBooking, indexOfLastBooking)
+                .map((booking, index) => (
+                  <Grid item xs={12} md={6} lg={4} key={index}>
+                    <Box display="flex" justifyContent="center">
+                      <BookingCard 
+                        booking={booking}
+                        onDelete={handleDeleteBooking} 
+                      />
+                    </Box>
+                  </Grid>
+                ))}
             </Grid>
             <Box display="flex" justifyContent="center" mt={4}>
               <Pagination
-                count={Math.ceil(allBookings.length / bookingsPerPage)}
+                count={Math.ceil(totalBookings / bookingsPerPage)}
                 page={page}
                 onChange={handlePageChange}
               />
@@ -171,6 +198,13 @@ const BookingManagement = () => {
           </Box>
         </Grid>
       </Grid>
+      <DeleteBookingDialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleConfirmDeleteBooking}
+        bookingId={selectedBookingId}
+        token={token}
+      />
     </Container>
   );
 };

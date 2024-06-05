@@ -37,19 +37,24 @@ const Login = () => {
       e.preventDefault();
       const res = await axios.post('http://localhost:5600/auth/login', data);
       if (res.status === 200) {
-        NotificationManager.success(res.data.msg);
-        const { token } = res.data;
-        const role = JSON.parse(atob(token.split('.')[1])).role;
-        dispatch(login({ token, role }));
+        const { msg, token, user } = res.data;
+        NotificationManager.success(msg);
+        const { role, approved } = user;
+        dispatch(login({ token, role, approved }));
         redirectToRolePage(role);
       } else {
         NotificationManager.error(res.data.error);
       }
     } catch (error) {
       console.error(error);
-      NotificationManager.error(error.response.data.error); 
+      if (error.response && error.response.data && error.response.data.error) {
+        NotificationManager.error(error.response.data.error);
+      } else {
+        NotificationManager.error('An error occurred during login.');
+      }
     }
   };
+  
   
   const redirectToRolePage = (role) => {
     switch (role) {
@@ -78,7 +83,7 @@ const Login = () => {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: "#0f172b" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -114,13 +119,13 @@ const Login = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2 , backgroundColor: "#0f172b"}}
             >
               Sign In
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="/forgot-password" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
