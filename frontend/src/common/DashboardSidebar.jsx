@@ -19,7 +19,9 @@ import {
   CalendarMonth,
   AdminPanelSettingsOutlined,
   Edit,
+  
 } from "@mui/icons-material";
+
 import axios from "axios";
 import { logout } from "../redux/userSlice";
 const { styled } = require("@mui/system");
@@ -39,105 +41,30 @@ const DashboardSidebar = ({ active }) => {
   const token = useSelector((state) => state.user.token);
   const approved = localStorage.getItem('approved');
 
-  const handleLogout = async () => {
-    try {
-      await axios.post(
-        "http://localhost:5600/auth/logout",
-        null,
-        {
-          headers: { Authorization: `Bearer ${token}` },
+    const handleLogout = async () => {
+        try {
+          await axios.post('http://localhost:5600/auth/logout', null, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          dispatch(logout());
+          navigate('/login')
+        } catch (error) {
+          console.error('Error logging out:', error);
         }
-      );
-      localStorage.setItem("userName", "");
-      dispatch(logout());
-      navigate("/login");
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
-  };
+      };
 
-  const vendorNavItems = [
-    {
-      text: "Dashboard",
-      icon: (
-        <DashboardOutlined
-          sx={{ color: `${active === 1 ? "#dab61e" : "white"}` }}
-        />
-      ),
-      link: "/vendordashboard",
-    },
-    {
-      text: "Profile",
-      icon: (
-        <AccountCircle sx={{ color: `${active === 3 ? "#dab61e" : "white"}` }} />
-      ),
-      link: "/vendorprofile",
-    }
-  ];
+  
 
-  const customerNavItems = [
-    {
-      text: "Dashboard",
-      icon: (
-        <DashboardOutlined
-          sx={{ color: `${active === 1 ? "#dab61e" : "white"}` }}
-        />
-      ),
-      link: "/customerdashboard",
-    },
-    {
-      text: "Favourites",
-      icon: (
-        <Edit sx={{ color: `${active === 2 ? "#dab61e" : "white"}` }} />
-      ),
-      link: "/customerfavourites",
-    },
-    {
-      text: "Profile",
-      icon: (
-        <AccountCircle sx={{ color: `${active === 3 ? "#dab61e" : "white"}` }} />
-      ),
-      link: "/customerprofile",
-    },
-    {
-      text: "Bookings",
-      icon: (
-        <CalendarMonth
-          sx={{ color: `${active === 4 ? "#dab61e" : "white"}` }}
-        />
-      ),
-      link: "/customerbookings",
-    },
-  ];
 
-  if (userRole === "vendor" && approved) {
-    vendorNavItems.push(
-      {
-        text: "Services",
-        icon: (
-          <Edit sx={{ color: `${active === 2 ? "#dab61e" : "white"}` }} />
-        ),
-        link: "/vendorservices",
-      },
-      {
-        text: "Bookings",
-        icon: (
-          <CalendarMonth
-            sx={{ color: `${active === 4 ? "#dab61e" : "white"}` }}
-          />
-        ),
-        link: "/vendorbookings",
-      }
-    );
-  }
 
-  let navItems = [];
-if (userRole === "vendor") {
-  navItems = vendorNavItems;
-} else {
-  navItems = customerNavItems;
-}
-
+      const navItems = [
+        userRole === 'vendor' ? { text: "Dashboard", icon: <DashboardOutlined sx={{color: `${active === 1 ? "crimson" : "#555"}` }} />, link: "/vendordashboard" } : { text: "Home", link: "/" },
+        userRole === 'vendor' ? { text: "Services", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/vendorservices" } : { text: "Favourites", icon: <Edit sx={{color: `${active === 2 ? "crimson" : "#555"}` }} />, link: "/customerfavourites" },
+        { text: "Profile", icon: <AccountCircle sx={{color: `${active === 3 ? "crimson" : "#555"}` }}/>, link: userRole === 'vendor' ? "/vendorprofile" : "/customerprofile" },
+        userRole === 'vendor' ? { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/vendorbookings" } : { text: "Bookings", icon: <CalendarMonth sx={{color: `${active === 4 ? "crimson" : "#555"}` }}/>, link: "/customerbookings" },
+      ].filter(Boolean);
+      
+      
   return (
     <Box component="nav">
       <Drawer
@@ -225,12 +152,13 @@ if (userRole === "vendor") {
           <Divider />
           <FlexBetween gap="1rem" p="1.5rem 2rem" alignItems="center">
             {/* User Info */}
-            <Box>
-              <Typography fontWeight="bold" fontSize="0.9rem">
-                {localStorage.getItem("userName")}
-              </Typography>
-              <Typography fontSize="0.8rem">{userRole}</Typography>
-            </Box>
+            {userRole === 'vendor' && (
+              <Box>
+                <Typography fontWeight="bold" fontSize="0.9rem">
+                  {localStorage.getItem("userName")}
+                </Typography>
+                <Typography fontSize="0.8rem">{userRole}</Typography>
+            </Box>)}
             {/* Admin Settings Icon */}
             <Box>
               <AdminPanelSettingsOutlined sx={{ fontSize: "25px" }} />

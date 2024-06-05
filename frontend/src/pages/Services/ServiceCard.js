@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const ServiceCard = ({ service, onAddToFavorites, onRemoveFromFavorites, isFavorite, onBookVenue }) => {
+
+const ServiceCard = ({ service, onAddToFavorites, onRemoveFromFavorites, isFavorite }) => {
   return (
     <div className="col-lg-12 wow fadeInUp" data-wow-delay="0.1s">
-      <Link to={`/service/${service._id}`} className="room-item shadow rounded overflow-hidden">
+      <Link to={`/service/${service._id}`} className="room-item shadow rounded overflow-hidden service-card">
         <div className="position-relative">
           {/* Add any image or additional content here */}
         </div>
@@ -34,9 +35,7 @@ const ServiceCard = ({ service, onAddToFavorites, onRemoveFromFavorites, isFavor
             Add to Favorites
           </button>
         )}
-        <button className="btn btn-sm btn-dark rounded py-2 px-4" onClick={() => onBookVenue(service._id)}>
-          Book Venue
-        </button>
+        
       </div>
     </div>
   );

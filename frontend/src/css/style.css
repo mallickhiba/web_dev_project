@@ -537,4 +537,8 @@
     font-weight: bold;
     font-size: 1rem;
   }
+  .service-card {
+    border: 1px solid #ccc;
+  }
+  
   

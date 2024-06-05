@@ -10,9 +10,7 @@ import {
 import EventIcon from "@mui/icons-material/Event";
 
 const BookingCard = ({ booking }) => {
-  const customer = booking.customer
-    ? `${booking.customer.firstName} ${booking.customer.lastName}`
-    : "Anonymous";
+  
   const service = booking.service_id
     ? booking.service_id.service_name
     : "Unknown Service";
@@ -45,9 +43,7 @@ const BookingCard = ({ booking }) => {
             </Typography>
           </Box>
           <Divider sx={{ mb: 2 }} />
-         <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
-            Customer: <span style={{ fontWeight: "normal" }}>{customer}</span>
-          </Typography>
+         
           <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
             Vendor: <span style={{ fontWeight: "normal" }}>{vendor}</span>
           </Typography>
@@ -63,9 +59,7 @@ const BookingCard = ({ booking }) => {
           <Typography sx={{ mb: 1.5, fontWeight: "bold" }} color="text.secondary">
             Booking Date: <span style={{ fontWeight: "normal" }}>{new Date(booking.bookingDate).toLocaleDateString()}</span>
           </Typography>
-          <Typography sx={{ fontWeight: "bold" }} color="text.secondary">
-            Created At: <span style={{ fontWeight: "normal" }}>{new Date(booking.createdAt).toLocaleDateString()}</span>
-          </Typography>
+          
         </CardContent>
       </Card>
     </Box>

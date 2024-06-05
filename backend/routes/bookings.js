@@ -6,6 +6,8 @@ const customerMiddleware = require("../middlewares/customerMiddleware");
 const authenticate = require("../middlewares/authenticate");
 const adminMiddleware = require("../middlewares/adminMiddleware");
 const vendorMiddleware = require("../middlewares/vendorMiddleware");
+const transporter = require('../emailService.js'); 
+
 
 const router = express.Router();
 
@@ -205,50 +207,57 @@ router.get(
   }
 );
 
-// POST a new booking. only customer can make bookings ****TESTED***
-router.post(
-  "/createBooking",
-  authenticate,
-  customerMiddleware,
-  async (req, res) => {
-    try {
-        const customerID = req.user.id; 
 
-        if (!req.body.bookingDate || !req.body.service || !req.body.service.service_id || !req.body.service.selected_package || !req.body.service.selected_package.package_id || !req.body.service.selected_package.name || req.body.guests == null) {
+
+
+// POST a new booking. only customer can make bookings
+router.post('/createBooking', authenticate, customerMiddleware, async (req, res) => {
+    try {
+        const customerID = req.body.customer_id;
+        console.log(req.body);
+
+        if (!req.body.service._id || !req.body.service.selected_package.name || req.body.guests == null) {
             return res.status(400).json({ message: "Please provide all required fields." });
         }
 
-        // Extract vendor_id from service_id
-        const service = await Service.findById(req.body.service.service_id);
+        // Extract service document
+        const service = await Service.findById(req.body.service._id);
         if (!service) {
             return res.status(404).json({ message: "Service not found." });
         }
 
-        const vendor_id = service.vendor_id; // Assuming the vendor_id is stored in the service document
+        // Find the package in the packages array using the name field
+        const selectedPackage = service.packages.find(pkg => pkg.name === req.body.service.selected_package.name);
+        if (!selectedPackage) {
+            return res.status(404).json({ message: "Package not found." });
+        }
+
+        const vendor_id = req.body.vendor_id; // Assuming the vendor_id is passed directly in the request
 
         // Create booking data object
         const bookingData = {
             customer: customerID,
-            service_id: req.body.service.service_id,
+            service_id: req.body.service._id,
             selected_package: {
-                package_id: req.body.service.selected_package.package_id,
-                name: req.body.service.selected_package.name,
+                package_id: selectedPackage.package_id,
+                name: selectedPackage.name,
             },
-            vendor_id: vendor_id, // Set vendor_id to the extracted vendor_id
+            vendor_id: vendor_id, // Set vendor_id to the provided vendor_id
             guests: req.body.guests,
             bookingDate: req.body.bookingDate,
         };
 
       // Create new booking
       const newBooking = await Booking.create(bookingData);
-      res
-        .status(201)
-        .json({ message: "Booking created successfully", booking: newBooking });
+      res.status(201).json({ message: "Booking created successfully", booking: newBooking });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
-  }
-);
+    
+});
+
+
+
 
 // PUT endpoint to change booking status. Only vendor can do this.
 router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMiddleware, async (req, res) => {
@@ -262,7 +271,6 @@ router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMid
         if (!booking) {
             return res.status(404).json({ message: "Booking not found or does not belong to the vendor." });
         }
-
         // Check for valid status
         if (!["pending", "confirmed", "cancelled"].includes(newStatus)) {
             return res.status(400).json({ message: "Invalid status. Allowed values: 'pending', 'confirmed', 'cancelled'." });
@@ -279,6 +287,23 @@ router.put('/changeBookingStatus/:bookingId/:newStatus', authenticate, vendorMid
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
+    const customer = await User.findById(req.body.customer_id);
+    if (newStatus == 'confirmed'){
+    const mailOptions2 = {
+      from: process.env.EMAIL_USER,
+      to: customer.email,
+      subject: 'Booking Confirmed',
+      text: `Yay! Your booking has been confirmed`
+  };
+  transporter.sendMail(mailOptions2, (error, info) => {
+      if (error) {
+          console.error('Error sending email:', error);
+          return res.status(500).send('Error sending email');
+      } else {
+          console.log('Email sent: ' + info.response);
+          return res.send('Confirmation mail sent to customer');
+      }
+  });}
 });
 
 // DELETE a booking by ID. Only admin can do this.

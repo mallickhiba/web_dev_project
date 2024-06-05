@@ -12,6 +12,7 @@ const PhotographyService = require('../models/Services').model('PhotographyServi
 const CateringService = require('../models/Services').model('CateringService');
 const DecorService = require('../models/Services').model('DecorService');
 const BaseService = require('../models/Services'); // Adjust the path as per your project structure
+const Users = require('../models/User');
 var router = express.Router();
 
 
@@ -58,7 +59,7 @@ router.get('/venues1', async (req, res) => {
     if (sort[1]) {
       sortBy[sort[0]] = sort[1];
     } else {
-      sortBy[sort[0]] = 'asc';
+      sortBy[sort[0]] = 'asc'
     }
 
 
@@ -517,7 +518,7 @@ router.post('/getbyservicename', async (req, res) => {
     const services = await Service.find({ service_name: regex })
       .populate({
         path: 'vendor_id',
-        model: 'Users', // Use the correct collection name here
+        model: 'User', // Use the correct collection name here
         select: 'firstName lastName -_id'
       });
 

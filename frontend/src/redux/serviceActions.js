@@ -9,7 +9,7 @@ import {
 import { setCaterings,addFavoriteC, removeFavoriteC} from "./CateringSlice";
 import { setPhotographys,addFavoriteP, removeFavoriteP} from "./PhotographySlice";
 import { setDecors,addFavoriteD, removeFavoriteD} from "./DecorSlice";
-import { setServices, setServiceDetail ,addFavorite, removeFavorite,getFavourites,postareview,getReviews} from "./serviceSlice"; // Import setServiceDetail
+import { setServices, setServiceDetail ,addFavorite, removeFavorite,getFavourites,postareview,getReviews,getBookings} from "./serviceSlice"; // Import setServiceDetail
 import { NotificationManager } from "react-notifications";
 
 // Fetch venues with filtering and sorting
@@ -255,6 +255,43 @@ export const getFromFavorites = createAsyncThunk(
   }
 );
 
+export const getFromBookings = createAsyncThunk(
+  'caterings/getcustomerbookings',
+  async (_, { dispatch }) => {
+    const token = getToken();
+    if (!token) {
+      const errorMessage = 'TOKEN NOT FOUND / INVALID. PLEASE LOG IN';
+      dispatch(setError(errorMessage));
+      NotificationManager.error(errorMessage);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        'http://localhost:5600/bookings/customerbookings',
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log('API Response:', response.data); // Detailed log of the response
+
+      // Check if the response data contains a bookings key that is an array
+      if (response.data && Array.isArray(response.data.bookings)) {
+        dispatch(getBookings(response.data.bookings));
+        NotificationManager.success('Bookings fetched successfully');
+      } else {
+        console.error('Invalid response format:', response.data); // Detailed log of invalid response
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.msg || error.message;
+      console.error('Error fetching bookings:', errorMessage); // Log the error
+      dispatch(setError(errorMessage));
+      NotificationManager.error(errorMessage);
+    }
+  }
+);
+
+
 // Fetch service by ID
 export const fetchreviews = createAsyncThunk(
   "service/fetchServiceById",
@@ -270,6 +307,24 @@ export const fetchreviews = createAsyncThunk(
     }
   }
 );
+
+// Fetch service by ID
+export const fetchbookings = createAsyncThunk(
+  "service/fetchbookings",
+  async (id, { dispatch }) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axios.get(`http://localhost:5600/bookings/customerbookings`);
+      dispatch(getReviews(response.data.booking)); // Dispatch setServiceDetail with the response data
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setError(error.message));
+      dispatch(setLoading(false));
+    }
+  }
+);
+
+
 
 
 

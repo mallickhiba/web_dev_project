@@ -2,7 +2,8 @@ import React from "react";
 import Book from "./Book";
 import Carousel from "./Carousel";
 import Services from "./Service";
-import Rooms from "./Rooms";
+
+
 
 
 export default function Home() {
@@ -11,7 +12,8 @@ export default function Home() {
       <Carousel />
       <Book />
       <Services />
-      <Rooms />
+      
+
  
     </>
   );
