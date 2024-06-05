@@ -16,7 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { login } from '../../redux/userSlice'; // Importing the login action
 import { NotificationManager } from "react-notifications";
 import { useNavigate } from 'react-router-dom';
-import Header from "../../common/Header";
+
 
 const defaultTheme = createTheme();
 
