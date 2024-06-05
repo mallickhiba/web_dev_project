@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { Delete, MoreVert, Close, Edit } from "@mui/icons-material";
 import { deleteUser, editUser } from "../../../redux/adminUserSlice";
+import BASE_URL from "../../../../src/baseURL";
 
 const UserCard = ({ user }) => {
   const dispatch = useDispatch();
@@ -58,7 +59,8 @@ const UserCard = ({ user }) => {
 
   const handleDeleteUser = async () => {
     try {
-      const response = await fetch(`http://localhost:5600/admin/users/delete/${user._id}`, {
+      const response = await fetch(`${BASE_URL}admin/users/delete/${user._id}`, 
+      {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +86,7 @@ const UserCard = ({ user }) => {
 
   const handleEditUser = async () => {
     try {
-      const response = await fetch(`http://localhost:5600/admin/users/update/${user._id}`, {
+      const response = await fetch(`${BASE_URL}/admin/users/update/${user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

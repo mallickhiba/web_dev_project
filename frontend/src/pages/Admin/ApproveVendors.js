@@ -18,6 +18,7 @@ import { setVendors } from "../../redux/adminVendorSlice";
 import SearchIcon from '@mui/icons-material/Search';
 import VendorCard from "./components/VendorCard";
 import VendorEditModal from "./components/VendorEditModal";
+import BASE_URL from "../../../src/baseURL";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -82,7 +83,7 @@ const ApproveVendors = () => {
     const fetchVendors = async () => {
       try {
         console.log("Fetching vendors...");
-        const response = await axios.get("http://localhost:5600/admin/vendors", {
+        const response = await axios.get(`${BASE_URL}admin/vendors`,{
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("Vendor details:", response.data);

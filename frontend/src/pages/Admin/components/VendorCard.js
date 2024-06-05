@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 import { Delete, MoreVert, Close } from "@mui/icons-material";
 import { editVendor } from "../../../redux/adminVendorSlice";
+import BASE_URL from "../../../../src/baseURL";
+
 
 const VendorCard = ({ vendor }) => {
   const dispatch = useDispatch();
@@ -41,7 +43,7 @@ const VendorCard = ({ vendor }) => {
 
     try {
       // Make the POST request to update vendor's approval status
-      const response = await fetch('http://localhost:5600/admin/vendors/approve', {
+      const response = await fetch(`${BASE_URL}admin/vendors/approve`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

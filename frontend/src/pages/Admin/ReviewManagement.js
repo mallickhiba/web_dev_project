@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from "react-redux";
 import AdminSidebar from "./components/AdminSidebar";
 import { setReviews } from "../../redux/adminReviewSlice";
 import SearchIcon from "@mui/icons-material/Search";
+import BASE_URL from "../../../src/baseURL";
+
 
 const ReviewManagement = () => {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ const ReviewManagement = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [value, setValue] = useState(0);
 
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -31,7 +34,7 @@ const ReviewManagement = () => {
       try {
         console.log("Fetching reviews...");
         const response = await axios.get(
-          "http://localhost:5600/reviews/view-reviews",
+          `${BASE_URL}reviews/view-reviews`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

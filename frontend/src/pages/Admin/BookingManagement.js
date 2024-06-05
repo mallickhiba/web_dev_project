@@ -80,7 +80,7 @@ const BookingManagement = () => {
       try {
         console.log("Fetching bookings...");
         const response = await axios.get(
-          "http://localhost:5600/bookings/allbookings",
+          "${BASE_URL}bookings/allbookings",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
