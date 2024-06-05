@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { NotificationManager } from "react-notifications";
+
 
 const initialState = {
   services: [],
@@ -11,6 +13,7 @@ const initialState = {
   selectedService: null,
   reviews:[]
 };
+
 
 export const fetchAllServiceByIdAsync = createAsyncThunk(
   'service/fetchServiceById',
@@ -59,9 +62,11 @@ export const postbooking = createAsyncThunk(
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      NotificationManager.success("Booking created successfully!");
       dispatch(postabooking(response.data));
     } catch (error) {
       dispatch(setError(error.response?.data?.message || error.message));
+      NotificationManager.error("Error!");
     }
   }
 );
