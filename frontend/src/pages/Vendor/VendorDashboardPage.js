@@ -1,66 +1,104 @@
 import React, { useEffect } from 'react'
-import DashboardSidebar from '../../common/DashboardSidebar';
-import {  Box, Container, Grid, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { setUserDetails } from '../../redux/userSlice';
+import { Link, useHistory } from 'react-router-dom'; // Import Link from react-router-dom
+import DashboardSidebar from '../../common/DashboardSidebar';
+import {
+  Avatar,
+  Box,
+  Container,
+  Divider,
+  Grid,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Typography,
+  Card,
+  CardContent,
+} from '@mui/material';
+import {
+  Logout,
+  PersonAdd,
+  Settings,
+  Person,
+  Group,
+  Store,
+  AssignmentInd,
+  ListAlt,
+  BookOnline,
+} from '@mui/icons-material';
+
+const KPI = ({ title, value, icon, onClick, to }) => (
+  <Card
+    onClick={onClick}
+    sx={{ minWidth: 150, m: 2, borderRadius: 2, boxShadow: 3, cursor: 'pointer' }}
+    component={to ? Link : 'div'} // Use Link if 'to' prop is provided
+    to={to} // Pass 'to' prop to Link
+  >
+    <CardContent>
+      <Box display="flex" alignItems="center" justifyContent="space-between">
+        {icon}
+        <Typography variant="h4" component="div">
+          {value}
+        </Typography>
+      </Box>
+      <Typography variant="h6" color="textSecondary" gutterBottom>
+        {title}
+      </Typography>
+    </CardContent>
+  </Card>
+);
 
 const VendorDashboardPage = () => {
- 
-  const dispatch = useDispatch();
 
-  const token = useSelector((state) => state.user.token);
-  const vendorData = useSelector((state) => state.user.userDetails);
-
-  useEffect(() => {
-    const fetchVendorDetails = async () => {
-      try {
-        const response = await axios.get("http://localhost:5600/auth/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Vendor details:", response.data);
-        dispatch(setUserDetails(response.data));
-        const { firstName, lastName } = response.data;
-const userName = `${firstName} ${lastName}`;
-localStorage.setItem('userName', userName);
-console.log(localStorage.getItem(userName));
-      } catch (error) {
-        console.error("Error fetching vendor details:", error);
-      }
-    };
-
-  
-  }, [dispatch, token, vendorData]);
-
+  const newServices = 2; // Example data
+  const newBookings = 5; // Example data
 
   return (
     <Container>
-    <Grid container>
-      {/* Render the DashboardSidebar component */}
-      <Grid item xs={12} md={3}>
-        <DashboardSidebar active={1} />
-      </Grid>
+      <Grid container>
+        {/* Render the AdminSidebar component */}
+        <Grid item xs={12} md={3}>
+          <DashboardSidebar active={1} />
+        </Grid>
 
-      {/* Main content */}
-      <Grid item xs={12} md={9}>
-        <Box mx={4} my={4}>
-          <Box border="1px  #ccc" borderRadius={4} p={3} mb={3} mt={2}>
-            <Typography variant="h4">i am Dashboard </Typography>
-           
-      </Box>
-          </Box>
-
-      
+        {/* Main content */}
+        <Grid item xs={12} md={9}>
+          <Box mx={4} my={4}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              mb={3}
+            >
+              <Typography variant="h6">
+                Welcome to vendor dashboard
+              </Typography>
+              
         
+            </Box>
+              <Grid item xs={12} sm={6} md={4}>
+              <KPI
+                  title="Active Services"
+                  value={newServices}
+                  icon={<ListAlt fontSize="large" />}
+                  to="/vendorservices"
+                />
+                <KPI
+                  title="New Bookings Added"
+                  value={newBookings}
+                  icon={<BookOnline fontSize="large" />}
+                  to="/vendorbookings"
+                />
+            </Grid>
+          </Box>
+        </Grid>
       </Grid>
-
-
-{/* Main content end here */}
-
-    </Grid>
-  </Container> 
-
-  )
-}
+    </Container>
+  );
+};
 
 export default VendorDashboardPage;
